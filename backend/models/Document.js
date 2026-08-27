@@ -1,0 +1,247 @@
+const mongoose = require('mongoose');
+
+const documentSchema = new mongoose.Schema({
+  trackingNo: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  createdBy: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  office: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  fund: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  gsoRoutingSlip: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  section: {
+    type: String,
+    default: 'N/A',
+    trim: true,
+  },
+  fpp: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  department: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  contactNumber: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  responsibilityCenter: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  accountCode: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  obrParticulars: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  email: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  requestedByName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  requestedByDesignation: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  cashAvailabilityName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  cashAvailabilityDesignation: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  approvedByName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  approvedByDesignation: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  certifiedAName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  certifiedAPosition: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  certifiedBName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  certifiedBPosition: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  preparedByName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  prItems: [
+    {
+      itemNo: { type: String, default: '' },
+      unit: { type: String, default: '' },
+      description: { type: String, default: '' },
+      quantity: { type: String, default: '' },
+      unitCost: { type: String, default: '' },
+      totalCost: { type: String, default: '' },
+    },
+  ],
+  prDate: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  purpose: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  notes: {
+    type: String,
+    default: '',
+  },
+  amount: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  supplierAmount: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  supplier: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  driveLink: {
+    type: String,
+    default: 'N/A',
+    trim: true,
+  },
+  prEnabled: {
+    type: Boolean,
+    default: true,
+  },
+  obrEnabled: {
+    type: Boolean,
+    default: true,
+  },
+  prNo: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  obrNo: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  status: {
+    type: String,
+    enum: [
+      'pending',
+      'pending-gso',
+      'pending-bac',
+      'ready-transfer',
+      'in-budget',
+      'in-pto',
+      'for-validation',
+      'pre-validation',
+      'for-revision',
+      'ongoing',
+      'approved',
+      'reprocessed',
+      'completed',
+      'returned',
+      'discontinued',
+      'cancelled',
+      'canceled',
+    ],
+    default: 'pending',
+  },
+  logs: [
+    {
+      label: { type: String, default: '' },
+      color: { type: String, default: 'bg-sky-500' },
+      byOffice: { type: String, default: '' },
+      byUser: { type: String, default: '' },
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
+  subDocuments: [
+    {
+      trackingNo: { type: String, trim: true },
+      purpose: { type: String, trim: true },
+      amount: { type: String, trim: true },
+      supplier: { type: String, trim: true },
+      status: { type: String, default: 'returned' },
+      logs: [
+        {
+          label: { type: String, default: '' },
+          color: { type: String, default: 'bg-sky-500' },
+          byOffice: { type: String, default: '' },
+          byUser: { type: String, default: '' },
+          createdAt: { type: Date, default: Date.now },
+        },
+      ],
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model('Document', documentSchema);
