@@ -1,17 +1,81 @@
-import { Printer } from "lucide-react"
+import { useState } from "react"
+import { Printer, Save, CheckCircle } from "lucide-react"
 import type { DocumentRow } from "../types/documentTypes"
+import { toast } from "../../lib/toast"
+
+const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"
+const API_URL = RAW_API_URL.replace(/\/$/, "").endsWith("/api")
+  ? RAW_API_URL.replace(/\/$/, "")
+  : `${RAW_API_URL.replace(/\/$/, "")}/api`
 
 type RoutingSlipModalProps = {
   rsDoc: DocumentRow | null
   onClose: () => void
 }
 
+const CATEGORY_OPTIONS = [
+  "IT AND EQUIPMENT",
+  "MEALS AND EVENTS",
+  "GOODS & SERVICES",
+  "REPAIR & MAINTENANCE OF MOTOR VEHICLES AND EQUIPMENT",
+]
+
 export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalProps) {
   if (!rsDoc) return null
 
-  const handleGenerateRoutingSlip = () => {
+  const docId = String(rsDoc.id || (rsDoc as any)._id || "")
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    String(rsDoc.gsoRoutingSlip || "").trim()
+  )
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleSaveCategory = async (category: string) => {
+    if (!docId || !category) return false
+    try {
+      setIsSaving(true)
+      const token = localStorage.getItem("token")
+      const response = await fetch(`${API_URL}/documents/${docId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ gsoRoutingSlip: category }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "")
+        toast.error(`Failed to save routing slip: ${errorText || response.statusText}`)
+        return false
+      }
+
+      toast.success("Routing slip category updated")
+      rsDoc.gsoRoutingSlip = category
+      if ((rsDoc as any).doc) (rsDoc as any).doc.gsoRoutingSlip = category
+      return true
+    } catch {
+      toast.error("Network error saving routing slip category")
+      return false
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleGenerateRoutingSlip = async (categoryToUse?: string) => {
     if (!rsDoc) return
-    const slip = String(rsDoc.gsoRoutingSlip || "").trim()
+    let slip = categoryToUse || selectedCategory || String(rsDoc.gsoRoutingSlip || "").trim()
+
+    if (!slip && selectedCategory) {
+      const saved = await handleSaveCategory(selectedCategory)
+      if (!saved) return
+      slip = selectedCategory
+    }
+
+    if (!slip) {
+      toast.error("Please select a routing slip category first.")
+      return
+    }
+
     const printWin = window.open("", "_blank", "width=1200,height=800")
     if (!printWin) {
       window.alert("Please allow pop-ups to generate the routing slip.")
@@ -21,7 +85,7 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
     const amount = rsDoc.amount ? rsDoc.amount : ""
     const office = rsDoc.office || ""
     const particulars = rsDoc.purpose || ""
-    const categoryTitle = slip ? slip.toUpperCase() : "GOODS &amp; SERVICES"
+    const categoryTitle = slip ? slip.toUpperCase() : "GOODS & SERVICES"
 
     // Per-category config
     const slipUpper = slip.toUpperCase()
@@ -189,7 +253,7 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
                 <span>Form No.: &nbsp;<strong>${formNo}</strong></span>
                 <span>Revision No.: &nbsp;<strong>${revisionNo}</strong></span>
               </div>
-              <div className="form-title">PROVINCIAL GENERAL SERVICES OFFICE<br/>VALIDATION FORM</div>
+              <div class="form-title">PROVINCIAL GENERAL SERVICES OFFICE<br/>VALIDATION FORM</div>
               ${slipUpper.includes("REPAIR") || slipUpper.includes("MOTOR") || slipUpper.includes("MAINTENANCE")
         ? `<div class="form-subtitle" style="text-align:center;font-weight:bold;font-size:8pt;text-decoration:underline;margin-bottom:6px;">REPAIR &amp; MAINTENANCE OF<br/>MOTOR VEHICLES AND EQUIPMENT</div>`
         : `<div class="form-subtitle">${categoryTitle}</div>`
@@ -234,72 +298,81 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       onMouseDown={(e) => { if (e.currentTarget === e.target) onClose() }}
     >
-      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-6 py-4">
           <div>
-            <div className="text-base font-semibold text-slate-900">Routing Slips</div>
-            <div className="text-xs text-slate-500">{rsDoc.trackingNo}</div>
+            <div className="text-base font-bold text-slate-900">Routing Slip Category</div>
+            <div className="text-xs font-medium text-slate-500">{rsDoc.trackingNo}</div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 focus:outline-none"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
             title="Close"
           >
             ✕
           </button>
         </div>
-        <div className="px-5 py-5">
-          <table className="w-full border-collapse overflow-hidden rounded-lg border border-slate-200 text-sm">
-            <thead>
-              <tr className="bg-slate-50">
-                <th className="border-b border-slate-200 px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Routing Slip</th>
-                <th className="border-b border-slate-200 px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {String(rsDoc.gsoRoutingSlip || "").trim() ? (
-                <tr>
-                  <td className="border-b border-slate-100 px-4 py-3 text-sm font-medium text-slate-900">
-                    {rsDoc.gsoRoutingSlip}
-                  </td>
-                  <td className="border-b border-slate-100 px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={handleGenerateRoutingSlip}
-                      className="inline-flex items-center gap-1.5 rounded-md bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none"
-                    >
-                      <Printer className="size-3.5" />
-                      Generate
-                    </button>
-                  </td>
-                </tr>
-              ) : (
-                <tr>
-                  <td colSpan={2} className="px-4 py-6 text-center text-sm italic text-slate-400">
-                    No routing slip category assigned yet.
-                    <br />
-                    <span className="text-xs">GSO will assign the category.</span>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="p-6 space-y-5">
+          <div className="space-y-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Select Category
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+            >
+              <option value="">— Select Category —</option>
+              {CATEGORY_OPTIONS.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {!String(rsDoc.gsoRoutingSlip || "").trim() && (
-            <div className="mt-4 rounded-md bg-slate-50 p-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Available Categories:</div>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-500 list-inside list-disc">
-                <li>IT and Equipment</li>
-                <li>Meals and Events</li>
-                <li>Goods and Services</li>
-                <li>Repair and Maintenance</li>
-              </ul>
+          <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+            <button
+              type="button"
+              disabled={isSaving || !selectedCategory}
+              onClick={async () => {
+                if (!selectedCategory) return
+                const ok = await handleSaveCategory(selectedCategory)
+                if (ok) {
+                  setSelectedCategory(selectedCategory)
+                }
+              }}
+              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Save className="size-4" />
+              Save Category
+            </button>
+
+            <button
+              type="button"
+              disabled={isSaving || (!selectedCategory && !String(rsDoc.gsoRoutingSlip || "").trim())}
+              onClick={() => handleGenerateRoutingSlip()}
+              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Printer className="size-4" />
+              Generate Printout
+            </button>
+          </div>
+
+          {!selectedCategory && !String(rsDoc.gsoRoutingSlip || "").trim() && (
+            <div className="rounded-xl bg-amber-50 p-4 border border-amber-200/60">
+              <div className="flex gap-2">
+                <CheckCircle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800 leading-relaxed font-medium">
+                  Select a category above to assign and generate the routing slip for this document.
+                </p>
+              </div>
             </div>
           )}
         </div>

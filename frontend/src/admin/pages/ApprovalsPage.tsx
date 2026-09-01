@@ -1938,39 +1938,44 @@ export default function ApprovalsPage({
                     </td>
                     {(actionIsGso || actionIsAdmin) ? (
                       <td className="px-3 py-3 align-top">
-                        {actionIsGso ? (
-                          <select
-                            value={routingSlipMap[r.doc._id] ?? r.gsoRoutingSlip}
-                            onChange={async (e) => {
-                              const val = e.target.value
-                              setRoutingSlipMap((prev) => ({ ...prev, [r.doc._id]: val }))
-                              try {
-                                const token = localStorage.getItem('token')
-                                await fetch(`${API_URL}/documents/${r.doc._id}`, {
-                                  method: 'PATCH',
-                                  headers: {
-                                    Authorization: `Bearer ${token}`,
-                                    'Content-Type': 'application/json',
-                                  },
-                                  body: JSON.stringify({ gsoRoutingSlip: val }),
-                                })
-                              } catch {
-                                // ignore save error silently
+                        <select
+                          value={routingSlipMap[r.doc._id] ?? r.gsoRoutingSlip ?? ""}
+                          onChange={async (e) => {
+                            const val = e.target.value
+                            const prevVal = routingSlipMap[r.doc._id] ?? r.gsoRoutingSlip ?? ""
+                            setRoutingSlipMap((prev) => ({ ...prev, [r.doc._id]: val }))
+                            try {
+                              const token = localStorage.getItem('token')
+                              const response = await fetch(`${API_URL}/documents/${r.doc._id}`, {
+                                method: 'PATCH',
+                                headers: {
+                                  Authorization: `Bearer ${token}`,
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ gsoRoutingSlip: val }),
+                              })
+                              if (!response.ok) {
+                                const msg = await response.text().catch(() => "")
+                                setRoutingSlipMap((prev) => ({ ...prev, [r.doc._id]: prevVal }))
+                                toast.error(`Failed to update routing slip: ${msg || response.statusText}`)
+                              } else {
+                                toast.success("Routing slip updated")
+                                r.gsoRoutingSlip = val
+                                if (r.doc) r.doc.gsoRoutingSlip = val
                               }
-                            }}
-                            className="h-8 w-full min-w-[180px] rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-900 focus:outline-none focus-visible:outline-none"
-                          >
-                            <option value="">— Select —</option>
-                            <option value="IT AND EQUIPMENT">IT AND EQUIPMENT</option>
-                            <option value="MEALS AND EVENTS">MEALS AND EVENTS</option>
-                            <option value="GOODS & SERVICES">GOODS &amp; SERVICES</option>
-                            <option value="REPAIR & MAINTENANCE OF MOTOR VEHICLES AND EQUIPMENT">REPAIR &amp; MAINTENANCE OF MOTOR VEHICLES AND EQUIPMENT</option>
-                          </select>
-                        ) : (
-                          <div className={`text-xs ${deadlineStatus.isExceeded ? 'text-white' : 'text-slate-700'}`}>
-                            {(routingSlipMap[r.doc._id] ?? r.gsoRoutingSlip) || <span className="italic text-slate-400">Not set</span>}
-                          </div>
-                        )}
+                            } catch {
+                              setRoutingSlipMap((prev) => ({ ...prev, [r.doc._id]: prevVal }))
+                              toast.error("Network error updating routing slip")
+                            }
+                          }}
+                          className="h-8 w-full min-w-[180px] rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-900 focus:outline-none focus-visible:outline-none"
+                        >
+                          <option value="">— Select —</option>
+                          <option value="IT AND EQUIPMENT">IT AND EQUIPMENT</option>
+                          <option value="MEALS AND EVENTS">MEALS AND EVENTS</option>
+                          <option value="GOODS & SERVICES">GOODS &amp; SERVICES</option>
+                          <option value="REPAIR & MAINTENANCE OF MOTOR VEHICLES AND EQUIPMENT">REPAIR &amp; MAINTENANCE OF MOTOR VEHICLES AND EQUIPMENT</option>
+                        </select>
                       </td>
                     ) : null}
                     <td className={`px-3 py-3 align-top text-right text-xs tabular-nums ${deadlineStatus.isExceeded ? 'text-white' : 'text-slate-700'}`}>{r.amount}</td>
