@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AdminDashboardPage from "./admin/pages/AdminDashboardPage"
 import LoginPage from "./admin/pages/LoginPage"
 import ProcurementDashboardPage from "./procurementusers/pages/ProcurementDashboardPage"
@@ -47,6 +47,12 @@ function App() {
 
   // Auto-logout when outside working hours (does nothing for admins)
   useScheduleGuard(user?.role, onLogout)
+
+  // Auto-logout on 401/403 from any apiFetch call (expired / invalid token)
+  useEffect(() => {
+    window.addEventListener('auth:logout', onLogout)
+    return () => window.removeEventListener('auth:logout', onLogout)
+  }, [onLogout])
 
   // If user is logged in
   if (user) {

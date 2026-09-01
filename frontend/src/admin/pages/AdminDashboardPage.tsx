@@ -15,7 +15,7 @@ import AllDocumentsPage from "./AllDocumentsPage"
 import OfficesPage from "./OfficesPage"
 import ReportsPage from "./ReportsPage"
 import SettingsPage from "./SettingsPage"
-import API_URL from "../../lib/api"
+import API_URL, { apiFetch } from "../../lib/apiFetch"
 
 type OfficeSummary = {
   name: string
@@ -57,10 +57,7 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token")
-        const res = await fetch(`${API_URL}/documents/stats`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await apiFetch(`${API_URL}/documents/stats`)
         if (res.ok) {
           const data = await res.json()
           setStats(data)
