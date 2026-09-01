@@ -8,6 +8,7 @@ import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
+import { getSubDocAmount } from "../../users/types/documentTypes"
 
 type ApprovalRow = {
   timestamp: string
@@ -996,6 +997,11 @@ export default function ApprovalsPage({
 
       const mapped = (data.documents || [])
         .filter((d) => {
+          const parentStatusLower = String(d?.status || '').trim().toLowerCase()
+          if (parentStatusLower === 'discontinued' || parentStatusLower === 'cancelled' || parentStatusLower === 'canceled') {
+            return false
+          }
+
           if (filterReceivedOnly || filterRecentlyTransferredOnly) return true
 
           if (actionMode === 'logsOnly' && logsOnlyActionMode === 'historyOnly') {
@@ -1102,7 +1108,8 @@ export default function ApprovalsPage({
               rawLogs: itemLogs,
               sourceOfFund: d.fund || '',
               amount: (() => {
-                const cleaned = String(item.amount || d.amount || '')
+                const rawAmt = isSub ? getSubDocAmount(d, index) : (item.amount || d.amount || '')
+                const cleaned = String(rawAmt)
                   .replace(/[^0-9.,-]/g, '')
                   .trim()
                 return cleaned ? `₱ ${cleaned}` : ''
@@ -1139,10 +1146,16 @@ export default function ApprovalsPage({
             })()
 
             if (mainDocQualifies) {
-              rowsToYield.push(createRow(d, false, -1))
+              const parentStatusLower = String(d?.status || '').trim().toLowerCase()
+              if (parentStatusLower !== 'discontinued' && parentStatusLower !== 'cancelled' && parentStatusLower !== 'canceled') {
+                rowsToYield.push(createRow(d, false, -1))
+              }
             }
             d.subDocuments.forEach((sub, subIdx) => {
-              rowsToYield.push(createRow(sub, true, subIdx))
+              const subStatusLower = String(sub?.status || '').trim().toLowerCase()
+              if (subStatusLower !== 'discontinued' && subStatusLower !== 'cancelled' && subStatusLower !== 'canceled') {
+                rowsToYield.push(createRow(sub, true, subIdx))
+              }
             })
           } else {
             rowsToYield.push(createRow(d, false, -1))
@@ -1153,6 +1166,15 @@ export default function ApprovalsPage({
 
       const filteredMapped = (filterReceivedOnly || filterRecentlyTransferredOnly)
         ? mapped.filter((row) => {
+          const statusLower = String(row.currentStatus || '').trim().toLowerCase()
+          const parentStatusLower = String(row.doc?.status || '').trim().toLowerCase()
+          if (
+            statusLower === 'discontinued' || statusLower === 'cancelled' || statusLower === 'canceled' ||
+            parentStatusLower === 'discontinued' || parentStatusLower === 'cancelled' || parentStatusLower === 'canceled'
+          ) {
+            return false
+          }
+
           const transferredToOffice = hasTransferredToCurrentOffice(row)
           const receivedByOffice = hasReceivedForCurrentOffice(row)
           const transferredFromOffice = hasTransferredFromCurrentOffice(row)
@@ -1459,13 +1481,8 @@ export default function ApprovalsPage({
         const pageW = pdfDoc.internal.pageSize.getWidth()
         const pageH = pdfDoc.internal.pageSize.getHeight()
 
-        const marginX = 14
-        const marginY = 14
-        const contentW = pageW - marginX * 2
-        const contentH = pageH - marginY * 2
-
         if (i > 0) pdfDoc.addPage("letter", "portrait")
-        pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
       }
 
       const blob = pdfDoc.output("blob")
@@ -1483,7 +1500,7 @@ export default function ApprovalsPage({
   }
 
   const captureObrPreviewToPdf = async (_row: ApprovalRow) => {
-    const root = obrCaptureRef.current || obrVisibleRef.current
+    const root = obrVisibleRef.current || obrCaptureRef.current
     if (!root) return
 
     let previewTab: Window | null = null
@@ -1512,10 +1529,14 @@ export default function ApprovalsPage({
         useCORS: true,
         logging: false,
         allowTaint: false,
-        scrollX: 0,
-        scrollY: 0,
+        width: 816,
+        height: 1056,
         windowWidth: 816,
         windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
@@ -1535,12 +1556,7 @@ export default function ApprovalsPage({
       const pageW = pdfDoc.internal.pageSize.getWidth()
       const pageH = pdfDoc.internal.pageSize.getHeight()
 
-      const marginX = 14
-      const marginY = 14
-      const contentW = pageW - marginX * 2
-      const contentH = pageH - marginY * 2
-
-      pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
 
       const blob = pdfDoc.output("blob")
       const url = URL.createObjectURL(blob)

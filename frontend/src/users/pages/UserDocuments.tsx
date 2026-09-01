@@ -14,6 +14,7 @@ import OngoingTab from "../components/tabs/OngoingTab"
 import CompletedTab from "../components/tabs/CompletedTab"
 import DiscontinuedTab from "../components/tabs/DiscontinuedTab"
 import RoutingSlipModal from "../components/RoutingSlipModal"
+import { getSubDocAmount } from "../types/documentTypes"
 
 type TabType = "pre-validation" | "ongoing" | "completed" | "discontinued"
 
@@ -277,13 +278,8 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         const pageW = pdfDoc.internal.pageSize.getWidth()
         const pageH = pdfDoc.internal.pageSize.getHeight()
 
-        const marginX = 14
-        const marginY = 14
-        const contentW = pageW - marginX * 2
-        const contentH = pageH - marginY * 2
-
         if (i > 0) pdfDoc.addPage("letter", "portrait")
-        pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
       }
 
       const blob = pdfDoc.output("blob")
@@ -302,7 +298,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   }
 
   const captureObrPreviewToPdf = async () => {
-    const root = obrCaptureRef.current || obrVisibleRef.current
+    const root = obrVisibleRef.current || obrCaptureRef.current
     if (!root) return
 
     let previewTab: Window | null = null
@@ -330,10 +326,15 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         backgroundColor: "#ffffff",
         useCORS: true,
         allowTaint: false,
-        scrollX: 0,
-        scrollY: 0,
+        logging: false,
+        width: 816,
+        height: 1056,
         windowWidth: 816,
         windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
@@ -353,12 +354,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
       const pageW = pdfDoc.internal.pageSize.getWidth()
       const pageH = pdfDoc.internal.pageSize.getHeight()
 
-      const marginX = 14
-      const marginY = 14
-      const contentW = pageW - marginX * 2
-      const contentH = pageH - marginY * 2
-
-      pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
 
       const blob = pdfDoc.output("blob")
       const url = URL.createObjectURL(blob)
@@ -1664,8 +1660,36 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           onRoutingSlip={(doc) => setRoutingSlipDoc(doc)}
           onHistoryModal={(doc) => setHistoryModalDoc(doc)}
           onEditDoc={(doc) => { setEditDoc(doc); setIsModalOpen(true) }}
-          onEditMainSupplier={(doc) => setEditingMainDoc({ id: doc.id, trackingNo: doc.trackingNo, supplier: String(doc.supplier || ""), supplierAmount: formatPesoInput(String(doc.supplierAmount || ""), true) })}
-          onEditSubDoc={(parentDoc, index, sub) => setEditingSubDoc({ parentId: parentDoc.id, index, trackingNo: sub.trackingNo, purpose: sub.purpose, amount: formatPesoInput(sub.amount, true), supplier: sub.supplier || "" })}
+          onEditMainSupplier={(doc) => {
+            const existingSupplier = String(doc.supplier || "").trim()
+            const subSuppliers = Array.from(new Set((doc.subDocuments || []).map(s => String(s.supplier || "").trim()).filter(Boolean)))
+            const initialSupplier = existingSupplier || subSuppliers.join(", ")
+
+            const parseNum = (val: any) => {
+              const cleaned = String(val || "").replace(/[^0-9.-]/g, "").replace(/,/g, "").trim()
+              const n = Number.parseFloat(cleaned)
+              return Number.isFinite(n) ? n : 0
+            }
+
+            const parentTotal = parseNum(doc.amount || (doc as any).supplierAmount)
+            let sumSubDocs = 0
+            if (Array.isArray(doc.subDocuments) && doc.subDocuments.length > 0) {
+              doc.subDocuments.forEach((_, sidx) => {
+                const subAmtStr = getSubDocAmount(doc, sidx)
+                sumSubDocs += parseNum(subAmtStr)
+              })
+            }
+            const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
+            const initialAmount = String(mainRemaining)
+
+            setEditingMainDoc({
+              id: doc.id,
+              trackingNo: doc.trackingNo,
+              supplier: initialSupplier,
+              supplierAmount: formatPesoInput(initialAmount, true),
+            })
+          }}
+          onEditSubDoc={(parentDoc, index, sub) => setEditingSubDoc({ parentId: parentDoc.id, index, trackingNo: sub.trackingNo, purpose: sub.purpose, amount: formatPesoInput(getSubDocAmount(parentDoc, index), true), supplier: sub.supplier || "" })}
           onCancelDoc={cancelPrevalidationDocument}
           onReprocessDoc={(doc) => setReprocessConfirmDoc(doc)}
           onReprocessSubDoc={(parentDoc, index, sub) => setReprocessConfirmSubDoc({ parentDoc, index, subDoc: sub })}
@@ -3629,19 +3653,24 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Amount</label>
-                  <input
-                    type="text"
-                    value={editingSubDoc.amount}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      setEditingSubDoc(prev => prev ? { ...prev, amount: formatPesoInput(val, false) } : null)
-                    }}
-                    onBlur={() => {
-                      setEditingSubDoc(prev => prev && prev.amount ? { ...prev, amount: formatPesoInput(prev.amount, true) } : prev)
-                    }}
-                    className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm focus:border-sky-500 focus:outline-none"
-                    placeholder="Enter amount"
-                  />
+                  <div className="relative flex rounded-md border border-slate-200 overflow-hidden focus-within:border-sky-500 focus-within:ring-1 focus-within:ring-sky-500">
+                    <span className="flex items-center justify-center bg-slate-50 px-3 text-sm text-slate-500 border-r border-slate-200 font-semibold select-none">
+                      ₱
+                    </span>
+                    <input
+                      type="text"
+                      value={editingSubDoc.amount}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setEditingSubDoc(prev => prev ? { ...prev, amount: formatPesoInput(val, false) } : null)
+                      }}
+                      onBlur={() => {
+                        setEditingSubDoc(prev => prev && prev.amount ? { ...prev, amount: formatPesoInput(prev.amount, true) } : prev)
+                      }}
+                      className="h-10 w-full px-3 text-sm focus:outline-none bg-white"
+                      placeholder="Enter amount"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Supplier</label>
@@ -3679,6 +3708,33 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         purpose: editingSubDoc.purpose,
                         amount: editingSubDoc.amount,
                         supplier: editingSubDoc.supplier || ''
+                      }
+
+                      const parseNum = (val: any) => {
+                        const cleaned = String(val || "").replace(/[^0-9.-]/g, "").replace(/,/g, "").trim()
+                        const n = Number.parseFloat(cleaned)
+                        return Number.isFinite(n) ? n : 0
+                      }
+                      const parentTotal = parseNum(parentDoc.amount)
+                      const mainSupplierAmt = parseNum(parentDoc.supplierAmount)
+                      const availableForSubDocs = Math.max(0, parentTotal - mainSupplierAmt)
+
+                      let runningSum = 0
+                      for (let i = 0; i < nextSubDocs.length; i++) {
+                        const currentAmt = parseNum(nextSubDocs[i].amount)
+                        if (i <= editingSubDoc.index) {
+                          runningSum += currentAmt
+                        } else {
+                          const remaining = Math.max(0, availableForSubDocs - runningSum)
+                          const subAmt = parseNum(nextSubDocs[i].amount)
+                          if (subAmt === availableForSubDocs || subAmt > remaining) {
+                            nextSubDocs[i] = {
+                              ...nextSubDocs[i],
+                              amount: formatPesoInput(String(remaining), true)
+                            }
+                          }
+                          runningSum += parseNum(nextSubDocs[i].amount)
+                        }
                       }
 
                       const token = localStorage.getItem('token')
@@ -3755,19 +3811,24 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Amount</label>
-                  <input
-                    type="text"
-                    value={editingMainDoc.supplierAmount}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      setEditingMainDoc((prev) => (prev ? { ...prev, supplierAmount: formatPesoInput(val, false) } : null))
-                    }}
-                    onBlur={() => {
-                      setEditingMainDoc((prev) => (prev && prev.supplierAmount ? { ...prev, supplierAmount: formatPesoInput(prev.supplierAmount, true) } : prev))
-                    }}
-                    className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm focus:border-sky-500 focus:outline-none"
-                    placeholder="Enter amount"
-                  />
+                  <div className="relative flex rounded-md border border-slate-200 overflow-hidden focus-within:border-sky-500 focus-within:ring-1 focus-within:ring-sky-500">
+                    <span className="flex items-center justify-center bg-slate-50 px-3 text-sm text-slate-500 border-r border-slate-200 font-semibold select-none">
+                      ₱
+                    </span>
+                    <input
+                      type="text"
+                      value={editingMainDoc.supplierAmount}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setEditingMainDoc((prev) => (prev ? { ...prev, supplierAmount: formatPesoInput(val, false) } : null))
+                      }}
+                      onBlur={() => {
+                        setEditingMainDoc((prev) => (prev && prev.supplierAmount ? { ...prev, supplierAmount: formatPesoInput(prev.supplierAmount, true) } : prev))
+                      }}
+                      className="h-10 w-full px-3 text-sm focus:outline-none bg-white"
+                      placeholder="Enter amount"
+                    />
+                  </div>
                 </div>
               </div>
 

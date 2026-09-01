@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react"
 import { FileText, History, ChevronDown, ChevronRight, Printer } from "lucide-react"
-import type { DocumentRow, DocumentParticular, DocumentLog } from "../../types/documentTypes"
+import { type DocumentRow, type DocumentParticular, type DocumentLog, getSubDocAmount } from "../../types/documentTypes"
 
 type TransferTask = { taskId?: number; task?: string; duration?: string; status?: string }
 
@@ -233,6 +233,10 @@ export default function PreValidationTab({
                             const amt = String((doc as any).supplierAmount || "").trim()
                             return amt ? `${supplier} - ₱ ${formatPeso(amt)}` : supplier
                           }
+                          const subSuppliers = Array.from(new Set((doc.subDocuments || []).map(s => String(s.supplier || "").trim()).filter(Boolean)))
+                          if (subSuppliers.length > 0) {
+                            return subSuppliers.join(", ")
+                          }
                           if (!hasSubDocs) return "-"
                           const filled = (doc.subDocuments || []).filter((s) => s.supplier && String(s.supplier).trim() !== "").length
                           const total = (doc.subDocuments || []).length
@@ -285,7 +289,7 @@ export default function PreValidationTab({
                         className={String(sub?.status || "").trim().toLowerCase() === "completed" ? "bg-emerald-50" : "bg-slate-50/50"}
                       >
                         <td className={String(sub?.status || "").trim().toLowerCase() === "completed" ? "border-r border-emerald-200 px-3 py-2 text-[10px] font-semibold text-emerald-700" : "border-r border-slate-200 px-3 py-2 text-[10px] text-slate-400"}>
-                          SUB-DOCUMENT
+                          SUB-DOCUMENT ({sidx + 1})
                         </td>
                         <td className="border-r border-slate-200 px-3 py-2">
                           <div className="flex items-center gap-2 pl-4">
@@ -296,7 +300,7 @@ export default function PreValidationTab({
                         <td className="border-r border-slate-200 px-3 py-2 text-xs text-slate-500 whitespace-nowrap">Same as parent</td>
                         <td className="border-r border-slate-200 px-3 py-2 text-xs text-slate-600 italic">{sub.purpose}</td>
                         <td className="border-r border-slate-200 px-3 py-2 text-xs text-slate-500">-</td>
-                        <td className="border-r border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">₱ {formatPeso(sub.amount)}</td>
+                        <td className="border-r border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">₱ {formatPeso(getSubDocAmount(doc, sidx))}</td>
                         <td className="border-r border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 whitespace-normal wrap-break-word" title={sub.supplier || ""}>{sub.supplier || "-"}</td>
                         <td className="border-r border-slate-200 px-3 py-2">
                           <div className="flex flex-wrap gap-1">

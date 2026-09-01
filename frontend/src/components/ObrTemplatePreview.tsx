@@ -111,11 +111,11 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
       <div className="print-page bg-white relative w-[816px] h-[1056px] overflow-hidden mx-auto p-3 print-no-mt">
         <div className="h-full w-full text-[14px] text-black">
           <div
-            className="relative h-full border-[3px] border-black flex flex-col px-3 py-2"
+            className="relative h-full border-[3px] border-black flex flex-col px-3 py-2.5"
             style={{ fontFamily: "Arial, sans-serif" }}
           >
             {/* Header: logos + title + barcode */}
-            <div className="relative grid grid-cols-[80px_1fr_80px] items-center pt-1 shrink-0 pb-1">
+            <div className="relative grid grid-cols-[80px_1fr_80px] items-center pt-2 shrink-0 pb-1">
               <div className="flex justify-center">
                 <img src="/images/bataan-seal.png" alt="Bataan" className="h-16 w-16 object-contain ml-2" />
               </div>
@@ -159,17 +159,17 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                 </div>
 
                 {/* Payee, Office, Address */}
-                <div className="grid grid-cols-[120px_1fr] h-7 border-b border-black">
-                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px]">Payee</div>
-                  <div className="px-3 flex items-center text-[14px]">{model.payee || ""}</div>
+                <div className="grid grid-cols-[120px_1fr] h-9 border-b border-black">
+                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px] leading-none">Payee</div>
+                  <div className="px-3 flex items-center text-[14px] font-semibold leading-none">{model.payee || ""}</div>
                 </div>
-                <div className="grid grid-cols-[120px_1fr] h-7 border-b border-black">
-                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px]">Office</div>
-                  <div className="px-3 flex items-center text-[14px]">{model.office || "N/A"}</div>
+                <div className="grid grid-cols-[120px_1fr] h-9 border-b border-black">
+                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px] leading-none">Office</div>
+                  <div className="px-3 flex items-center text-[14px] font-semibold leading-none">{model.office || "N/A"}</div>
                 </div>
-                <div className="grid grid-cols-[120px_1fr] h-7 border-b-2 border-black">
-                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px]">Address</div>
-                  <div className="px-3 flex items-center text-[14px]">{model.address || "N/A"}</div>
+                <div className="grid grid-cols-[120px_1fr] h-9 border-b-2 border-black">
+                  <div className="border-r border-black px-3 flex items-center justify-center font-bold text-[14px] leading-none">Address</div>
+                  <div className="px-3 flex items-center text-[14px] font-semibold leading-none">{model.address || "N/A"}</div>
                 </div>
 
                 {/* Table Header Row */}
@@ -177,14 +177,14 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                   <div className="border-r border-black px-1 flex items-center justify-center text-[11px] leading-tight text-center">
                     Responsibility<br />Center
                   </div>
-                  <div className="border-r border-black flex items-center justify-center text-[15px] uppercase">PARTICULARS</div>
-                  <div className="border-r border-black flex items-center justify-center text-[13px]">FPP</div>
-                  <div className="border-r border-black flex items-center justify-center text-[13px]">Account Code</div>
-                  <div className="flex items-center justify-center text-[13px]">Amount</div>
+                  <div className="border-r border-black flex items-center justify-center text-[15px] uppercase leading-none">PARTICULARS</div>
+                  <div className="border-r border-black flex items-center justify-center text-[13px] leading-none">FPP</div>
+                  <div className="border-r border-black flex items-center justify-center text-[13px] leading-none">Account Code</div>
+                  <div className="flex items-center justify-center text-[13px] leading-none">Amount</div>
                 </div>
 
                 {/* Table Body */}
-                <div className="grid grid-cols-[120px_1fr_80px_120px_110px] flex-1 border-b-2 border-black min-h-[300px]">
+                <div className="grid grid-cols-[120px_1fr_80px_120px_110px] flex-1 border-b-2 border-black min-h-[290px]">
                   <div className="border-r border-black p-2 flex items-start justify-center text-[14px] text-center pt-2">
                     {model.responsibilityCenter || ""}
                   </div>
@@ -203,12 +203,12 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                 </div>
 
                 {/* Total Row */}
-                <div className="grid grid-cols-[120px_1fr_80px_120px_110px] h-7 border-b-2 border-black">
+                <div className="grid grid-cols-[120px_1fr_80px_120px_110px] h-8 border-b-2 border-black">
                   <div className="col-span-3" />
-                  <div className="border-r border-black flex items-center justify-end px-2 font-bold text-[14px]">
+                  <div className="border-r border-black flex items-center justify-end px-2 font-bold text-[14px] leading-none">
                     Total
                   </div>
-                  <div className="p-1 text-[14px] font-bold tabular-nums text-center flex items-center justify-center whitespace-nowrap">
+                  <div className="p-1 text-[14px] font-bold tabular-nums text-center flex items-center justify-center whitespace-nowrap leading-none">
                     {totalAmountText}
                   </div>
                 </div>
@@ -216,24 +216,28 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                 {/* Certification Section (Box A & Box B) */}
                 <div className="grid grid-cols-2 border-b-2 border-black min-h-[110px]">
                   {/* Box A */}
-                  <div className="border-r-2 border-black p-2.5 flex flex-col justify-between">
+                  <div className="border-r-2 border-black p-2.5 flex flex-col justify-between pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="border-2 border-black w-6 h-6 flex items-center justify-center text-[13px] font-bold shrink-0">
+                      <div className="border-2 border-black w-6 h-6 flex items-center justify-center text-[13px] font-bold shrink-0 leading-none">
                         A.
                       </div>
-                      <div className="font-bold text-[15px]">Certified</div>
+                      <div className="font-bold text-[15px] leading-none">Certified</div>
                     </div>
 
                     <div className="mt-2 space-y-2 text-[12px] leading-snug pl-8">
                       <div className="flex items-start gap-2.5">
-                        <div className="border border-black w-4 h-4 flex items-center justify-center text-[10px] shrink-0 mt-0.5 font-bold">
-                          ✓
+                        <div className="border border-black w-4 h-4 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                          <svg className="w-3 h-3 text-black stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
                         </div>
                         <div>Charges to appropriation/allotment necessary,lawful and under my direct supervision.</div>
                       </div>
                       <div className="flex items-start gap-2.5">
-                        <div className="border border-black w-4 h-4 flex items-center justify-center text-[10px] shrink-0 mt-0.5 font-bold">
-                          ✓
+                        <div className="border border-black w-4 h-4 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                          <svg className="w-3 h-3 text-black stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
                         </div>
                         <div>Supporting documents valid, proper and legal.</div>
                       </div>
@@ -241,15 +245,15 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                   </div>
 
                   {/* Box B */}
-                  <div className="p-2.5 flex flex-col justify-between">
+                  <div className="p-2.5 flex flex-col justify-start pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="border-2 border-black w-6 h-6 flex items-center justify-center text-[13px] font-bold shrink-0">
+                      <div className="border-2 border-black w-6 h-6 flex items-center justify-center text-[13px] font-bold shrink-0 leading-none">
                         B.
                       </div>
-                      <div className="font-bold text-[15px]">Certified</div>
+                      <div className="font-bold text-[15px] leading-none">Certified</div>
                     </div>
 
-                    <div className="mt-2 text-[12px] leading-snug pl-8 flex items-start gap-2.5">
+                    <div className="mt-3.5 pl-8 text-[12px] leading-snug">
                       <div>Existence of available appropriation.</div>
                     </div>
                   </div>
@@ -258,52 +262,52 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
                 {/* Signatures Section Grid */}
                 <div className="flex flex-col">
                   {/* Signature row */}
-                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-11 border-b border-black">
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Signature:</div>
+                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-12 border-b border-black">
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Signature:</div>
                     <div className="border-r-2 border-black" />
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Signature:</div>
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Signature:</div>
                     <div />
                   </div>
 
                   {/* Printed Name row */}
-                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-8 border-b border-black">
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Printed Name:</div>
-                    <div className="px-2 flex items-center justify-center text-center text-[15px] font-bold border-r-2 border-black uppercase tracking-wide">
+                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-10 border-b border-black">
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Printed Name:</div>
+                    <div className="px-2 flex items-center justify-center text-center text-[15px] font-bold border-r-2 border-black uppercase tracking-wide leading-none">
                       {model.certifiedAName}
                     </div>
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Printed Name:</div>
-                    <div className="px-2 flex items-center justify-center text-center text-[15px] font-bold uppercase tracking-wide">
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Printed Name:</div>
+                    <div className="px-2 flex items-center justify-center text-center text-[15px] font-bold uppercase tracking-wide leading-none">
                       {model.certifiedBName}
                     </div>
                   </div>
 
                   {/* Position row */}
-                  <div className="grid grid-cols-[110px_1fr_110px_1fr] min-h-[54px] border-b border-black">
-                    <div className="px-2 py-1 flex items-start border-r border-black text-[13px] font-normal">Position:</div>
-                    <div className="px-2 py-1 flex flex-col items-center justify-center text-center border-r-2 border-black">
+                  <div className="grid grid-cols-[110px_1fr_110px_1fr] min-h-[60px] border-b border-black">
+                    <div className="px-2 py-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Position:</div>
+                    <div className="px-2 py-2 flex flex-col items-center justify-center text-center border-r-2 border-black">
                       <div className="text-[14px] font-bold uppercase leading-tight">
                         {model.certifiedAPosition}
                       </div>
-                      <div className="text-[11px] leading-tight text-slate-700 mt-0.5">
+                      <div className="text-[11px] leading-tight text-slate-700 mt-1">
                         Head Requesting Office/Authorized Representative
                       </div>
                     </div>
-                    <div className="px-2 py-1 flex items-start border-r border-black text-[13px] font-normal">Position:</div>
-                    <div className="px-2 py-1 flex flex-col items-center justify-center text-center">
+                    <div className="px-2 py-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Position:</div>
+                    <div className="px-2 py-2 flex flex-col items-center justify-center text-center">
                       <div className="text-[14px] font-bold leading-tight">
                         {model.certifiedBPosition}
                       </div>
-                      <div className="text-[11px] leading-tight text-slate-700 mt-0.5">
+                      <div className="text-[11px] leading-tight text-slate-700 mt-1">
                         Head, Budget Unit/Authorized Representative
                       </div>
                     </div>
                   </div>
 
                   {/* Date row */}
-                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-7">
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Date:</div>
+                  <div className="grid grid-cols-[110px_1fr_110px_1fr] h-8">
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Date:</div>
                     <div className="border-r-2 border-black" />
-                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal">Date:</div>
+                    <div className="px-2 flex items-center border-r border-black text-[13px] font-normal leading-none">Date:</div>
                     <div />
                   </div>
                 </div>

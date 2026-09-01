@@ -1028,13 +1028,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         const pageW = pdfDoc.internal.pageSize.getWidth()
         const pageH = pdfDoc.internal.pageSize.getHeight()
 
-        const marginX = 14
-        const marginY = 14
-        const contentW = pageW - marginX * 2
-        const contentH = pageH - marginY * 2
-
         if (i > 0) pdfDoc.addPage("letter", "portrait")
-        pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
       }
 
       const blob = pdfDoc.output("blob")
@@ -1052,7 +1047,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
   }
 
   const captureObrPreviewToPdf = async (_row: RequestRow) => {
-    const root = obrCaptureRef.current || obrVisibleRef.current
+    const root = obrVisibleRef.current || obrCaptureRef.current
     if (!root) return
 
     let previewTab: Window | null = null
@@ -1080,10 +1075,15 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         backgroundColor: "#ffffff",
         useCORS: true,
         allowTaint: false,
-        scrollX: 0,
-        scrollY: 0,
+        logging: false,
+        width: 816,
+        height: 1056,
         windowWidth: 816,
         windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
@@ -1103,12 +1103,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
       const pageW = pdfDoc.internal.pageSize.getWidth()
       const pageH = pdfDoc.internal.pageSize.getHeight()
 
-      const marginX = 14
-      const marginY = 14
-      const contentW = pageW - marginX * 2
-      const contentH = pageH - marginY * 2
-
-      pdfDoc.addImage(imgData, "PNG", marginX, marginY, contentW, contentH)
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
 
       const blob = pdfDoc.output("blob")
       const url = URL.createObjectURL(blob)

@@ -1,6 +1,6 @@
 import { Fragment } from "react"
 import { FileText, History, ChevronDown, ChevronRight, Printer } from "lucide-react"
-import type { DocumentRow } from "../../types/documentTypes"
+import { type DocumentRow, getSubDocAmount } from "../../types/documentTypes"
 
 /**
  * Returns true when a sub-document should be visible to the end user.
@@ -314,6 +314,10 @@ export default function OngoingTab({
                           const amt = String((doc as any).supplierAmount || "").trim()
                           return amt ? `${supplier} - ₱ ${formatPeso(amt)}` : supplier
                         }
+                        const subSuppliers = Array.from(new Set((doc.subDocuments || []).map(s => String(s.supplier || "").trim()).filter(Boolean)))
+                        if (subSuppliers.length > 0) {
+                          return subSuppliers.join(", ")
+                        }
                         if (!hasSubDocs) return "-"
                         const filled = (doc.subDocuments || []).filter((s) => s.supplier && String(s.supplier).trim() !== "").length
                         return `${filled}/${(doc.subDocuments || []).length}`
@@ -325,11 +329,27 @@ export default function OngoingTab({
                           <History className="size-3" />
                           History
                         </button>
-                        {showActions && (
+                        {docStatus === "ongoing" && !hasReprocessed && (
                           <>
                             <button type="button" onClick={() => onEditDoc(doc)} className="inline-flex items-center gap-1 rounded bg-sky-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-sky-700">Update</button>
-                            <button type="button" onClick={() => onEditMainSupplier(doc)} className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-emerald-700">Edit Details</button>
-                            <button type="button" disabled={actionBusyId === doc.id} onClick={() => onReprocessDoc(doc)} className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">Reprocess</button>
+                            <button
+                              type="button"
+                              disabled={hasSubDocs && !allSubDocsTransferred}
+                              onClick={() => onEditMainSupplier(doc)}
+                              className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-1 text-[10px] font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+                              title={hasSubDocs && !allSubDocsTransferred ? "Transfer all sub-documents to next office first" : ""}
+                            >
+                              Edit Details
+                            </button>
+                            <button
+                              type="button"
+                              disabled={actionBusyId === doc.id || (hasSubDocs && !allSubDocsTransferred)}
+                              onClick={() => onReprocessDoc(doc)}
+                              className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-1 text-[10px] font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+                              title={hasSubDocs && !allSubDocsTransferred ? "Transfer all sub-documents to next office first" : ""}
+                            >
+                              Reprocess
+                            </button>
                             <button type="button" disabled={actionBusyId === doc.id} onClick={() => onCancelDoc(doc)} className="inline-flex items-center gap-1 rounded bg-rose-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>
                           </>
                         )}
@@ -364,7 +384,7 @@ export default function OngoingTab({
                               : "border-r border-slate-200 px-3 py-2 text-[10px] text-slate-400"
                           }
                         >
-                          SUB-DOCUMENT
+                          SUB-DOCUMENT ({sidx + 1})
                         </td>
                         <td className="border-r border-slate-200 px-3 py-2">
                           <div className="flex items-center gap-2 pl-4">
@@ -380,7 +400,7 @@ export default function OngoingTab({
                           {sub.purpose}
                         </td>
                         <td className="border-r border-slate-200 px-3 py-2 text-xs text-slate-500">-</td>
-                        <td className="border-r border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">₱ {formatPeso(sub.amount)}</td>
+                        <td className="border-r border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">₱ {formatPeso(getSubDocAmount(doc, sidx))}</td>
                         <td
                           className="border-r border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 whitespace-normal wrap-break-word"
                           title={sub.supplier || ""}
