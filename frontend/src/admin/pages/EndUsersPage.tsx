@@ -77,8 +77,8 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
   const [newUserError, setNewUserError] = useState<string | null>(null)
 
   const officeFiltered = useMemo(() => {
-    if (!office) return []
-    return rows.filter((r) => String(r.office || "").trim() === office)
+    if (!office) return rows
+    return rows.filter((r) => String(r.office || "").trim().toLowerCase() === office.trim().toLowerCase())
   }, [office, rows])
 
   const filtered = useMemo(() => {
@@ -350,169 +350,162 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
-          <div className="text-sm text-slate-600">User List</div>
-        </div>
+      {/* ── Fixed Sticky Sub-Header Section ── */}
+      <div className="sticky top-[108px] z-20 bg-[#f0f9ff] pt-1 pb-2 space-y-3 shadow-sm border-b border-sky-200/50 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-base font-bold tracking-tight text-sky-950">{title}</div>
+            <div className="text-xs font-semibold text-sky-600">User List</div>
+          </div>
 
-        <button
-          type="button"
-          className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
-          onClick={() => {
-            resetNewUserForm()
-            setIsNewUserOpen(true)
-          }}
-        >
-          New End User
-        </button>
-      </div>
-
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="text-sm font-semibold text-slate-900">Please select an Office</div>
-        <div className="mt-3">
-          <select
-            aria-label="Office"
-            title="Office"
-            value={office}
-            onChange={(e) => setOffice(e.target.value)}
-            className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+          <button
+            type="button"
+            className="inline-flex h-9 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-4 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
+            onClick={() => {
+              resetNewUserForm()
+              setIsNewUserOpen(true)
+            }}
           >
-            <option value="">-- Please Select --</option>
-            {officeOptions.map((o) => (
-              <option key={o} value={o}>
-                {o}
-              </option>
-            ))}
-          </select>
+            New End User
+          </button>
+        </div>
+
+        <div className="rounded-2xl border border-sky-200/80 bg-white p-3.5 shadow-sm">
+          <div className="text-xs font-bold uppercase tracking-wider text-sky-800">Please select an Office</div>
+          <div className="mt-2">
+            <select
+              aria-label="Office"
+              title="Office"
+              value={office}
+              onChange={(e) => setOffice(e.target.value)}
+              className="h-10 w-full rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
+            >
+              <option value="">-- Please Select --</option>
+              {officeOptions.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="entries">
+              Show
+            </label>
+            <select
+              id="entries"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="h-9 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
+            >
+              {[10, 25, 50, 100].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs font-semibold uppercase tracking-wider text-sky-700">entries</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="search">
+              Search:
+            </label>
+            <input
+              id="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-9 w-full min-w-56 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm text-sky-950 placeholder:text-sky-300 focus:border-sky-500 focus:bg-white focus:outline-none"
+              placeholder="name, username..."
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="entries">
-            Show
-          </label>
-          <select
-            id="entries"
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-          >
-            {[10, 25, 50, 100].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm text-slate-600">entries</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="search">
-            Search:
-          </label>
-          <input
-            id="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-            placeholder="id, name, username..."
-          />
-        </div>
-      </div>
-
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="overflow-auto">
+      <div className="overflow-hidden rounded-2xl border border-sky-200/80 bg-white shadow-sm">
+        <div className="overflow-auto max-h-[calc(100vh-280px)]">
           {error ? (
             <div className="p-4 text-center text-sm text-rose-600">
               Error: {error}
             </div>
           ) : loading && office ? (
-            <div className="p-4 text-center text-sm text-slate-600">
+            <div className="p-4 text-center text-sm text-sky-600">
               Loading users...
             </div>
           ) : (
-          <table className="w-full min-w-[900px] text-left text-sm">
-            <thead className="bg-slate-50 [&_th]:text-center">
-              <tr className="border-b border-slate-200">
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">User ID</th>
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">@Username</th>
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+          <table className="w-full min-w-[900px] text-center text-sm">
+            <thead className="sticky top-0 z-10 bg-gradient-to-r from-sky-100 to-sky-50 border-b border-sky-200 shadow-sm [&_th]:text-center">
+              <tr className="border-b border-sky-200/80">
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Office</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Full Name</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Username</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Date Created</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Status</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
-              {office ? (
-                visible.length > 0 ? (
-                  visible.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-50">
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-center font-medium text-slate-900">{r.id}</td>
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-slate-700">{r.office}</td>
-                      <td className="px-4 py-3 align-top font-medium text-slate-900">{r.fullName}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.username}</td>
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-slate-700">{r.dateCreated}</td>
-                      <td className="px-4 py-3 align-top text-center">
-                        <span className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}>
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-center">
-                          <button
-                            type="button"
-                            className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-xs font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
-                            onClick={() => {
-                              setEditUserRow(r)
-                              setEditUser({
-                                office: r.office,
-                                status: r.status,
-                                firstName: r.firstName || "",
-                                middleName: r.middleName || "",
-                                lastName: r.lastName || "",
-                                username: r.username,
-                              })
-                              setEditUserError(null)
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            className={`inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold text-white transition focus:outline-none focus-visible:outline-none ${
-                              r.status === "active"
-                                ? "bg-rose-600 hover:bg-rose-700"
-                                : "bg-emerald-600 hover:bg-emerald-700"
-                            }`}
-                            onClick={() => toggleArchive(r)}
-                          >
-                            {r.status === "active" ? "Archive" : "Activate"}
-                          </button>
-                          <button
-                            type="button"
-                            className="inline-flex h-8 items-center justify-center rounded-md bg-amber-400 px-3 text-xs font-semibold text-slate-900 transition hover:bg-amber-300 focus:outline-none focus-visible:outline-none"
-                            onClick={() => setResetPasswordUser(r)}
-                          >
-                            Reset Password
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
-                      No results.
+            <tbody className="divide-y divide-sky-100">
+              {visible.length > 0 ? (
+                visible.map((r) => (
+                  <tr key={r.id} className="hover:bg-sky-50/50 transition-colors">
+                    <td className="hidden md:table-cell px-4 py-3 align-middle text-center font-medium text-slate-700">{r.office}</td>
+                    <td className="px-4 py-3 align-middle text-center font-bold text-sky-950">{r.fullName}</td>
+                    <td className="px-4 py-3 align-middle text-center font-medium text-sky-800">{r.username}</td>
+                    <td className="hidden md:table-cell px-4 py-3 align-middle text-center text-slate-600">{r.dateCreated}</td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <span className={`inline-flex h-6 items-center rounded-lg px-2.5 text-[11px] font-bold ${statusBadgeClass[r.status]}`}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-center">
+                        <button
+                          type="button"
+                          className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-xs font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+                          onClick={() => {
+                            setEditUserRow(r)
+                            setEditUser({
+                              office: r.office,
+                              status: r.status,
+                              firstName: r.firstName || "",
+                              middleName: r.middleName || "",
+                              lastName: r.lastName || "",
+                              username: r.username,
+                            })
+                            setEditUserError(null)
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className={`inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold text-white transition focus:outline-none focus-visible:outline-none ${
+                            r.status === "active"
+                              ? "bg-rose-600 hover:bg-rose-700"
+                              : "bg-emerald-600 hover:bg-emerald-700"
+                          }`}
+                          onClick={() => toggleArchive(r)}
+                        >
+                          {r.status === "active" ? "Archive" : "Activate"}
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex h-8 items-center justify-center rounded-md bg-amber-400 px-3 text-xs font-semibold text-slate-900 transition hover:bg-amber-300 focus:outline-none focus-visible:outline-none"
+                          onClick={() => setResetPasswordUser(r)}
+                        >
+                          Reset Password
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                )
+                ))
               ) : (
                 <tr>
                   <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
-                    Select an office to view users.
+                    No results.
                   </td>
                 </tr>
               )}

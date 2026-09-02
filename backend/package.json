@@ -4,6 +4,7 @@
   "description": "Backend API for Document Tracking System",
   "main": "server.js",
   "scripts": {
+    "predev": "node scripts/free-port.js",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },

@@ -1187,7 +1187,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('all')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-xl px-3.5 text-xs font-bold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'all' ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20' : 'bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100'
               }`}
           >
             All
@@ -1200,7 +1200,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('ongoing')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'ongoing' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-xl px-3.5 text-xs font-bold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'ongoing' ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20' : 'bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100'
               }`}
           >
             Ongoing
@@ -1214,7 +1214,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('completed')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'completed' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-xl px-3.5 text-xs font-bold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'completed' ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
               }`}
           >
             Completed
@@ -1222,11 +1222,11 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
           <button
             type="button"
             onClick={() => setFundTab('discontinued')}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === 'discontinued' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-xl px-3.5 text-xs font-bold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === 'discontinued' ? 'bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-md shadow-rose-500/20' : 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100'
               }`}
           >
             <span>Discontinued</span>
-            <span className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${fundTab === 'discontinued' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            <span className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${fundTab === 'discontinued' ? 'bg-white/25 text-white' : 'bg-rose-200/80 text-rose-900'}`}>
               {fundCounts['discontinued'] || 0}
             </span>
           </button>
@@ -1384,14 +1384,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="entries">
+          <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="entries">
             Show
           </label>
           <select
             id="entries"
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+            className="h-9 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
           >
             {[10, 25, 50, 100].map((n) => (
               <option key={n} value={n}>
@@ -1399,24 +1399,24 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               </option>
             ))}
           </select>
-          <span className="text-sm text-slate-600">entries</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-sky-700">entries</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="search">
+          <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="search">
             Search:
           </label>
           <input
             id="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+            className="h-9 w-full min-w-56 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm text-sky-950 placeholder:text-sky-300 focus:border-sky-500 focus:bg-white focus:outline-none"
             placeholder="tracking, purpose, office..."
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-sky-200/80 bg-white shadow-sm">
         <div>
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}

@@ -79,91 +79,126 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
   }
 
   return (
-    <div className="min-h-dvh bg-slate-50">
+    <div style={{ minHeight: "100dvh", background: "#f0f9ff", fontFamily: "Inter, sans-serif" }}>
       <div
-        className={`grid min-h-dvh grid-cols-1 ${isSidebarCollapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[260px_1fr]"
-          }`}
+        style={{
+          display: "grid",
+          minHeight: "100dvh",
+          gridTemplateColumns: isSidebarCollapsed ? "80px 1fr" : "260px 1fr",
+        }}
+        className="lg:grid"
       >
         {/* Sidebar */}
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
-          <div className="flex h-dvh flex-col">
+        <aside
+          className="hidden lg:block"
+          style={{
+            background: "#ffffff",
+            borderRight: "1px solid #bae6fd",
+            boxShadow: "2px 0 16px rgba(14,165,233,0.07)",
+          }}
+        >
+          <div style={{ display: "flex", height: "100dvh", flexDirection: "column" }}>
             {/* Logo Header */}
             <div
-              className={`flex h-16 items-center gap-3 border-b border-slate-200 ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
-                }`}
+              style={{
+                background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 60%, #0369a1 100%)",
+                padding: isSidebarCollapsed ? "1.25rem 0" : "1.25rem 1.25rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+                gap: "12px",
+                flexShrink: 0,
+                minHeight: "72px",
+                position: "relative",
+                overflow: "hidden",
+              }}
             >
-              <div
-                className={`grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-background shadow ${isSidebarCollapsed ? "mx-auto" : ""
-                  }`}
-              >
-                <img
-                  src="/images/Bataan.png"
-                  alt="Bataan"
-                  className="size-full object-contain p-1"
-                />
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+                pointerEvents: "none",
+              }} />
+              <div style={{
+                width: isSidebarCollapsed ? "38px" : "44px",
+                height: isSidebarCollapsed ? "38px" : "44px",
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.22)",
+                border: "2px solid rgba(255,255,255,0.5)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                overflow: "hidden", padding: "4px", flexShrink: 0,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                position: "relative",
+              }}>
+                <img src="/images/Bataan.png" alt="Bataan" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
-              {isSidebarCollapsed ? null : (
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-muted-foreground">{user?.fullName || ""}</div>
+              {!isSidebarCollapsed && (
+                <div style={{ minWidth: 0, position: "relative" }}>
+                  <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#ffffff", letterSpacing: "0.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    Bataan Capitol DTS
+                  </div>
+                  <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    {user?.fullName || "User Portal"}
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-1 p-3">
-              <button
-                className={navButtonClass(route === "documents")}
-                type="button"
-                onClick={() => setRoute("documents")}
-                title="Office Requests"
-              >
-                <FileStack className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Office Requests"}
-              </button>
-              <button
-                className={navButtonClass(route === "all-documents")}
-                type="button"
-                onClick={() => setRoute("all-documents")}
-                title="All Documents"
-              >
-                <FolderSearch className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "All Documents"}
-              </button>
-
-              <button
-                className={navButtonClass(route === "profile")}
-                type="button"
-                onClick={() => setRoute("profile")}
-                title="Account Settings"
-              >
-                <Settings className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Account Settings"}
-              </button>
+            <nav style={{ flex: 1, padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "2px", overflowY: "auto" }}>
+              {[
+                { key: "documents", label: "Office Requests", icon: <FileStack size={16} /> },
+                { key: "all-documents", label: "All Documents", icon: <FolderSearch size={16} /> },
+                { key: "profile", label: "Account Settings", icon: <Settings size={16} /> },
+              ].map(({ key, label, icon }) => {
+                const isActive = route === key
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setRoute(key as UserRoute)}
+                    title={label}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "10px",
+                      width: "100%",
+                      padding: isSidebarCollapsed ? "0.6rem 0" : "0.6rem 0.85rem",
+                      justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+                      borderRadius: "10px", border: "none", cursor: "pointer",
+                      fontFamily: "inherit", fontSize: "0.82rem",
+                      fontWeight: isActive ? 600 : 500,
+                      color: isActive ? "#0284c7" : "#475569",
+                      background: isActive ? "linear-gradient(to right, #e0f2fe, #f0f9ff)" : "transparent",
+                      boxShadow: isActive ? "inset 3px 0 0 #0ea5e9" : "none",
+                      transition: "all 0.15s ease", outline: "none",
+                    }}
+                    onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.background = "#f0f9ff"; (e.currentTarget as HTMLButtonElement).style.color = "#0284c7" } }}
+                    onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#475569" } }}
+                  >
+                    <span style={{ color: isActive ? "#0ea5e9" : "#94a3b8", flexShrink: 0, display: "flex" }}>{icon}</span>
+                    {!isSidebarCollapsed && label}
+                  </button>
+                )
+              })}
             </nav>
 
             {/* Footer Actions */}
-            <div className="border-t border-slate-200 p-3">
-              <button
-                type="button"
-                onClick={() => setIsSidebarCollapsed((v) => !v)}
-                className={`mb-2 inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
-                  }`}
+            <div style={{ borderTop: "1px solid #bae6fd", padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <button type="button" onClick={() => setIsSidebarCollapsed(v => !v)}
                 title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: isSidebarCollapsed ? "center" : "flex-start", width: "100%", padding: isSidebarCollapsed ? "0.55rem 0" : "0.55rem 0.85rem", borderRadius: "10px", border: "1.5px solid #bae6fd", background: "#f0f9ff", cursor: "pointer", fontSize: "0.78rem", fontWeight: 500, color: "#0369a1", fontFamily: "inherit", transition: "all 0.15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#e0f2fe" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#f0f9ff" }}
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
-                {isSidebarCollapsed ? null : "Collapse sidebar"}
+                {isSidebarCollapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
+                {!isSidebarCollapsed && "Collapse sidebar"}
               </button>
-
-              <button
-                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
-                  }`}
-                onClick={onLogout}
-                type="button"
-                title="Logout"
+              <button type="button" onClick={onLogout} title="Logout"
+                style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: isSidebarCollapsed ? "center" : "flex-start", width: "100%", padding: isSidebarCollapsed ? "0.55rem 0" : "0.55rem 0.85rem", borderRadius: "10px", border: "1.5px solid #fecaca", background: "#fff5f5", cursor: "pointer", fontSize: "0.78rem", fontWeight: 500, color: "#dc2626", fontFamily: "inherit", transition: "all 0.15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fee2e2" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fff5f5" }}
               >
-                <LogOut className="size-4" />
-                {isSidebarCollapsed ? null : "Logout"}
+                <LogOut size={15} />
+                {!isSidebarCollapsed && "Logout"}
               </button>
             </div>
           </div>
@@ -171,77 +206,47 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
 
         {/* Mobile Header */}
         <div className="lg:hidden">
-          <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
-            <div className="flex h-16 w-full items-center justify-between gap-4 px-4">
-              <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center overflow-hidden rounded-xl bg-background shadow">
-                  <img
-                    src="/images/Bataan.png"
-                    alt="Bataan"
-                    className="size-full object-contain p-1"
-                  />
+          <header style={{ position: "sticky", top: 0, zIndex: 10, background: "linear-gradient(135deg,#0ea5e9,#0284c7)", borderBottom: "1px solid #0284c7", backdropFilter: "blur(8px)" }}>
+            <div style={{ display: "flex", height: "64px", width: "100%", alignItems: "center", justifyContent: "space-between", gap: "1rem", padding: "0 1rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(255,255,255,0.2)", border: "2px solid rgba(255,255,255,0.45)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "3px", flexShrink: 0 }}>
+                  <img src="/images/Bataan.png" alt="Bataan" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 </div>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-muted-foreground">User Portal</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Bataan Capitol DTS</div>
+                  <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>User Portal</div>
                 </div>
               </div>
-              <button
-                className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
-                onClick={onLogout}
-                type="button"
-              >
-                <LogOut className="size-4" />
-                Logout
+              <button onClick={onLogout} type="button"
+                style={{ display: "flex", alignItems: "center", gap: "6px", padding: "0.4rem 0.85rem", borderRadius: "8px", border: "1.5px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.15)", color: "#fff", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                <LogOut size={14} /> Logout
               </button>
             </div>
           </header>
 
           {/* Mobile Navigation */}
-          <nav className="border-b border-slate-200 bg-white px-4 py-2">
-            <div className="flex gap-2 overflow-x-auto">
-                <button
-                  className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "documents"
-                    ? "bg-slate-100 text-slate-900"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
-                  onClick={() => setRoute("documents")}
-                  type="button"
-                >
-                  <FileStack className="size-4" />
-                  Office Requests
+          <nav style={{ borderBottom: "1px solid #bae6fd", background: "#ffffff", padding: "0.5rem 1rem", overflowX: "auto" }}>
+            <div style={{ display: "flex", gap: "6px" }}>
+              {[
+                { key: "documents", label: "Office Requests", icon: <FileStack size={14} /> },
+                { key: "all-documents", label: "All", icon: <FolderSearch size={14} /> },
+                { key: "profile", label: "Account Settings", icon: <Settings size={14} /> },
+              ].map(({ key, label, icon }) => (
+                <button key={key} type="button" onClick={() => setRoute(key as UserRoute)}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "0.4rem 0.75rem", borderRadius: "8px", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: "0.78rem", fontWeight: 500, whiteSpace: "nowrap", background: route === key ? "#e0f2fe" : "transparent", color: route === key ? "#0284c7" : "#64748b", transition: "all 0.15s" }}>
+                  {icon}{label}
                 </button>
-              <button
-                className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "all-documents"
-                  ? "bg-slate-100 text-slate-900"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                  }`}
-                onClick={() => setRoute("all-documents")}
-              >
-                <FolderSearch className="size-4" />
-                All
-              </button>
-
-              <button
-                className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "profile"
-                  ? "bg-slate-100 text-slate-900"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                  }`}
-                onClick={() => setRoute("profile")}
-              >
-                <Settings className="size-4" />
-                Account Settings
-              </button>
+              ))}
             </div>
           </nav>
         </div>
 
         {/* Main Content */}
-        <main className="min-w-0 h-dvh overflow-y-auto">
+        <main style={{ minWidth: 0, height: "100dvh", overflowY: "auto", background: "#f0f9ff" }}>
           {route === "documents" ? (
             <UserDocuments />
           ) : route === "all-documents" ? (
-            <div className="w-full px-4 py-6 lg:px-8">
+            <div style={{ width: "100%", padding: "1.5rem 2rem" }}>
               <AllDocumentsPage title="All Documents" readOnly />
             </div>
           ) : route === "profile" ? (
@@ -253,4 +258,4 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
       </div>
     </div>
   )
-}
+}

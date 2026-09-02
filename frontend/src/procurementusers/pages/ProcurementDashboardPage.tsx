@@ -745,147 +745,144 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
   }
 
   return (
-    <div className="h-dvh overflow-hidden bg-slate-50">
+    <div style={{ minHeight: "100dvh", background: "#f0f9ff", fontFamily: "Inter, sans-serif" }}>
       <div
-        className={`grid h-dvh grid-cols-1 ${isSidebarCollapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[260px_1fr]"
-          }`}
+        style={{
+          display: "grid",
+          minHeight: "100dvh",
+          gridTemplateColumns: isSidebarCollapsed ? "80px 1fr" : "260px 1fr",
+        }}
+        className="lg:grid"
       >
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
-          <div className="flex h-dvh flex-col">
+        <aside
+          className="hidden lg:block"
+          style={{
+            background: "#ffffff",
+            borderRight: "1px solid #bae6fd",
+            boxShadow: "2px 0 16px rgba(14,165,233,0.07)",
+          }}
+        >
+          <div style={{ display: "flex", height: "100dvh", flexDirection: "column" }}>
+            {/* Header */}
             <div
-              className={`flex h-16 items-center gap-3 border-b border-slate-200 ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
-                }`}
+              style={{
+                background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 60%, #0369a1 100%)",
+                padding: isSidebarCollapsed ? "1.25rem 0" : "1.25rem 1.25rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+                gap: "12px",
+                flexShrink: 0,
+                minHeight: "72px",
+                position: "relative",
+                overflow: "hidden",
+              }}
             >
-              <div
-                className={`grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-background shadow ${isSidebarCollapsed ? "mx-auto" : ""
-                  }`}
-              >
-                <img src="/images/Bataan.png" alt="Bataan" className="size-full object-contain p-1" />
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+                pointerEvents: "none",
+              }} />
+              <div style={{
+                width: isSidebarCollapsed ? "38px" : "44px",
+                height: isSidebarCollapsed ? "38px" : "44px",
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.22)",
+                border: "2px solid rgba(255,255,255,0.5)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                overflow: "hidden", padding: "4px", flexShrink: 0,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                position: "relative",
+              }}>
+                <img src="/images/Bataan.png" alt="Bataan" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
-              {isSidebarCollapsed ? null : (
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-slate-900">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-slate-600">{user?.fullName || user?.username || ""}</div>
+              {!isSidebarCollapsed && (
+                <div style={{ minWidth: 0, position: "relative" }}>
+                  <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#ffffff", letterSpacing: "0.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    Bataan Capitol DTS
+                  </div>
+                  <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    {user?.fullName || user?.username || "Procurement"}
+                  </div>
                 </div>
               )}
             </div>
 
-            <nav className="flex-1 space-y-1 p-3">
-              <button
-                className={navButtonClass(route === "dashboard")}
-                type="button"
-                onClick={() => setRoute("dashboard")}
-                title="Dashboard"
-              >
-                <LayoutDashboard className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Dashboard"}
-              </button>
-              {canSeeOfficeRequests ? (
-                <button
-                  className={navButtonClass(route === "my-documents")}
-                  type="button"
-                  onClick={() => setRoute("my-documents")}
-                  title="Office Requests"
-                >
-                  <FileStack className="size-4 text-slate-500 group-hover:text-slate-700" />
-                  {isSidebarCollapsed ? null : "Office Requests"}
-                </button>
-              ) : null}
-              <button
-                className={navButtonClass(route === "all-documents")}
-                type="button"
-                onClick={() => setRoute("all-documents")}
-                title="All Documents"
-              >
-                <FolderSearch className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "All Documents"}
-              </button>
-              {canUseReview ? (
-                <button
-                  className={navButtonClass(route === "review")}
-                  type="button"
-                  onClick={() => setRoute("review")}
-                  title="Review"
-                >
-                  <span className="relative inline-flex items-center">
-                    <ClipboardCheck className="size-4 text-slate-500 group-hover:text-slate-700" />
-                    {reviewCount > 0 ? (
-                      <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-rose-600 px-1 text-center text-[10px] font-semibold leading-4 text-white">
-                        {reviewCount}
-                      </span>
-                    ) : null}
-                  </span>
-                  {isSidebarCollapsed ? null : (
-                    <span className="flex flex-1 items-center justify-between">
-                      <span>Review</span>
-                      {reviewCount > 0 ? (
-                        <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
+            {/* Navigation */}
+            <nav style={{ flex: 1, padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "2px", overflowY: "auto" }}>
+              {[
+                { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={16} />, show: true },
+                { key: "my-documents", label: "Office Requests", icon: <FileStack size={16} />, show: canSeeOfficeRequests },
+                { key: "all-documents", label: "All Documents", icon: <FolderSearch size={16} />, show: true },
+                {
+                  key: "review",
+                  label: "Review",
+                  icon: (
+                    <span style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+                      <ClipboardCheck size={16} />
+                      {reviewCount > 0 && (
+                        <span style={{ position: "absolute", top: "-4px", right: "-6px", minWidth: "12px", height: "12px", borderRadius: "999px", background: "#ef4444", color: "#fff", fontSize: "9px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 2px" }}>
                           {reviewCount}
                         </span>
-                      ) : null}
+                      )}
                     </span>
-                  )}
-                </button>
-              ) : null}
-              <button
-                className={navButtonClass(route === "reports")}
-                type="button"
-                onClick={() => setRoute("reports")}
-                title="Reports"
-              >
-                <BarChart3 className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Reports"}
-              </button>
-              <button
-                className={navButtonClass(route === "history")}
-                type="button"
-                onClick={() => setRoute("history")}
-                title="History"
-              >
-                <Clock3 className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "History"}
-              </button>
-              <button
-                className={navButtonClass(route === "recently-transferred")}
-                type="button"
-                onClick={() => setRoute("recently-transferred")}
-                title="Recently Transferred"
-              >
-                <FileText className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Recently Transferred"}
-              </button>
-              <button
-                className={navButtonClass(route === "account-settings")}
-                type="button"
-                onClick={() => setRoute("account-settings")}
-                title="Account Settings"
-              >
-                <Settings className="size-4 text-slate-500 group-hover:text-slate-700" />
-                {isSidebarCollapsed ? null : "Account Settings"}
-              </button>
+                  ),
+                  show: canUseReview,
+                },
+                { key: "reports", label: "Reports", icon: <BarChart3 size={16} />, show: true },
+                { key: "history", label: "History", icon: <Clock3 size={16} />, show: true },
+                { key: "recently-transferred", label: "Recently Transferred", icon: <FileText size={16} />, show: true },
+                { key: "account-settings", label: "Account Settings", icon: <Settings size={16} />, show: true },
+              ].filter(item => item.show).map(({ key, label, icon }) => {
+                const isActive = route === key
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setRoute(key as ProcurementRoute)}
+                    title={label}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "10px",
+                      width: "100%",
+                      padding: isSidebarCollapsed ? "0.6rem 0" : "0.6rem 0.85rem",
+                      justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+                      borderRadius: "10px", border: "none", cursor: "pointer",
+                      fontFamily: "inherit", fontSize: "0.82rem",
+                      fontWeight: isActive ? 600 : 500,
+                      color: isActive ? "#0284c7" : "#475569",
+                      background: isActive ? "linear-gradient(to right, #e0f2fe, #f0f9ff)" : "transparent",
+                      boxShadow: isActive ? "inset 3px 0 0 #0ea5e9" : "none",
+                      transition: "all 0.15s ease", outline: "none",
+                    }}
+                    onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.background = "#f0f9ff"; (e.currentTarget as HTMLButtonElement).style.color = "#0284c7" } }}
+                    onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#475569" } }}
+                  >
+                    <span style={{ color: isActive ? "#0ea5e9" : "#94a3b8", flexShrink: 0, display: "flex" }}>{icon}</span>
+                    {!isSidebarCollapsed && label}
+                  </button>
+                )
+              })}
             </nav>
 
-            <div className="border-t border-slate-200 p-3">
-              <button
-                type="button"
-                onClick={() => setIsSidebarCollapsed((v) => !v)}
-                className={`mb-2 inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
-                  }`}
+            {/* Footer */}
+            <div style={{ borderTop: "1px solid #bae6fd", padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <button type="button" onClick={() => setIsSidebarCollapsed(v => !v)}
                 title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: isSidebarCollapsed ? "center" : "flex-start", width: "100%", padding: isSidebarCollapsed ? "0.55rem 0" : "0.55rem 0.85rem", borderRadius: "10px", border: "1.5px solid #bae6fd", background: "#f0f9ff", cursor: "pointer", fontSize: "0.78rem", fontWeight: 500, color: "#0369a1", fontFamily: "inherit", transition: "all 0.15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#e0f2fe" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#f0f9ff" }}
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
-                {isSidebarCollapsed ? null : "Collapse sidebar"}
+                {isSidebarCollapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
+                {!isSidebarCollapsed && "Collapse sidebar"}
               </button>
-
-              <button
-                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
-                  }`}
-                onClick={onLogout}
-                type="button"
-                title="Logout"
+              <button type="button" onClick={onLogout} title="Logout"
+                style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: isSidebarCollapsed ? "center" : "flex-start", width: "100%", padding: isSidebarCollapsed ? "0.55rem 0" : "0.55rem 0.85rem", borderRadius: "10px", border: "1.5px solid #fecaca", background: "#fff5f5", cursor: "pointer", fontSize: "0.78rem", fontWeight: 500, color: "#dc2626", fontFamily: "inherit", transition: "all 0.15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fee2e2" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fff5f5" }}
               >
-                <LogOut className="size-4" />
-                {isSidebarCollapsed ? null : "Logout"}
+                <LogOut size={15} />
+                {!isSidebarCollapsed && "Logout"}
               </button>
             </div>
           </div>
