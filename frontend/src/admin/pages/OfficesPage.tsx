@@ -64,13 +64,13 @@ type OfficeFormModel = {
 }
 
 const typeBadgeClass: Record<OfficeType, string> = {
-  operating: "bg-amber-400 text-slate-900",
-  viewing: "bg-slate-200 text-slate-900",
+  operating: "bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
+  viewing: "bg-gradient-to-r from-sky-400 to-sky-500 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
 }
 
 const statusBadgeClass: Record<OfficeStatus, string> = {
-  active: "bg-emerald-600 text-white",
-  archived: "bg-rose-600 text-white",
+  active: "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
+  archived: "bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
 }
 
 export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
@@ -782,24 +782,20 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                       <td className="px-4 py-3 align-middle text-center text-slate-700">{r.head}</td>
                       <td className="px-4 py-3 align-middle text-center text-slate-700">{r.headDesignation}</td>
                       <td className="px-4 py-3 align-middle text-center text-slate-600">{r.createdAt}</td>
-                      <td className="px-4 py-3 align-middle text-center">
-                        <span
-                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${typeBadgeClass[r.type]}`}
-                        >
+                      <td className="px-4 py-3.5 align-middle text-center">
+                        <span className={typeBadgeClass[r.type]}>
                           {r.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 align-top text-center">
-                        <span
-                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}
-                        >
+                      <td className="px-4 py-3.5 align-middle text-center">
+                        <span className={statusBadgeClass[r.status]}>
                           {r.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 align-top text-center">
+                      <td className="px-4 py-3.5 align-middle text-center">
                         <button
                           type="button"
-                          className="inline-flex h-7 items-center justify-center rounded bg-sky-600 px-3 text-[11px] font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+                          className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-3 text-xs font-bold text-white shadow-md shadow-sky-500/20 transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
                           onClick={() => {
                             setIsPrivilegesOpen(r)
                           }}
@@ -807,20 +803,18 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           Show Privileges
                         </button>
                       </td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-col items-stretch gap-2">
+                      <td className="px-4 py-0 align-middle text-center">
+                        <div className="flex h-full min-h-[56px] flex-wrap items-center justify-center gap-1.5 py-2 min-w-[200px]">
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-indigo-600 px-3 text-[11px] font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus-visible:outline-none"
-                            onClick={() => {
-                              setEditOffice(r)
-                            }}
+                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-3 text-xs font-bold text-white shadow-xs transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
+                            onClick={() => setEditOffice(r)}
                           >
                             Edit
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-slate-900 px-3 text-[11px] font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-sky-800 to-sky-900 px-3 text-xs font-bold text-white shadow-xs transition hover:from-sky-900 hover:to-sky-950 focus:outline-none focus-visible:outline-none"
                             onClick={() => {
                               setEmailOffice(r)
                               setEmailValue(r.email)
@@ -830,9 +824,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           </button>
                           <button
                             type="button"
-                            className={`inline-flex h-7 items-center justify-center rounded px-3 text-[11px] font-semibold text-white transition focus:outline-none focus-visible:outline-none ${r.status === "active"
-                                ? "bg-rose-600 hover:bg-rose-700"
-                                : "bg-emerald-600 hover:bg-emerald-700"
+                            className={`inline-flex h-7 items-center justify-center rounded-xl px-3 text-xs font-bold text-white shadow-xs transition focus:outline-none focus-visible:outline-none ${r.status === "active"
+                                ? "bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700"
+                                : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
                               }`}
                             onClick={() => toggleArchive(r)}
                           >
@@ -840,14 +834,14 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-red-700 px-3 text-[11px] font-semibold text-white transition hover:bg-red-800 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-red-600 to-rose-700 px-3 text-xs font-bold text-white shadow-xs transition hover:from-red-700 hover:to-rose-800 focus:outline-none focus-visible:outline-none"
                             onClick={() => deleteOffice(r)}
                           >
                             Delete
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded-xl border border-sky-200 bg-sky-50 px-3 text-xs font-bold text-sky-900 shadow-xs transition hover:bg-sky-100 focus:outline-none focus-visible:outline-none"
                             onClick={() => {
                               setTasksOffice(r)
                               setTaskQuery("")
