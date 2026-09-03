@@ -153,7 +153,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="h-12 w-full bg-slate-50 border-l-[3px] border-l-blue-500 pl-4 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-300 focus:bg-slate-100"
-                  placeholder="Username / Email ID"
+                  placeholder="Username"
                 />
               </div>
 
