@@ -178,9 +178,16 @@ export function PrTemplatePreview({
                 </div>
 
                 <div className="mt-2 border border-black min-h-[650px] p-0 pr-table">
-                  <div className="grid grid-cols-[140px_1fr_120px] text-[12px] font-bold">
+                  <div className="grid grid-cols-[140px_1fr_120px] text-[12px] font-bold text-black">
                     <div className="border-r border-black px-2 py-1">Department: {model.department || ""}</div>
-                    <div className="px-2 py-1">PR No.: {model.prNo || ""}</div>
+                    <div className="px-2 py-1">
+                      <span>PR No.:</span>
+                      {model.prNo ? (
+                        <span className="text-blue-600 font-bold ml-1.5">
+                          {model.prNo.replace(/^PR\s*No\.?\s*:?\s*/i, "")}
+                        </span>
+                      ) : null}
+                    </div>
                     <div className="px-2 py-1">Date: {model.date || ""}</div>
                   </div>
                   <div className="grid grid-cols-[140px_1fr_120px] border-b border-black text-[12px] font-bold">

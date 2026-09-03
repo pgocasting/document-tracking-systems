@@ -296,6 +296,20 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
     printWin.document.close()
   }
 
+  const isGSO = (() => {
+    try {
+      const raw = localStorage.getItem("user") || sessionStorage.getItem("user")
+      const parsed = raw ? JSON.parse(raw) : null
+      const role = String(parsed?.role || "").trim().toLowerCase()
+      const office = String(parsed?.office || "").trim().toLowerCase()
+      return role === "superadmin" || role === "admin" || office.includes("gso") || office.includes("general services")
+    } catch {
+      return false
+    }
+  })()
+
+  const assignedCategory = String(rsDoc.gsoRoutingSlip || "").trim()
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
@@ -306,7 +320,9 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
       <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-6 py-4">
           <div>
-            <div className="text-base font-bold text-slate-900">Routing Slip Category</div>
+            <div className="text-base font-bold text-slate-900">
+              {isGSO ? "Routing Slip Category" : "Routing Slip Printout"}
+            </div>
             <div className="text-xs font-medium text-slate-500">{rsDoc.trackingNo}</div>
           </div>
           <button
@@ -318,62 +334,122 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
             ✕
           </button>
         </div>
+
         <div className="p-6 space-y-5">
-          <div className="space-y-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-              Select Category
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
-            >
-              <option value="">— Select Category —</option>
-              {CATEGORY_OPTIONS.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-            <button
-              type="button"
-              disabled={isSaving || !selectedCategory}
-              onClick={async () => {
-                if (!selectedCategory) return
-                const ok = await handleSaveCategory(selectedCategory)
-                if (ok) {
-                  setSelectedCategory(selectedCategory)
-                }
-              }}
-              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Save className="size-4" />
-              Save Category
-            </button>
-
-            <button
-              type="button"
-              disabled={isSaving || (!selectedCategory && !String(rsDoc.gsoRoutingSlip || "").trim())}
-              onClick={() => handleGenerateRoutingSlip()}
-              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Printer className="size-4" />
-              Generate Printout
-            </button>
-          </div>
-
-          {!selectedCategory && !String(rsDoc.gsoRoutingSlip || "").trim() && (
-            <div className="rounded-xl bg-amber-50 p-4 border border-amber-200/60">
-              <div className="flex gap-2">
-                <CheckCircle className="size-4 text-amber-600 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-800 leading-relaxed font-medium">
-                  Select a category above to assign and generate the routing slip for this document.
-                </p>
+          {isGSO ? (
+            /* GSO / Admin View: Can select & save category */
+            <>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Select Category (GSO Only)
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+                >
+                  <option value="">— Select Category —</option>
+                  {CATEGORY_OPTIONS.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
+
+              <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  disabled={isSaving || !selectedCategory}
+                  onClick={async () => {
+                    if (!selectedCategory) return
+                    const ok = await handleSaveCategory(selectedCategory)
+                    if (ok) {
+                      setSelectedCategory(selectedCategory)
+                    }
+                  }}
+                  className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Save className="size-4" />
+                  Save Category
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isSaving || (!selectedCategory && !assignedCategory)}
+                  onClick={() => handleGenerateRoutingSlip()}
+                  className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-bold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Printer className="size-4" />
+                  Generate Printout
+                </button>
+              </div>
+
+              {!selectedCategory && !assignedCategory && (
+                <div className="rounded-xl bg-amber-50 p-4 border border-amber-200/60">
+                  <div className="flex gap-2">
+                    <CheckCircle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-800 leading-relaxed font-medium">
+                      Select a category above to assign and generate the routing slip for this document.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* End User / Regular User View: Read-only Category & Print Only */
+            <>
+              {assignedCategory ? (
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                      Assigned Category (by GSO)
+                    </div>
+                    <div className="text-sm font-bold text-emerald-800 flex items-center gap-2">
+                      <CheckCircle className="size-4 text-emerald-600 flex-shrink-0" />
+                      <span>{assignedCategory}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => handleGenerateRoutingSlip(assignedCategory)}
+                      className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus:outline-none"
+                    >
+                      <Printer className="size-4" />
+                      Print Routing Slip
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-amber-50 p-4 border border-amber-200/60">
+                    <div className="flex gap-2.5">
+                      <CheckCircle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-xs font-bold text-amber-900">
+                          Category Not Yet Assigned
+                        </div>
+                        <p className="text-xs text-amber-800 mt-1 leading-relaxed">
+                          GSO has not selected a category for this document yet. You will be able to print the routing slip once GSO assigns a category in the monitoring table.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="inline-flex h-9 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

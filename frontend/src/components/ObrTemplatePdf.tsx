@@ -443,14 +443,29 @@ export default function ObrTemplatePdf({ model }: { model: ObrTemplateModel }) {
                     {/* Main OBR Box Container */}
                     <View style={styles.mainBox}>
                         {/* Title & OBR No */}
-                        <View style={styles.titleRow}>
-                            <View style={styles.titleCell}>
-                                <Text style={styles.titleText}>OBLIGATION REQUEST</Text>
-                            </View>
-                            <View style={styles.obrNoCell}>
-                                <Text style={styles.obrNoText}>No. {model.obrNo || "100-26-"}</Text>
-                            </View>
-                        </View>
+                        {(() => {
+                            const obrPrefix = model.fund === "SEF" ? "200-26-" : "100-26-"
+                            const obrRaw = String(model.obrNo || "").trim().replace(/^No\.?\s*/i, "")
+                            let obrSuffix = obrRaw
+                            if (obrSuffix.startsWith("100-26-")) {
+                                obrSuffix = obrSuffix.slice("100-26-".length).trim()
+                            } else if (obrSuffix.startsWith("200-26-")) {
+                                obrSuffix = obrSuffix.slice("200-26-".length).trim()
+                            }
+                            return (
+                                <View style={styles.titleRow}>
+                                    <View style={styles.titleCell}>
+                                        <Text style={styles.titleText}>OBLIGATION REQUEST</Text>
+                                    </View>
+                                    <View style={styles.obrNoCell}>
+                                        <Text style={styles.obrNoText}>
+                                            <Text style={{ color: "#000000" }}>No. {obrPrefix} </Text>
+                                            {obrSuffix ? <Text style={{ color: "#2563eb", fontFamily: "Helvetica-Bold" }}>{obrSuffix}</Text> : null}
+                                        </Text>
+                                    </View>
+                                </View>
+                            )
+                        })()}
 
                         {/* Payee, Office, Address */}
                         <View style={styles.metaRow}>

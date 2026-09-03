@@ -1025,6 +1025,8 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
             : [],
           action: 'pending',
           status: String(d.status || 'pending'),
+          prNo: String(d.prNo || ''),
+          obrNo: String(d.obrNo || ''),
           gsoRoutingSlip: String(d.gsoRoutingSlip || ''),
         } satisfies DocumentRow
       })
@@ -1935,6 +1937,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
                 await fetchDocuments()
                 setIsModalOpen(false)
+                toast.success(`Request submitted successfully! Tracking No: ${trackingNo}`)
               } catch (e) {
                 setError(e instanceof Error ? e.message : 'Failed to submit request')
               } finally {
@@ -2078,7 +2081,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         fund: preview.doc.fund || "",
                         department: preview.doc.department || "",
                         section: preview.doc.section || "",
-                        prNo: "",
+                        prNo: String(preview.doc.prNo || "").trim(),
                         date: "",
                         fpp: preview.doc.fpp || "",
                         purpose: preview.doc.purpose || "",
@@ -2111,7 +2114,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                           address: "N/A",
                           trackingNo: preview.doc.trackingNo,
                           fund: preview.doc.fund || "",
-                          obrNo: preview.doc.fund === "SEF" ? "200-26-" : "100-26-",
+                          obrNo: String(preview.doc.obrNo || "").trim(),
                           responsibilityCenter: preview.doc.responsibilityCenter || "",
                           particulars: preview.doc.purpose || "",
                           notes: preview.doc.notes || "",
@@ -2161,7 +2164,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                             address: "N/A",
                             trackingNo: preview.doc.trackingNo,
                             fund: preview.doc.fund || "",
-                            obrNo: preview.doc.fund === "SEF" ? "200-26-" : "100-26-",
+                            obrNo: String(preview.doc.obrNo || "").trim(),
                             responsibilityCenter: preview.doc.responsibilityCenter || "",
                             particulars: preview.doc.purpose || "",
                             notes: preview.doc.notes || "",
@@ -2420,6 +2423,20 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                                   const labelLower = String(labelRaw || '').trim().toLowerCase()
                                   return labelLower.startsWith('received') || labelLower.includes('received')
                                 }
+                                const isTerminalActionLog = (labelRaw: string) => {
+                                  const labelLower = String(labelRaw || '').trim().toLowerCase()
+                                  return (
+                                    labelLower.includes('approved') ||
+                                    labelLower.includes('returned') ||
+                                    labelLower.includes('completed') ||
+                                    labelLower.includes('discontinued') ||
+                                    labelLower.includes('cancelled') ||
+                                    labelLower.includes('canceled')
+                                  )
+                                }
+                                const isStageEndLog = (labelRaw: string) => {
+                                  return isTransferLog(labelRaw) || isTerminalActionLog(labelRaw)
+                                }
 
                                 const timestamps = selectedAsc.map((l) => new Date(l.createdAt).getTime())
                                 const spanByStartIdx = new Map<number, { rowSpan: number; durationMs: number }>()
@@ -2431,21 +2448,21 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                                   const current = selectedAsc[i]
                                   if (!isReceivedLog(String(current?.label || ''))) continue
 
-                                  let transferIdx = -1
+                                  let endIdx = -1
                                   for (let j = i + 1; j < selectedAsc.length; j += 1) {
-                                    if (isTransferLog(String(selectedAsc[j]?.label || ''))) {
-                                      transferIdx = j
+                                    if (isStageEndLog(String(selectedAsc[j]?.label || ''))) {
+                                      endIdx = j
                                       break
                                     }
                                   }
 
-                                  if (transferIdx < 0) continue
+                                  if (endIdx < 0) continue
                                   const startTs = timestamps[i]
-                                  const endTs = timestamps[transferIdx]
+                                  const endTs = timestamps[endIdx]
                                   const durationMs =
                                     Number.isFinite(startTs) && Number.isFinite(endTs) ? Math.max(0, endTs - startTs) : 0
 
-                                  // Check if this specific stage (From Received to Transfer) is exceeded
+                                  // Check if this specific stage (From Received to Transfer/Completion) is exceeded
                                   const isStageExceeded = (() => {
                                     const receivedLog = selectedAsc[i]
                                     const offKey = String(receivedLog.byOffice || '').trim().toUpperCase()
@@ -2478,11 +2495,11 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                                     return false
                                   })()
 
-                                  spanByStartIdx.set(i, { rowSpan: transferIdx - i + 1, durationMs })
+                                  spanByStartIdx.set(i, { rowSpan: endIdx - i + 1, durationMs })
                                   if (isStageExceeded) {
-                                    for (let k = i; k <= transferIdx; k++) exceededIndices.add(k)
+                                    for (let k = i; k <= endIdx; k++) exceededIndices.add(k)
                                   }
-                                  for (let k = i + 1; k <= transferIdx; k += 1) {
+                                  for (let k = i + 1; k <= endIdx; k += 1) {
                                     coveredIdx.add(k)
                                   }
                                 }

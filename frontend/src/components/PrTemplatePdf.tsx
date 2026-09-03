@@ -278,7 +278,16 @@ export default function PrTemplatePdf({ model }: { model: PrTemplateModel }) {
                       <Text style={styles.metaCell}>Department: {model.department || ""}</Text>
                     </View>
                     <View style={{ width: "48%" }}>
-                      <Text style={styles.metaCell}>PR No.: {model.prNo || ""}</Text>
+                      <Text style={styles.metaCell}>
+                        PR No.:{" "}
+                        {model.prNo ? (
+                          <Text style={{ color: "#2563eb", fontFamily: "Times-Bold" }}>
+                            {model.prNo.replace(/^PR\s*No\.?\s*:?\s*/i, "")}
+                          </Text>
+                        ) : (
+                          ""
+                        )}
+                      </Text>
                     </View>
                     <View style={{ width: "24%" }}>
                       <Text style={styles.metaCell}>Date: {model.date || ""}</Text>

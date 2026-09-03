@@ -106,6 +106,15 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
 
   const totalAmountText = computeTotalFromAmount(model.amount || '')
 
+  const obrPrefix = model.fund === "SEF" ? "200-26-" : "100-26-"
+  const obrRaw = String(model.obrNo || "").trim().replace(/^No\.?\s*/i, "")
+  let obrSuffix = obrRaw
+  if (obrSuffix.startsWith("100-26-")) {
+    obrSuffix = obrSuffix.slice("100-26-".length).trim()
+  } else if (obrSuffix.startsWith("200-26-")) {
+    obrSuffix = obrSuffix.slice("200-26-".length).trim()
+  }
+
   return (
     <div className={className}>
       <div className="print-page bg-white relative w-[816px] h-[1056px] overflow-hidden mx-auto p-3 print-no-mt">
@@ -150,11 +159,14 @@ export default function ObrTemplatePreview({ model, className }: ObrTemplatePrev
               <div className="flex-1 flex flex-col">
                 {/* Title and OBR No */}
                 <div className="grid grid-cols-[1fr_220px] h-9 border-b-2 border-black">
-                  <div className="flex items-center justify-center font-bold text-[20px] tracking-wide uppercase">
+                  <div className="flex items-center justify-center font-bold text-[20px] tracking-wide uppercase text-black">
                     OBLIGATION REQUEST
                   </div>
-                  <div className="flex items-center px-3 text-[17px] border-l-2 border-black font-semibold">
-                    No. {model.obrNo || "100-26-"}
+                  <div className="flex items-center px-3 text-[17px] border-l-2 border-black font-semibold text-black">
+                    <span>No. {obrPrefix}</span>
+                    {obrSuffix ? (
+                      <span className="text-blue-600 font-bold ml-1.5">{obrSuffix}</span>
+                    ) : null}
                   </div>
                 </div>
 

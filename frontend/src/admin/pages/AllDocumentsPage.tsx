@@ -3092,11 +3092,27 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             const labelLower = String(labelRaw || '').trim().toLowerCase()
                             return labelLower.startsWith('received') || labelLower.includes('received')
                           }
+                          const isTerminalActionLog = (labelRaw: string) => {
+                            const labelLower = String(labelRaw || '').trim().toLowerCase()
+                            return (
+                              labelLower.includes('approved') ||
+                              labelLower.includes('returned') ||
+                              labelLower.includes('completed') ||
+                              labelLower.includes('discontinued') ||
+                              labelLower.includes('cancelled') ||
+                              labelLower.includes('canceled')
+                            )
+                          }
+                          const isStageEndLog = (labelRaw: string) => {
+                            return isTransferLog(labelRaw) || isTerminalActionLog(labelRaw)
+                          }
 
                           const selectedAsc =
                             historyTab === 'transactions'
                               ? transactionsAsc.filter((l) =>
-                                isTransferLog(String(l?.label || '')) || isReceivedLog(String(l?.label || ''))
+                                isTransferLog(String(l?.label || '')) ||
+                                isReceivedLog(String(l?.label || '')) ||
+                                isTerminalActionLog(String(l?.label || ''))
                               )
                               : prevalidationAsc
 
@@ -3112,23 +3128,23 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             const current = selectedAsc[i]
                             if (!isReceivedLog(String(current?.label || ''))) continue
 
-                            let transferIdx = -1
+                            let endIdx = -1
                             for (let j = i + 1; j < selectedAsc.length; j += 1) {
-                              if (isTransferLog(String(selectedAsc[j]?.label || ''))) {
-                                transferIdx = j
+                              if (isStageEndLog(String(selectedAsc[j]?.label || ''))) {
+                                endIdx = j
                                 break
                               }
                             }
 
-                            if (transferIdx < 0) continue
+                            if (endIdx < 0) continue
 
                             const startTs = timestamps[i]
-                            const endTs = timestamps[transferIdx]
+                            const endTs = timestamps[endIdx]
                             const durationMs =
                               Number.isFinite(startTs) && Number.isFinite(endTs) ? Math.max(0, endTs - startTs) : 0
-                            spanByStartIdx.set(i, { rowSpan: transferIdx - i + 1, durationMs })
+                            spanByStartIdx.set(i, { rowSpan: endIdx - i + 1, durationMs })
 
-                            for (let k = i + 1; k <= transferIdx; k += 1) {
+                            for (let k = i + 1; k <= endIdx; k += 1) {
                               coveredIdx.add(k)
                             }
                           }
