@@ -415,16 +415,15 @@ export default function ProcurementUsersPage({ title = "Users" }: ProcurementUse
           ) : loading ? (
             <div className="p-4 text-center text-sm text-slate-600">Loading users...</div>
           ) : (
-            <table className="w-full min-w-[900px] text-left text-sm">
-              <thead className="bg-slate-50 [&_th]:text-center">
-                <tr className="border-b border-slate-200">
-                  <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">User ID</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">@Username</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+            <table className="w-full min-w-[900px] text-center text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Username</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -432,26 +431,25 @@ export default function ProcurementUsersPage({ title = "Users" }: ProcurementUse
                   visible.length > 0 ? (
                     visible.map((r) => (
                       <tr key={r.id} className="hover:bg-slate-50">
-                        <td className="hidden md:table-cell px-4 py-3 align-top text-center font-medium text-slate-900">{r.id}</td>
-                        <td className="px-4 py-3 align-top font-medium text-slate-900">{r.fullName}</td>
-                        <td className="px-4 py-3 align-top text-slate-700">{r.username}</td>
-                        <td className="hidden md:table-cell px-4 py-3 align-top text-slate-700">{r.dateCreated}</td>
-                        <td className="hidden md:table-cell px-4 py-3 align-top text-center">
+                        <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.fullName}</td>
+                        <td className="px-4 py-3 align-middle text-center text-slate-700">{r.username}</td>
+                        <td className="hidden md:table-cell px-4 py-3 align-middle text-center text-slate-700">{r.dateCreated}</td>
+                        <td className="hidden md:table-cell px-4 py-3 align-middle text-center">
                           <span
                             className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${typeBadgeClass[r.type]}`}
                           >
                             {r.type}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-top text-center">
+                        <td className="px-4 py-3 align-middle text-center">
                           <span
                             className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}
                           >
                             {r.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 align-top">
-                          <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-center">
+                        <td className="px-4 py-3 align-middle text-center">
+                          <div className="flex flex-wrap items-center justify-center gap-1.5 min-w-[200px]">
                             <button
                               type="button"
                               className={`inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold text-white transition focus:outline-none focus-visible:outline-none ${
@@ -488,14 +486,14 @@ export default function ProcurementUsersPage({ title = "Users" }: ProcurementUse
                     ))
                   ) : (
                     <tr>
-                      <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                      <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={6}>
                         No results.
                       </td>
                     </tr>
                   )
                 ) : (
                   <tr>
-                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={6}>
                       Select an office to view users.
                     </td>
                   </tr>

@@ -713,7 +713,8 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
 
       {tab === "offices" ? (
         <>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <label className="text-sm text-slate-600" htmlFor="entries">
                 Show
@@ -747,128 +748,127 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="overflow-auto">
-              {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
-              {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
-              <table className="w-full min-w-[1200px] text-left text-sm">
-                <thead className="bg-slate-50 [&_th]:text-center">
-                  <tr className="border-b border-slate-200">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office ID</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Name</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Description</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head Designation</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Created</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Privileges</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {visible.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 align-top text-center font-medium text-slate-900">{r.id}</td>
-                      <td className="px-4 py-3 align-top font-medium text-slate-900">{r.name}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.description}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.email}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.head}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.headDesignation}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.createdAt}</td>
-                      <td className="px-4 py-3 align-top text-center">
-                        <span
-                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${typeBadgeClass[r.type]}`}
-                        >
-                          {r.type}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 align-top text-center">
-                        <span
-                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}
-                        >
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 align-top text-center">
+          <div className="overflow-auto">
+            {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
+            {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
+            <table className="w-full min-w-[1200px] text-center text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office ID</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Name</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Description</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head Designation</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Created</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Privileges</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {visible.map((r) => (
+                  <tr key={r.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.id}</td>
+                    <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.name}</td>
+                    <td className="px-4 py-3 align-middle text-center text-slate-700">{r.description}</td>
+                    <td className="px-4 py-3 align-middle text-center text-slate-700">{r.email}</td>
+                    <td className="px-4 py-3 align-middle text-center text-slate-700">{r.head}</td>
+                    <td className="px-4 py-3 align-middle text-center text-slate-700">{r.headDesignation}</td>
+                    <td className="px-4 py-3 align-middle text-center text-slate-700">{r.createdAt}</td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <span
+                        className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${typeBadgeClass[r.type]}`}
+                      >
+                        {r.type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <span
+                        className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}
+                      >
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <button
+                        type="button"
+                        className="inline-flex h-7 items-center justify-center rounded bg-sky-600 px-3 text-[11px] font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+                        onClick={() => {
+                          setIsPrivilegesOpen(r)
+                        }}
+                      >
+                        Show Privileges
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <div className="flex flex-wrap items-center justify-center gap-1.5 min-w-[240px]">
                         <button
                           type="button"
-                          className="inline-flex h-7 items-center justify-center rounded bg-sky-600 px-3 text-[11px] font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+                          className="inline-flex h-7 items-center justify-center rounded bg-indigo-600 px-3 text-[11px] font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus-visible:outline-none"
                           onClick={() => {
-                            setIsPrivilegesOpen(r)
+                            setEditOffice(r)
                           }}
                         >
-                          Show Privileges
+                          Edit
                         </button>
-                      </td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-col items-stretch gap-2">
-                          <button
-                            type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-indigo-600 px-3 text-[11px] font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus-visible:outline-none"
-                            onClick={() => {
-                              setEditOffice(r)
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-slate-900 px-3 text-[11px] font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
-                            onClick={() => {
-                              setEmailOffice(r)
-                              setEmailValue(r.email)
-                            }}
-                          >
-                            Update Email
-                          </button>
-                          <button
-                            type="button"
-                            className={`inline-flex h-7 items-center justify-center rounded px-3 text-[11px] font-semibold text-white transition focus:outline-none focus-visible:outline-none ${r.status === "active"
-                                ? "bg-rose-600 hover:bg-rose-700"
-                                : "bg-emerald-600 hover:bg-emerald-700"
-                              }`}
-                            onClick={() => toggleArchive(r)}
-                          >
-                            {r.status === "active" ? "Archive" : "Activate"}
-                          </button>
-                          <button
-                            type="button"
-                            className="inline-flex h-7 items-center justify-center rounded bg-red-700 px-3 text-[11px] font-semibold text-white transition hover:bg-red-800 focus:outline-none focus-visible:outline-none"
-                            onClick={() => deleteOffice(r)}
-                          >
-                            Delete
-                          </button>
-                          <button
-                            type="button"
-                            className="inline-flex h-7 items-center justify-center rounded border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
-                            onClick={() => {
-                              setTasksOffice(r)
-                              setTaskQuery("")
-                              setTaskPageSize(10)
-                              setNewTaskName("")
-                              setNewTaskDuration("")
-                            }}
-                          >
-                            View Tasks
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        <button
+                          type="button"
+                          className="inline-flex h-7 items-center justify-center rounded bg-slate-900 px-3 text-[11px] font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                          onClick={() => {
+                            setEmailOffice(r)
+                            setEmailValue(r.email)
+                          }}
+                        >
+                          Update Email
+                        </button>
+                        <button
+                          type="button"
+                          className={`inline-flex h-7 items-center justify-center rounded px-3 text-[11px] font-semibold text-white transition focus:outline-none focus-visible:outline-none ${r.status === "active"
+                              ? "bg-rose-600 hover:bg-rose-700"
+                              : "bg-emerald-600 hover:bg-emerald-700"
+                            }`}
+                          onClick={() => toggleArchive(r)}
+                        >
+                          {r.status === "active" ? "Archive" : "Activate"}
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex h-7 items-center justify-center rounded bg-red-700 px-3 text-[11px] font-semibold text-white transition hover:bg-red-800 focus:outline-none focus-visible:outline-none"
+                          onClick={() => deleteOffice(r)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex h-7 items-center justify-center rounded border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                          onClick={() => {
+                            setTasksOffice(r)
+                            setTaskQuery("")
+                            setTaskPageSize(10)
+                            setNewTaskName("")
+                            setNewTaskDuration("")
+                          }}
+                        >
+                          View Tasks
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
 
-                  {visible.length === 0 ? (
-                    <tr>
-                      <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={11}>
-                        No results.
-                      </td>
-                    </tr>
-                  ) : null}
-                </tbody>
-              </table>
-            </div>
+                {visible.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={11}>
+                      No results.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
           </div>
+        </div>
 
           {isEditOfficeModalOpen ? (
             <div

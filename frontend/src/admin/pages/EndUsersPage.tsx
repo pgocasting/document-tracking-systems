@@ -388,41 +388,41 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="entries">
-            Show
-          </label>
-          <select
-            id="entries"
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-          >
-            {[10, 25, 50, 100].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm text-slate-600">entries</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="search">
-            Search:
-          </label>
-          <input
-            id="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-            placeholder="id, name, username..."
-          />
-        </div>
-      </div>
-
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-600" htmlFor="entries">
+              Show
+            </label>
+            <select
+              id="entries"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+            >
+              {[10, 25, 50, 100].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-slate-600">entries</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-600" htmlFor="search">
+              Search:
+            </label>
+            <input
+              id="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+              placeholder="id, name, username..."
+            />
+          </div>
+        </div>
+
         <div className="overflow-auto">
           {error ? (
             <div className="p-4 text-center text-sm text-rose-600">
@@ -433,16 +433,15 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
               Loading users...
             </div>
           ) : (
-          <table className="w-full min-w-[900px] text-left text-sm">
-            <thead className="bg-slate-50 [&_th]:text-center">
-              <tr className="border-b border-slate-200">
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">User ID</th>
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">@Username</th>
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+          <table className="w-full min-w-[900px] text-center text-sm">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Username</th>
+                <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -450,18 +449,17 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
                 visible.length > 0 ? (
                   visible.map((r) => (
                     <tr key={r.id} className="hover:bg-slate-50">
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-center font-medium text-slate-900">{r.id}</td>
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-slate-700">{r.office}</td>
-                      <td className="px-4 py-3 align-top font-medium text-slate-900">{r.fullName}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{r.username}</td>
-                      <td className="hidden md:table-cell px-4 py-3 align-top text-slate-700">{r.dateCreated}</td>
-                      <td className="px-4 py-3 align-top text-center">
+                      <td className="hidden md:table-cell px-4 py-3 align-middle text-center text-slate-700">{r.office}</td>
+                      <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.fullName}</td>
+                      <td className="px-4 py-3 align-middle text-center text-slate-700">{r.username}</td>
+                      <td className="hidden md:table-cell px-4 py-3 align-middle text-center text-slate-700">{r.dateCreated}</td>
+                      <td className="px-4 py-3 align-middle text-center">
                         <span className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}>
                           {r.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-center">
+                      <td className="px-4 py-3 align-middle text-center">
+                        <div className="flex flex-wrap items-center justify-center gap-1.5 min-w-[200px]">
                           <button
                             type="button"
                             className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-xs font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
@@ -504,14 +502,14 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
                   ))
                 ) : (
                   <tr>
-                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                    <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={6}>
                       No results.
                     </td>
                   </tr>
                 )
               ) : (
                 <tr>
-                  <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                  <td className="px-4 py-10 text-center text-sm text-slate-600" colSpan={6}>
                     Select an office to view users.
                   </td>
                 </tr>

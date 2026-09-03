@@ -374,71 +374,71 @@ export default function DepartmentsList() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="deptEntries">
-            Show
-          </label>
-          <select
-            id="deptEntries"
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-          >
-            {[10, 25, 50, 100].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm text-slate-600">entries</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="deptSearch">
-            Search:
-          </label>
-          <input
-            id="deptSearch"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-            placeholder="name, description..."
-          />
-        </div>
-      </div>
-
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-600" htmlFor="deptEntries">
+              Show
+            </label>
+            <select
+              id="deptEntries"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+            >
+              {[10, 25, 50, 100].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-slate-600">entries</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-600" htmlFor="deptSearch">
+              Search:
+            </label>
+            <input
+              id="deptSearch"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+              placeholder="name, description..."
+            />
+          </div>
+        </div>
+
         <div className="overflow-auto">
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading && departments.length === 0 ? (
             <div className="p-4 text-center text-sm text-slate-600">Loading departments...</div>
           ) : null}
-          <table className="w-full min-w-[1000px] text-left text-sm">
-            <thead className="bg-slate-50 [&_th]:text-center">
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">ID</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Department Name</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Department Description</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">End Users</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+          <table className="w-full min-w-[1000px] text-center text-sm">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">ID</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Department Name</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Department Description</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">End Users</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {visible.map((d) => (
                 <tr key={d.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3 align-top text-center font-medium text-slate-900">{d.id}</td>
-                  <td className="px-4 py-3 align-top text-center font-medium text-slate-900">{d.name}</td>
-                  <td className="px-4 py-3 align-top text-center text-slate-700">{d.description}</td>
-                  <td className="px-4 py-3 align-top text-center text-slate-700">
+                  <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{d.id}</td>
+                  <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{d.name}</td>
+                  <td className="px-4 py-3 align-middle text-center text-slate-700">{d.description}</td>
+                  <td className="px-4 py-3 align-middle text-center text-slate-700">
                     {officeEmailByDepartment.get(d.name.trim().toLowerCase()) ?? ""}
                   </td>
-                  <td className="px-4 py-3 align-top text-center font-medium text-slate-900">
+                  <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">
                     {endUsersCountByDepartment.get(d.name.trim().toLowerCase()) ?? 0}
                   </td>
-                  <td className="px-4 py-3 align-top text-center">
+                  <td className="px-4 py-3 align-middle text-center">
                     <span
                       className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${
                         d.status === "active" ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
@@ -447,8 +447,8 @@ export default function DepartmentsList() {
                       {d.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 align-top text-center">
-                    <div className="flex items-center justify-center gap-2">
+                  <td className="px-4 py-3 align-middle text-center">
+                    <div className="flex flex-wrap items-center justify-center gap-1.5 min-w-[200px]">
                       <button
                         type="button"
                         onClick={() => openEditModal(d)}
