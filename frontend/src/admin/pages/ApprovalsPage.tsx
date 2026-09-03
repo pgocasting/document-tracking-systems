@@ -1606,20 +1606,20 @@ export default function ApprovalsPage({
       {shouldShowHeader ? (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="text-xl font-bold tracking-tight text-sky-950">{title}</div>
-            <div className="text-xs font-semibold text-sky-600">List of documents for review</div>
+            <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
+            <div className="text-sm text-slate-600">List of documents for review</div>
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="entries">
+              <label className="text-sm text-slate-600" htmlFor="entries">
                 Show
               </label>
               <select
                 id="entries"
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-9 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
+                className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
               >
                 {[10, 25, 50, 100].map((n) => (
                   <option key={n} value={n}>
@@ -1627,18 +1627,18 @@ export default function ApprovalsPage({
                   </option>
                 ))}
               </select>
-              <span className="text-xs font-semibold uppercase tracking-wider text-sky-700">entries</span>
+              <span className="text-sm text-slate-600">entries</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="search">
+              <label className="text-sm text-slate-600" htmlFor="search">
                 Search:
               </label>
               <input
                 id="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-9 w-full min-w-56 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm text-sky-950 placeholder:text-sky-300 focus:border-sky-500 focus:bg-white focus:outline-none"
+                className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
                 placeholder="tracking, requestor, purpose..."
               />
             </div>
@@ -1647,14 +1647,14 @@ export default function ApprovalsPage({
       ) : (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
           <div className="flex items-center gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="entries">
+            <label className="text-sm text-slate-600" htmlFor="entries">
               Show
             </label>
             <select
               id="entries"
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="h-9 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
+              className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
             >
               {[10, 25, 50, 100].map((n) => (
                 <option key={n} value={n}>
@@ -1662,51 +1662,51 @@ export default function ApprovalsPage({
                 </option>
               ))}
             </select>
-            <span className="text-xs font-semibold uppercase tracking-wider text-sky-700">entries</span>
+            <span className="text-sm text-slate-600">entries</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="search">
+            <label className="text-sm text-slate-600" htmlFor="search">
               Search:
             </label>
             <input
               id="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-full min-w-56 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm text-sky-950 placeholder:text-sky-300 focus:border-sky-500 focus:bg-white focus:outline-none"
+              className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
               placeholder="tracking, requestor, purpose..."
             />
           </div>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-sky-200/80 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-auto">
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
-          {loading ? <div className="p-4 text-center text-sm text-sky-600">Loading documents...</div> : null}
+          {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}
           <table className="w-full min-w-[1200px] table-auto text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-gradient-to-r from-sky-100/90 to-sky-50/70 border-b border-sky-200 [&_th]:text-center">
-              <tr className="border-b border-sky-200/80">
-                <th className="w-[120px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Timestamp</th>
-                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Tracking #</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Requestor</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">References</th>
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Created By</th>
-                <th className="w-[190px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Purpose</th>
-                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Supplier</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Attachments</th>
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Source of Fund</th>
+            <thead className="sticky top-0 z-10 bg-slate-50 [&_th]:text-center">
+              <tr className="border-b border-slate-200">
+                <th className="w-[120px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Timestamp</th>
+                <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tracking #</th>
+                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Requestor</th>
+                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">References</th>
+                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Created By</th>
+                <th className="w-[190px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Purpose</th>
+                <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Supplier</th>
+                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Attachments</th>
+                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Source of Fund</th>
                 {(actionIsGso || actionIsAdmin) ? (
-                  <th className="w-[200px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Routing Slip</th>
+                  <th className="w-[200px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Routing Slip</th>
                 ) : null}
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Amount</th>
+                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Amount</th>
                 {actionMode === "logsOnly" ? null : (
-                  <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Logs</th>
+                  <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Logs</th>
                 )}
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wide text-sky-800">Action</th>
+                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-sky-100">
+            <tbody className="divide-y divide-slate-200">
               {visible.map((r) => {
                 const deadlineStatus = (() => {
                   const logs = Array.isArray(r.doc?.logs) ? [...(r.doc.logs as any[])].reverse() : [];

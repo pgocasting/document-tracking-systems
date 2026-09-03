@@ -252,12 +252,12 @@ export default function SettingsPage() {
   return (
     <div className="w-full space-y-6">
       <header className="flex flex-col gap-1">
-        <div className="text-xl font-bold tracking-tight text-sky-950">System Settings</div>
-        <div className="text-xs font-semibold text-sky-600">Update system settings</div>
+        <div className="text-lg font-semibold tracking-tight text-slate-900">System Settings</div>
+        <div className="text-sm text-muted-foreground">Update system settings</div>
       </header>
 
-      <div className="rounded-2xl border border-sky-200/80 bg-white text-slate-900 shadow-sm">
-        <div className="border-b border-sky-100 px-4 pt-4 lg:px-6">
+      <div className="rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+        <div className="border-b border-slate-200 px-4 pt-4 lg:px-6">
           <div className="flex flex-wrap gap-2">
             {tabs.map((t) => {
               const isActive = tab === t.key
@@ -266,9 +266,9 @@ export default function SettingsPage() {
                   key={t.key}
                   type="button"
                   onClick={() => setTab(t.key)}
-                  className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${isActive
-                    ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                    : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
+                  className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none ${isActive
+                    ? "bg-slate-900 text-white shadow-sm"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                 >
                   {t.label}

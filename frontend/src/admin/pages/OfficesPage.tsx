@@ -64,13 +64,13 @@ type OfficeFormModel = {
 }
 
 const typeBadgeClass: Record<OfficeType, string> = {
-  operating: "bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
-  viewing: "bg-gradient-to-r from-sky-400 to-sky-500 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
+  operating: "bg-amber-400 text-slate-900",
+  viewing: "bg-slate-200 text-slate-900",
 }
 
 const statusBadgeClass: Record<OfficeStatus, string> = {
-  active: "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
-  archived: "bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold shadow-xs rounded-xl px-2.5 py-1 text-[11px]",
+  active: "bg-emerald-600 text-white",
+  archived: "bg-rose-600 text-white",
 }
 
 export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
@@ -629,101 +629,100 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
 
   return (
     <div className="w-full space-y-4">
-      {/* ── Fixed Sticky Top Header Section (Title, Tabs, Search Controls) ── */}
-      <div className="sticky top-0 z-30 bg-[#f0f9ff] pt-2 pb-3 space-y-4 shadow-sm border-b border-sky-200/60 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="text-xl font-bold tracking-tight text-sky-950">{title}</div>
-            <div className="text-xs font-semibold text-sky-600">
-              {tab === "offices"
-                ? "Office List"
-                : tab === "procurement-users"
-                  ? "Procurement Users"
-                  : tab === "end-users"
-                    ? "End Users"
-                    : tab === "departments"
-                      ? "Department List"
-                      : "Source of Fund"}
-            </div>
-          </div>
-
-          {tab === "offices" ? (
-            <button
-              type="button"
-              className="inline-flex h-9 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-4 text-sm font-bold text-white shadow-md shadow-sky-500/20 transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
-              onClick={() => setIsNewOfficeOpen(true)}
-            >
-              New Office
-            </button>
-          ) : null}
-        </div>
-
-        <div className="rounded-2xl border border-sky-200/80 bg-white p-2 shadow-sm">
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setTab("offices")}
-              className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${tab === "offices"
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                  : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
-                }`}
-            >
-              Offices
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("procurement-users")}
-              className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${tab === "procurement-users"
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                  : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
-                }`}
-            >
-              Procurement Users
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("end-users")}
-              className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${tab === "end-users"
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                  : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
-                }`}
-            >
-              End Users
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("departments")}
-              className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${tab === "departments"
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                  : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
-                }`}
-            >
-              Department List
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("source-of-funds")}
-              className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-bold transition-all focus:outline-none focus-visible:outline-none ${tab === "source-of-funds"
-                  ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-md shadow-sky-500/20"
-                  : "text-sky-800 hover:bg-sky-50 hover:text-sky-950"
-                }`}
-            >
-              Source of Fund
-            </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
+          <div className="text-sm text-slate-600">
+            {tab === "offices"
+              ? "Office List"
+              : tab === "procurement-users"
+                ? "Procurement Users"
+                : tab === "end-users"
+                  ? "End Users"
+                  : tab === "departments"
+                    ? "Department List"
+                    : "Source of Fund"}
           </div>
         </div>
 
         {tab === "offices" ? (
+          <button
+            type="button"
+            className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+            onClick={() => setIsNewOfficeOpen(true)}
+          >
+            New Office
+          </button>
+        ) : null}
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setTab("offices")}
+            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "offices"
+                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
+                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+              }`}
+          >
+            Offices
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("procurement-users")}
+            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "procurement-users"
+                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
+                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+              }`}
+          >
+            Procurement Users
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("end-users")}
+            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "end-users"
+                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
+                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+              }`}
+          >
+            End Users
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("departments")}
+            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "departments"
+                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
+                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+              }`}
+          >
+            Department List
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("source-of-funds")}
+            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "source-of-funds"
+                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
+                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+              }`}
+          >
+            Source of Fund
+          </button>
+        </div>
+      </div>
+
+      {tab === "offices" ? (
+        <>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="entries">
+              <label className="text-sm text-slate-600" htmlFor="entries">
                 Show
               </label>
               <select
                 id="entries"
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-9 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm font-medium text-sky-950 focus:border-sky-500 focus:bg-white focus:outline-none"
+                className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
               >
                 {[10, 25, 50, 100].map((n) => (
                   <option key={n} value={n}>
@@ -731,71 +730,71 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                   </option>
                 ))}
               </select>
-              <span className="text-xs font-semibold uppercase tracking-wider text-sky-700">entries</span>
+              <span className="text-sm text-slate-600">entries</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-sky-700" htmlFor="search">
+              <label className="text-sm text-slate-600" htmlFor="search">
                 Search:
               </label>
               <input
                 id="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-9 w-full min-w-56 rounded-xl border border-sky-200 bg-sky-50/50 px-3 text-sm text-sky-950 placeholder:text-sky-300 focus:border-sky-500 focus:bg-white focus:outline-none"
+                className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
                 placeholder="id, name, head..."
               />
             </div>
           </div>
-        ) : null}
-      </div>
 
-      {tab === "offices" ? (
-        <>
-          <div className="overflow-hidden rounded-2xl border border-sky-200/80 bg-white shadow-sm">
-            <div className="overflow-auto max-h-[calc(100vh-280px)]">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-auto">
               {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
-              {loading ? <div className="p-4 text-center text-sm text-sky-600">Loading offices...</div> : null}
-              <table className="w-full min-w-[1200px] text-center text-sm">
-                <thead className="sticky top-0 z-10 bg-gradient-to-r from-sky-100 to-sky-50 border-b border-sky-200 shadow-sm [&_th]:text-center">
-                  <tr className="border-b border-sky-200/80">
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Office ID</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Office Name</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Description</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Email</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Office Head</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Office Head Designation</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Created</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Type</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Status</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Privileges</th>
-                    <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-sky-800">Action</th>
+              {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
+              <table className="w-full min-w-[1200px] text-left text-sm">
+                <thead className="bg-slate-50 [&_th]:text-center">
+                  <tr className="border-b border-slate-200">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office ID</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Name</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Description</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head Designation</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Created</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Privileges</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-sky-100">
+                <tbody className="divide-y divide-slate-200">
                   {visible.map((r) => (
-                    <tr key={r.id} className="hover:bg-sky-50/50 transition-colors">
-                      <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.id}</td>
-                      <td className="px-4 py-3 align-middle text-center font-bold text-sky-950">{r.name}</td>
-                      <td className="px-4 py-3 align-middle text-center text-slate-700">{r.description}</td>
-                      <td className="px-4 py-3 align-middle text-center text-slate-700">{r.email}</td>
-                      <td className="px-4 py-3 align-middle text-center text-slate-700">{r.head}</td>
-                      <td className="px-4 py-3 align-middle text-center text-slate-700">{r.headDesignation}</td>
-                      <td className="px-4 py-3 align-middle text-center text-slate-600">{r.createdAt}</td>
-                      <td className="px-4 py-3.5 align-middle text-center">
-                        <span className={typeBadgeClass[r.type]}>
+                    <tr key={r.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3 align-top text-center font-medium text-slate-900">{r.id}</td>
+                      <td className="px-4 py-3 align-top font-medium text-slate-900">{r.name}</td>
+                      <td className="px-4 py-3 align-top text-slate-700">{r.description}</td>
+                      <td className="px-4 py-3 align-top text-slate-700">{r.email}</td>
+                      <td className="px-4 py-3 align-top text-slate-700">{r.head}</td>
+                      <td className="px-4 py-3 align-top text-slate-700">{r.headDesignation}</td>
+                      <td className="px-4 py-3 align-top text-slate-700">{r.createdAt}</td>
+                      <td className="px-4 py-3 align-top text-center">
+                        <span
+                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${typeBadgeClass[r.type]}`}
+                        >
                           {r.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 align-middle text-center">
-                        <span className={statusBadgeClass[r.status]}>
+                      <td className="px-4 py-3 align-top text-center">
+                        <span
+                          className={`inline-flex h-6 items-center rounded px-2 text-[11px] font-semibold ${statusBadgeClass[r.status]}`}
+                        >
                           {r.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 align-middle text-center">
+                      <td className="px-4 py-3 align-top text-center">
                         <button
                           type="button"
-                          className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-3 text-xs font-bold text-white shadow-md shadow-sky-500/20 transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
+                          className="inline-flex h-7 items-center justify-center rounded bg-sky-600 px-3 text-[11px] font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
                           onClick={() => {
                             setIsPrivilegesOpen(r)
                           }}
@@ -803,18 +802,20 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           Show Privileges
                         </button>
                       </td>
-                      <td className="px-4 py-0 align-middle text-center">
-                        <div className="flex h-full min-h-[56px] flex-wrap items-center justify-center gap-1.5 py-2 min-w-[200px]">
+                      <td className="px-4 py-3 align-top">
+                        <div className="flex flex-col items-stretch gap-2">
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-3 text-xs font-bold text-white shadow-xs transition hover:from-sky-600 hover:to-sky-700 focus:outline-none focus-visible:outline-none"
-                            onClick={() => setEditOffice(r)}
+                            className="inline-flex h-7 items-center justify-center rounded bg-indigo-600 px-3 text-[11px] font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus-visible:outline-none"
+                            onClick={() => {
+                              setEditOffice(r)
+                            }}
                           >
                             Edit
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-sky-800 to-sky-900 px-3 text-xs font-bold text-white shadow-xs transition hover:from-sky-900 hover:to-sky-950 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded bg-slate-900 px-3 text-[11px] font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
                             onClick={() => {
                               setEmailOffice(r)
                               setEmailValue(r.email)
@@ -824,9 +825,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           </button>
                           <button
                             type="button"
-                            className={`inline-flex h-7 items-center justify-center rounded-xl px-3 text-xs font-bold text-white shadow-xs transition focus:outline-none focus-visible:outline-none ${r.status === "active"
-                                ? "bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700"
-                                : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
+                            className={`inline-flex h-7 items-center justify-center rounded px-3 text-[11px] font-semibold text-white transition focus:outline-none focus-visible:outline-none ${r.status === "active"
+                                ? "bg-rose-600 hover:bg-rose-700"
+                                : "bg-emerald-600 hover:bg-emerald-700"
                               }`}
                             onClick={() => toggleArchive(r)}
                           >
@@ -834,14 +835,14 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded-xl bg-gradient-to-r from-red-600 to-rose-700 px-3 text-xs font-bold text-white shadow-xs transition hover:from-red-700 hover:to-rose-800 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded bg-red-700 px-3 text-[11px] font-semibold text-white transition hover:bg-red-800 focus:outline-none focus-visible:outline-none"
                             onClick={() => deleteOffice(r)}
                           >
                             Delete
                           </button>
                           <button
                             type="button"
-                            className="inline-flex h-7 items-center justify-center rounded-xl border border-sky-200 bg-sky-50 px-3 text-xs font-bold text-sky-900 shadow-xs transition hover:bg-sky-100 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 items-center justify-center rounded border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
                             onClick={() => {
                               setTasksOffice(r)
                               setTaskQuery("")
