@@ -297,12 +297,12 @@ export default function SettingsPage() {
               <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
-                    <thead className="bg-slate-900">
+                    <thead className="bg-blue-600 text-white">
                       <tr>
-                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-slate-100">
+                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-white">
                           Templates
                         </th>
-                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-slate-100">
+                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-white">
                           Action
                         </th>
                       </tr>
@@ -513,10 +513,10 @@ export default function SettingsPage() {
 
               <div className="mt-4 grid gap-4 lg:grid-cols-2">
                 <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
-                  <div className="bg-slate-900 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Recurrent Events</div>
+                  <div className="bg-blue-600 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Recurrent Events</div>
                   <div className="overflow-auto">
                     <table className="w-full border-collapse text-sm">
-                      <thead className="bg-slate-900 text-left text-[11px] font-bold uppercase tracking-wider text-slate-100">
+                      <thead className="bg-blue-600 text-left text-[11px] font-bold uppercase tracking-wider text-white">
                         <tr>
                           <th className="px-3.5 py-2.5">Date</th>
                           <th className="px-3.5 py-2.5">From</th>
@@ -566,7 +566,7 @@ export default function SettingsPage() {
                   <div className="bg-emerald-700 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Non-recurrent Events</div>
                   <div className="overflow-auto">
                     <table className="w-full border-collapse text-sm">
-                      <thead className="bg-slate-900 text-left text-[11px] font-bold uppercase tracking-wider text-slate-100">
+                      <thead className="bg-blue-600 text-left text-[11px] font-bold uppercase tracking-wider text-white">
                         <tr>
                           <th className="px-3.5 py-2.5">Date</th>
                           <th className="px-3.5 py-2.5">From</th>

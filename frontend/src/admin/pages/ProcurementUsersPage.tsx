@@ -416,14 +416,14 @@ export default function ProcurementUsersPage({ title = "Users" }: ProcurementUse
             <div className="p-4 text-center text-sm text-slate-600">Loading users...</div>
           ) : (
             <table className="w-full min-w-[900px] text-center text-sm">
-              <thead className="bg-slate-900">
+              <thead className="bg-blue-600 text-white">
                 <tr>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Full Name</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Username</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Date Created</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Type</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Status</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Full Name</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Username</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Date Created</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Type</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

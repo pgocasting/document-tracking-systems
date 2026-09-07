@@ -415,19 +415,19 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
             <div className="p-8 text-center text-sm text-slate-500">Loading...</div>
           ) : (
             <table className="w-full min-w-[900px] text-left text-sm">
-              <thead className="bg-slate-900 text-white">
-                <tr className="border-b border-slate-800">
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Requestor</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">References</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Created By</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Supplier</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Attachments</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Source of Fund</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+              <thead className="bg-blue-600 text-white">
+                <tr className="border-b border-blue-700">
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Requestor</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">References</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Attachments</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Source of Fund</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -570,12 +570,12 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
               {/* Logs table */}
               <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                 <table className="w-full text-left text-sm border-collapse">
-                  <thead className="bg-slate-900 border-b border-slate-800">
+                  <thead className="bg-blue-600 text-white border-b border-blue-700">
                     <tr>
-                      <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Timestamp</th>
-                      <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">User</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Remarks</th>
-                      <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200 text-right">Office</th>
+                      <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
+                      <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">User</th>
+                      <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Remarks</th>
+                      <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white text-right">Office</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/10">

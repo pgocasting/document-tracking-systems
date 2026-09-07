@@ -31,17 +31,17 @@ export default function CompletedTab({
     <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-900 text-white">
-            <tr className="border-b border-slate-800">
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Created By</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Particulars</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Supplier</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Logs</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+          <thead className="bg-blue-600 text-white">
+            <tr className="border-b border-blue-700">
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Logs</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">

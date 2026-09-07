@@ -757,19 +757,19 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
             {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
             {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
             <table className="w-full min-w-[1200px] text-center text-sm">
-              <thead className="bg-slate-900 text-white border-b border-slate-800">
+              <thead className="bg-blue-600 text-white border-b border-blue-700">
                 <tr>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office ID</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Name</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Description</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Email</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Head</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Head Designation</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Created</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Type</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Privileges</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office ID</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office Name</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Description</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Email</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office Head</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office Head Designation</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Created</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Type</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Status</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Privileges</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -1394,21 +1394,21 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                   <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
                     <div className="overflow-auto">
                       <table className="w-full table-fixed text-left text-sm">
-                        <thead className="bg-slate-900">
-                          <tr className="border-b border-slate-700">
-                            <th className="w-20 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
+                        <thead className="bg-blue-600 text-white">
+                          <tr className="border-b border-blue-700">
+                            <th className="w-20 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">
                               Task ID
                             </th>
-                            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
+                            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">
                               Task
                             </th>
-                            <th className="w-40 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
+                            <th className="w-40 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">
                               Duration
                             </th>
-                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
+                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">
                               Status
                             </th>
-                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
+                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">
                               Action
                             </th>
                           </tr>

@@ -439,14 +439,14 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
             </div>
           ) : (
           <table className="w-full min-w-[900px] text-center text-sm">
-            <thead className="bg-slate-900 text-white border-b border-slate-800">
+            <thead className="bg-blue-600 text-white border-b border-blue-700">
               <tr>
-                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office</th>
-                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Full Name</th>
-                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Username</th>
-                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Date Created</th>
-                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
-                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Full Name</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Username</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Date Created</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Status</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

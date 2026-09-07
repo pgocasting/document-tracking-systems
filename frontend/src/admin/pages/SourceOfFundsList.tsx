@@ -258,12 +258,12 @@ export default function SourceOfFundsList() {
             <div className="p-4 text-center text-sm text-slate-600">Loading source of funds...</div>
           ) : null}
           <table className="w-full min-w-[900px] text-center text-sm">
-            <thead className="bg-slate-900">
+            <thead className="bg-blue-600 text-white">
               <tr>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">ID</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Source of Fund</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Status</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">ID</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Source of Fund</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Status</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">

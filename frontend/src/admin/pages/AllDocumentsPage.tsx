@@ -1603,18 +1603,18 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
           <div className="hidden overflow-auto sm:block">
             <table className="w-full min-w-[1200px] text-left text-sm">
-              <thead className="bg-slate-900 text-white [&_th]:text-center">
-                <tr className="border-b border-slate-800">
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100 first:text-left first:pl-5">Tracking #</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">References</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Source of Fund</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Office (Requestor)</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Particulars</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Duration</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100 last:text-center last:pr-5">Action</th>
+              <thead className="bg-blue-600 text-white [&_th]:text-center">
+                <tr className="border-b border-blue-700">
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white first:text-left first:pl-5">Tracking #</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">References</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Source of Fund</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Office (Requestor)</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Duration</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Status</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white last:text-center last:pr-5">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -2337,14 +2337,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                     <div className="text-xs font-semibold text-slate-700">Items</div>
                     <div className="overflow-x-auto rounded-md border border-slate-200">
                       <table className="w-full min-w-[720px] border-collapse">
-                        <thead className="bg-slate-900">
-                          <tr className="text-left text-[11px] font-semibold text-slate-100">
-                            <th className="border-b border-slate-700 px-2 py-2">Unit</th>
-                            <th className="border-b border-slate-700 px-2 py-2">Description</th>
-                            <th className="border-b border-slate-700 px-2 py-2">Qty</th>
-                            <th className="border-b border-slate-700 px-2 py-2">Unit Cost</th>
-                            <th className="border-b border-slate-700 px-2 py-2">Total Cost</th>
-                            <th className="border-b border-slate-700 px-2 py-2" />
+                        <thead className="bg-blue-600 text-white">
+                          <tr className="text-left text-[11px] font-semibold text-white">
+                            <th className="border-b border-blue-700 px-2 py-2">Unit</th>
+                            <th className="border-b border-blue-700 px-2 py-2">Description</th>
+                            <th className="border-b border-blue-700 px-2 py-2">Qty</th>
+                            <th className="border-b border-blue-700 px-2 py-2">Unit Cost</th>
+                            <th className="border-b border-blue-700 px-2 py-2">Total Cost</th>
+                            <th className="border-b border-blue-700 px-2 py-2" />
                           </tr>
                         </thead>
                         <tbody>
@@ -3023,12 +3023,12 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             </div>
                           </div>
                           <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-900">
-                              <tr className="border-b border-slate-700">
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
+                            <thead className="bg-blue-600 text-white">
+                              <tr className="border-b border-blue-700">
+                                <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-white">Processed By</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-white">Action</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-white">Remarks</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200">
@@ -3058,14 +3058,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                 ) : (
                   <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-900">
-                        <tr className="border-b border-slate-700">
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Days</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Duration</th>
+                      <thead className="bg-blue-600 text-white">
+                        <tr className="border-b border-blue-700">
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Processed By</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Action</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Remarks</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Days</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-white">Duration</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200">

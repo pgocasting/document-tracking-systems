@@ -2365,12 +2365,12 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                                   </div>
                                 </div>
                                 <table className="w-full text-left text-sm">
-                                  <thead className="bg-slate-900">
-                                    <tr className="border-b border-slate-700">
-                                      <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
-                                      <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
-                                      <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
-                                      <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
+                                  <thead className="bg-blue-600 text-white">
+                                    <tr className="border-b border-blue-700">
+                                      <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
+                                      <th className="px-3 py-2 text-xs font-semibold text-white">Processed By</th>
+                                      <th className="px-3 py-2 text-xs font-semibold text-white">Action</th>
+                                      <th className="px-3 py-2 text-xs font-semibold text-white">Remarks</th>
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-slate-200">
@@ -2400,14 +2400,14 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                       ) : (
                         <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
                           <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-900">
-                              <tr className="border-b border-slate-700">
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Date</th>
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Processed By</th>
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Remarks</th>
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Days</th>
-                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Duration</th>
+                            <thead className="bg-blue-600 text-white">
+                              <tr className="border-b border-blue-700">
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Date</th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Processed By</th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Action</th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Remarks</th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Days</th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Duration</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200">
@@ -2664,10 +2664,10 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-lg border border-slate-200">
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-900">
-                          <tr className="border-b border-slate-700">
-                            <th className="w-40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">User</th>
-                            <th className="w-40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100">Remarks</th>
+                        <thead className="bg-blue-600 text-white">
+                          <tr className="border-b border-blue-700">
+                            <th className="w-40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">User</th>
+                            <th className="w-40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Remarks</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
@@ -2811,12 +2811,12 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                 <div className="flex-1 overflow-auto p-5">
                   <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                     <table className="w-full text-left text-sm border-collapse">
-                      <thead className="bg-slate-900 border-b border-slate-800">
+                      <thead className="bg-blue-600 text-white border-b border-blue-700">
                         <tr>
-                          <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Timestamp</th>
-                          <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">User</th>
-                          <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Remarks</th>
-                          <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200 text-right">Office</th>
+                          <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
+                          <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">User</th>
+                          <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Remarks</th>
+                          <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white text-right">Office</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/10">
@@ -3208,13 +3208,13 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-xl border border-slate-200">
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-900 text-white">
-                          <tr className="border-b border-slate-800">
-                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Returned At</th>
-                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
-                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
-                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
-                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+                        <thead className="bg-blue-600 text-white">
+                          <tr className="border-b border-blue-700">
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Returned At</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Action</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">

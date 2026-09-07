@@ -1690,25 +1690,25 @@ export default function ApprovalsPage({
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}
           <table className="w-full min-w-[1200px] table-auto text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-slate-900 text-white [&_th]:text-center">
-              <tr className="border-b border-slate-800">
-                <th className="w-[120px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
-                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Requestor</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">References</th>
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Created By</th>
-                <th className="w-[190px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
-                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Supplier</th>
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Attachments</th>
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Source of Fund</th>
+            <thead className="sticky top-0 z-10 bg-blue-600 text-white [&_th]:text-center">
+              <tr className="border-b border-blue-700">
+                <th className="w-[120px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>
+                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Requestor</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">References</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
+                <th className="w-[190px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
+                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Attachments</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Source of Fund</th>
                 {(actionIsGso || actionIsAdmin) ? (
-                  <th className="w-[200px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Routing Slip</th>
+                  <th className="w-[200px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Routing Slip</th>
                 ) : null}
-                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
                 {actionMode === "logsOnly" ? null : (
-                  <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Logs</th>
+                  <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Logs</th>
                 )}
-                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -2576,14 +2576,14 @@ export default function ApprovalsPage({
                   <div className="text-xs font-semibold text-slate-700">Items</div>
                   <div className="overflow-x-auto rounded-md border border-slate-200">
                     <table className="w-full min-w-[720px] border-collapse">
-                      <thead className="bg-slate-900">
-                        <tr className="text-left text-[11px] font-semibold text-slate-100">
-                          <th className="border-b border-slate-700 px-2 py-2">Unit</th>
-                          <th className="border-b border-slate-700 px-2 py-2">Description</th>
-                          <th className="border-b border-slate-700 px-2 py-2">Qty</th>
-                          <th className="border-b border-slate-700 px-2 py-2">Unit Cost</th>
-                          <th className="border-b border-slate-700 px-2 py-2">Total Cost</th>
-                          <th className="border-b border-slate-700 px-2 py-2" />
+                      <thead className="bg-blue-600 text-white">
+                        <tr className="text-left text-[11px] font-semibold text-white">
+                          <th className="border-b border-blue-700 px-2 py-2">Unit</th>
+                          <th className="border-b border-blue-700 px-2 py-2">Description</th>
+                          <th className="border-b border-blue-700 px-2 py-2">Qty</th>
+                          <th className="border-b border-blue-700 px-2 py-2">Unit Cost</th>
+                          <th className="border-b border-blue-700 px-2 py-2">Total Cost</th>
+                          <th className="border-b border-blue-700 px-2 py-2" />
                         </tr>
                       </thead>
                       <tbody>
@@ -2913,12 +2913,12 @@ export default function ApprovalsPage({
                     <div className="flex-1 overflow-auto p-5">
                       <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                         <table className="w-full text-left text-sm border-collapse">
-                          <thead className="bg-slate-900">
+                          <thead className="bg-blue-600 text-white border-b border-blue-700">
                             <tr>
-                              <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
-                              <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-100">User</th>
-                              <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-100">Remarks</th>
-                              <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-100 text-right">Office</th>
+                              <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
+                              <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">User</th>
+                              <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Remarks</th>
+                              <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white text-right">Office</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/10">
@@ -3225,12 +3225,12 @@ export default function ApprovalsPage({
                                       </div>
                                     </div>
                                     <table className="w-full text-left text-sm">
-                                      <thead className="bg-slate-900">
-                                        <tr className="border-b border-slate-700">
-                                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
-                                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
-                                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
-                                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
+                                      <thead className="bg-blue-600 text-white">
+                                        <tr className="border-b border-blue-700">
+                                          <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
+                                          <th className="px-3 py-2 text-xs font-semibold text-white">Processed By</th>
+                                          <th className="px-3 py-2 text-xs font-semibold text-white">Action</th>
+                                          <th className="px-3 py-2 text-xs font-semibold text-white">Remarks</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-200">
@@ -3262,14 +3262,14 @@ export default function ApprovalsPage({
                           ) : (
                             <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
                               <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-900">
-                                  <tr className="border-b border-slate-700">
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Days</th>
-                                    <th className="px-3 py-2 text-xs font-semibold text-slate-100">Duration</th>
+                                <thead className="bg-blue-600 text-white">
+                                  <tr className="border-b border-blue-700">
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Processed By</th>
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Action</th>
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Remarks</th>
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Days</th>
+                                    <th className="px-3 py-2 text-xs font-semibold text-white">Duration</th>
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200">
@@ -3522,10 +3522,10 @@ export default function ApprovalsPage({
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-lg border border-slate-200">
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-900">
-                          <tr className="border-b border-slate-700">
-                            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">User</th>
-                            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Remarks</th>
+                        <thead className="bg-blue-600 text-white">
+                          <tr className="border-b border-blue-700">
+                            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white">User</th>
+                            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white">Remarks</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
