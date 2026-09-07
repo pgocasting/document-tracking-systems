@@ -273,14 +273,14 @@ export default function SectionsList() {
             <div className="p-4 text-center text-sm text-slate-600">Loading sections...</div>
           ) : null}
           <table className="w-full min-w-[900px] text-left text-sm">
-            <thead className="bg-slate-50 [&_th]:text-center">
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">ID</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Code</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Section Name</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Description</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+            <thead className="bg-slate-900 [&_th]:text-center">
+              <tr className="border-b border-slate-800">
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">ID</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Code</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Section Name</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Description</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">

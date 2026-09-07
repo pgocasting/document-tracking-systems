@@ -2337,14 +2337,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                     <div className="text-xs font-semibold text-slate-700">Items</div>
                     <div className="overflow-x-auto rounded-md border border-slate-200">
                       <table className="w-full min-w-[720px] border-collapse">
-                        <thead className="bg-slate-50">
-                          <tr className="text-left text-[11px] font-semibold text-slate-600">
-                            <th className="border-b border-slate-200 px-2 py-2">Unit</th>
-                            <th className="border-b border-slate-200 px-2 py-2">Description</th>
-                            <th className="border-b border-slate-200 px-2 py-2">Qty</th>
-                            <th className="border-b border-slate-200 px-2 py-2">Unit Cost</th>
-                            <th className="border-b border-slate-200 px-2 py-2">Total Cost</th>
-                            <th className="border-b border-slate-200 px-2 py-2" />
+                        <thead className="bg-slate-900">
+                          <tr className="text-left text-[11px] font-semibold text-slate-100">
+                            <th className="border-b border-slate-700 px-2 py-2">Unit</th>
+                            <th className="border-b border-slate-700 px-2 py-2">Description</th>
+                            <th className="border-b border-slate-700 px-2 py-2">Qty</th>
+                            <th className="border-b border-slate-700 px-2 py-2">Unit Cost</th>
+                            <th className="border-b border-slate-700 px-2 py-2">Total Cost</th>
+                            <th className="border-b border-slate-700 px-2 py-2" />
                           </tr>
                         </thead>
                         <tbody>
@@ -3023,12 +3023,12 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             </div>
                           </div>
                           <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-50">
-                              <tr className="border-b border-slate-200">
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-700">Date</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-700">Processed By</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-700">Action</th>
-                                <th className="px-3 py-2 text-xs font-semibold text-slate-700">Remarks</th>
+                            <thead className="bg-slate-900">
+                              <tr className="border-b border-slate-700">
+                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
+                                <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200">
@@ -3058,14 +3058,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                 ) : (
                   <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-50">
-                        <tr className="border-b border-slate-200">
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Date</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Processed By</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Action</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Remarks</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Days</th>
-                          <th className="px-3 py-2 text-xs font-semibold text-slate-700">Duration</th>
+                      <thead className="bg-slate-900">
+                        <tr className="border-b border-slate-700">
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Date</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Processed By</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Action</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Remarks</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Days</th>
+                          <th className="px-3 py-2 text-xs font-semibold text-slate-100">Duration</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200">

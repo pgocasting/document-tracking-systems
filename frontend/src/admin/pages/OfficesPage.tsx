@@ -1394,21 +1394,21 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                   <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
                     <div className="overflow-auto">
                       <table className="w-full table-fixed text-left text-sm">
-                        <thead className="bg-slate-50">
-                          <tr className="border-b border-slate-200">
-                            <th className="w-20 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+                        <thead className="bg-slate-900">
+                          <tr className="border-b border-slate-700">
+                            <th className="w-20 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
                               Task ID
                             </th>
-                            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
                               Task
                             </th>
-                            <th className="w-40 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            <th className="w-40 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
                               Duration
                             </th>
-                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
                               Status
                             </th>
-                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            <th className="w-28 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">
                               Action
                             </th>
                           </tr>

@@ -416,14 +416,14 @@ export default function ProcurementUsersPage({ title = "Users" }: ProcurementUse
             <div className="p-4 text-center text-sm text-slate-600">Loading users...</div>
           ) : (
             <table className="w-full min-w-[900px] text-center text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-slate-900">
                 <tr>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Username</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Full Name</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Username</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Date Created</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Type</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

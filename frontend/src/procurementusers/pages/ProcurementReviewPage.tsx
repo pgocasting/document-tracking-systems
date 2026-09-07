@@ -570,12 +570,12 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
               {/* Logs table */}
               <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                 <table className="w-full text-left text-sm border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                  <thead className="bg-slate-900 border-b border-slate-800">
                     <tr>
-                      <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Timestamp</th>
-                      <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">User</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Remarks</th>
-                      <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Office</th>
+                      <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Timestamp</th>
+                      <th className="w-40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">User</th>
+                      <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Remarks</th>
+                      <th className="w-24 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-200 text-right">Office</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/10">

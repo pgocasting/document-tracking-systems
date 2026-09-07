@@ -415,15 +415,15 @@ export default function DepartmentsList() {
             <div className="p-4 text-center text-sm text-slate-600">Loading departments...</div>
           ) : null}
           <table className="w-full min-w-[1000px] text-center text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-900">
               <tr>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">ID</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Department Name</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Department Description</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">End Users</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">ID</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Department Name</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Department Description</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Email</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">End Users</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Status</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-100">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
