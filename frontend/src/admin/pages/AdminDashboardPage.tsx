@@ -377,10 +377,10 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
                   </div>
                 </div>
 
-                {/* Accomplished */}
+                {/* Completed */}
                 <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-emerald-600 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Accomplished</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Completed</span>
                     <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                       <FileCheck2 className="size-4" />
                     </div>
@@ -459,16 +459,10 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
                                 Office
                               </th>
                               <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
-                                In Transit
-                              </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
-                                On Process
-                              </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
                                 Ongoing
                               </th>
                               <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
-                                Accomplished
+                                Completed
                               </th>
                               <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
                                 Discontinued
@@ -481,33 +475,31 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
                           <tbody className="divide-y divide-slate-100">
                             {statsLoading ? (
                               <tr>
-                                <td className="px-3 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                                <td className="px-3 py-10 text-center text-sm text-slate-600" colSpan={5}>
                                   Loading...
                                 </td>
                               </tr>
                             ) : stats?.officeSummary && stats.officeSummary.length > 0 ? (
                               stats.officeSummary.map((office) => (
                                 <tr key={office.name} className="border-b border-slate-200 transition-colors hover:bg-slate-50">
-                                  <td className="px-3 py-2 align-middle font-medium">{office.name}</td>
-                                  <td className="px-3 py-2 align-middle text-slate-700">{office.inTransit}</td>
-                                  <td className="px-3 py-2 align-middle text-slate-700">{office.onProcess}</td>
-                                  <td className="px-3 py-2 align-middle text-sky-700 font-medium">
+                                  <td className="px-4 py-3 align-middle font-medium text-slate-900">{office.name}</td>
+                                  <td className="px-4 py-3 align-middle text-sky-700 font-medium">
                                     {office.ongoing}
                                   </td>
-                                  <td className="px-3 py-2 align-middle text-emerald-700 font-medium">
+                                  <td className="px-4 py-3 align-middle text-emerald-700 font-medium">
                                     {office.accomplished}
                                   </td>
-                                  <td className="px-3 py-2 align-middle text-rose-700 font-medium">
+                                  <td className="px-4 py-3 align-middle text-rose-700 font-medium">
                                     {office.discontinued}
                                   </td>
-                                  <td className="px-3 py-2 align-middle text-amber-700 font-medium">
+                                  <td className="px-4 py-3 align-middle text-amber-700 font-medium">
                                     {office.exceeded}
                                   </td>
                                 </tr>
                               ))
                             ) : (
                               <tr>
-                                <td className="px-3 py-10 text-center text-sm text-slate-600" colSpan={7}>
+                                <td className="px-3 py-10 text-center text-sm text-slate-600" colSpan={5}>
                                   No data available
                                 </td>
                               </tr>
