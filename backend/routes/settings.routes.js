@@ -4,6 +4,28 @@ const SystemSettings = require('../models/SystemSettings');
 
 const router = express.Router();
 
+/** GET /api/settings  – public */
+router.get('/', async (req, res) => {
+  try {
+    const settings = await SystemSettings.findOne({ key: 'global' }).lean();
+    res.json({
+      defaultSchedule: settings?.defaultSchedule ?? {
+        monday:    { enabled: true,  from: '08:00', to: '17:00' },
+        tuesday:   { enabled: true,  from: '08:00', to: '17:00' },
+        wednesday: { enabled: true,  from: '08:00', to: '17:00' },
+        thursday:  { enabled: true,  from: '08:00', to: '17:00' },
+        friday:    { enabled: true,  from: '08:00', to: '17:00' },
+        saturday:  { enabled: false, from: '',      to: ''      },
+        sunday:    { enabled: false, from: '',      to: ''      },
+      },
+      specialDates: settings?.specialDates ?? [],
+    });
+  } catch (err) {
+    console.error('GET /api/settings error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 /** GET /api/settings/schedule  – public (needed for login-page check) */
 router.get('/schedule', async (req, res) => {
   try {

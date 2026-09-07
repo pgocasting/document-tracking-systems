@@ -1068,38 +1068,6 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
     // For created/updated documents, refresh the list
     if (action === 'created' || action === 'updated') {
-      if (action === 'updated' && data.document) {
-        const updated = data.document;
-        const targetId = String(updated._id || updated.id);
-        setDocuments((prev) =>
-          prev.map((d) => {
-            if (d.id === targetId) {
-              return {
-                ...d,
-                gsoRoutingSlip: String(updated.gsoRoutingSlip ?? d.gsoRoutingSlip ?? ''),
-                status: String(updated.status ?? d.status),
-                prNo: String(updated.prNo ?? d.prNo ?? ''),
-                obrNo: String(updated.obrNo ?? d.obrNo ?? ''),
-                fund: String(updated.fund ?? d.fund ?? ''),
-                amount: String(updated.amount ?? d.amount ?? ''),
-                supplier: String(updated.supplier ?? d.supplier ?? ''),
-                logs: Array.isArray(updated.logs) ? updated.logs : d.logs,
-              }
-            }
-            return d;
-          })
-        );
-        setRoutingSlipDoc((prev) => {
-          if (prev && (prev.id === targetId || (prev as any)._id === targetId)) {
-            return {
-              ...prev,
-              gsoRoutingSlip: String(updated.gsoRoutingSlip ?? prev.gsoRoutingSlip ?? ''),
-            }
-          }
-          return prev;
-        });
-      }
-
       // Check if this document belongs to the current user/office
       const doc = data.document;
       const docCreatedBy = String(doc?.createdBy || '').trim().toLowerCase()
