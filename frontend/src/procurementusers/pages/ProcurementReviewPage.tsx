@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { History } from "lucide-react"
 import { toast } from "../../lib/toast"
+import { useDocumentSocket } from "../../hooks/useSocket"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 
 const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"

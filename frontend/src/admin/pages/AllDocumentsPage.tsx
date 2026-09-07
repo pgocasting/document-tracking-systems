@@ -73,12 +73,21 @@ type ApiDocument = {
   prNo?: string
   obrNo?: string
   supplier?: string
+  supplierAmount?: string
   bacNotes?: string
   gsoRoutingSlip?: string
   purpose: string
   amount?: string
   status?: string
   createdAt?: string
+  subDocuments?: Array<{
+    trackingNo?: string
+    purpose?: string
+    amount?: string
+    supplier?: string
+    status?: string
+    logs?: Array<{ label?: string; color?: string; byOffice?: string; byUser?: string; createdAt?: string }>
+  }>
   prItems?: Array<{
     itemNo?: string
     unit?: string
