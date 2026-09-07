@@ -20,7 +20,7 @@ import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import RoutingSlipModal from "../../users/components/RoutingSlipModal"
-import type { DocumentRow } from "../../users/types/documentTypes"
+import { getSubDocAmount, type DocumentRow } from "../../users/types/documentTypes"
 
 type RequestRow = {
   trackingNo: string
@@ -573,30 +573,58 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               phase,
               currentLocation: inferCurrentLocation(String(d.status || ''), String(d.office || ''), d.logs),
               supplier: (() => {
+                const parseNum = (val: any) => {
+                  const cleaned = String(val || '').replace(/[^0-9.-]/g, '').replace(/,/g, '').trim()
+                  const n = Number.parseFloat(cleaned)
+                  return Number.isFinite(n) ? n : 0
+                }
+
                 const toPeso = (raw: any) => {
-                  const cleaned = String(raw || '')
-                    .replace(/[^0-9.,-]/g, '')
-                    .trim()
-                  return cleaned ? `₱ ${cleaned}` : ''
+                  const cleaned = String(raw || '').replace(/[^0-9.,-]/g, '').trim()
+                  if (!cleaned) return ''
+                  const n = Number.parseFloat(cleaned.replace(/,/g, ''))
+                  if (!Number.isFinite(n)) return `₱ ${cleaned}`
+                  return `₱ ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 }
 
                 const subs = Array.isArray((d as any).subDocuments) ? ((d as any).subDocuments as any[]) : []
-                const main = {
-                  name: String((d as any)?.supplier || '').trim() || 'Not Updated',
-                  amount: toPeso(String((d as any)?.supplierAmount || '').trim() || (d as any)?.amount),
-                }
+                const mainSupplier = String((d as any)?.supplier || '').trim()
 
                 if (subs.length > 0) {
-                  return [
-                    main,
-                    ...subs.map((s: any) => ({
-                      name: String(s?.supplier || '').trim() || 'Not Updated',
-                      amount: toPeso(s?.amount),
-                    })),
-                  ]
+                  if (mainSupplier && mainSupplier.toLowerCase() !== 'not updated') {
+                    const parentTotal = parseNum((d as any)?.amount)
+                    let sumSubDocs = 0
+                    subs.forEach((s: any, sidx: number) => {
+                      const subAmtStr = s?.amount || getSubDocAmount(d as any, sidx)
+                      sumSubDocs += parseNum(subAmtStr)
+                    })
+                    const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
+                    const mainAmt = (d as any)?.supplierAmount || (mainRemaining > 0 ? String(mainRemaining) : (d as any)?.amount)
+
+                    return [
+                      {
+                        name: mainSupplier,
+                        amount: toPeso(mainAmt),
+                      },
+                      ...subs.map((s: any, sidx: number) => ({
+                        name: String(s?.supplier || '').trim() || 'Not Updated',
+                        amount: toPeso(s?.amount || getSubDocAmount(d as any, sidx)),
+                      })),
+                    ]
+                  }
+
+                  return subs.map((s: any, sidx: number) => ({
+                    name: String(s?.supplier || '').trim() || 'Not Updated',
+                    amount: toPeso(s?.amount || getSubDocAmount(d as any, sidx)),
+                  }))
                 }
 
-                return [main]
+                return [
+                  {
+                    name: mainSupplier || 'Not Updated',
+                    amount: toPeso(String((d as any)?.supplierAmount || '').trim() || (d as any)?.amount),
+                  },
+                ]
               })(),
               bacNotes: String(d.bacNotes || '-'),
               runningTime: formatRunningTime(d.createdAt),
