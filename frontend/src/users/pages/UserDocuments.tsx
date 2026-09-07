@@ -2090,10 +2090,10 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                           requestedByDesignation:
                             String(preview.doc.requestedByDesignation || "").trim() ||
                             String(deptHeadContext.deptHeadDesignation || "").trim(),
-                          cashAvailabilityName: String(preview.doc.cashAvailabilityName || "").trim(),
-                          cashAvailabilityDesignation: String(preview.doc.cashAvailabilityDesignation || "").trim(),
-                          approvedByName: String(preview.doc.approvedByName || "").trim(),
-                          approvedByDesignation: String(preview.doc.approvedByDesignation || "").trim(),
+                          cashAvailabilityName: String(preview.doc.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY",
+                          cashAvailabilityDesignation: String(preview.doc.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer",
+                          approvedByName: String(preview.doc.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III",
+                          approvedByDesignation: String(preview.doc.approvedByDesignation || "").trim() || "Provincial Governor",
                           status: preview.doc.status,
                           logs: preview.doc.logs,
                           hasPr: preview.doc.particulars?.some((p: any) => p.label === "PR"),
@@ -2122,10 +2122,10 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         requestedByDesignation:
                           String(preview.doc.requestedByDesignation || "").trim() ||
                           String(deptHeadContext.deptHeadDesignation || "").trim(),
-                        cashAvailabilityName: String(preview.doc.cashAvailabilityName || "").trim(),
-                        cashAvailabilityDesignation: String(preview.doc.cashAvailabilityDesignation || "").trim(),
-                        approvedByName: String(preview.doc.approvedByName || "").trim(),
-                        approvedByDesignation: String(preview.doc.approvedByDesignation || "").trim(),
+                        cashAvailabilityName: String(preview.doc.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY",
+                        cashAvailabilityDesignation: String(preview.doc.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer",
+                        approvedByName: String(preview.doc.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III",
+                        approvedByDesignation: String(preview.doc.approvedByDesignation || "").trim() || "Provincial Governor",
                         status: preview.doc.status,
                         logs: preview.doc.logs,
                         hasPr: preview.doc.particulars?.some((p: any) => p.label === "PR"),

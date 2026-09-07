@@ -308,15 +308,32 @@ router.post('/', authenticateToken, async (req, res) => {
       email: typeof email === 'string' ? email.trim() : '',
       requestedByName: typeof requestedByName === 'string' ? requestedByName.trim() : '',
       requestedByDesignation: typeof requestedByDesignation === 'string' ? requestedByDesignation.trim() : '',
-      cashAvailabilityName: typeof cashAvailabilityName === 'string' ? cashAvailabilityName.trim() : '',
+      cashAvailabilityName:
+        typeof cashAvailabilityName === 'string' && cashAvailabilityName.trim()
+          ? cashAvailabilityName.trim()
+          : 'ALICIA R. MAGPANTAY',
       cashAvailabilityDesignation:
-        typeof cashAvailabilityDesignation === 'string' ? cashAvailabilityDesignation.trim() : '',
-      approvedByName: typeof approvedByName === 'string' ? approvedByName.trim() : '',
-      approvedByDesignation: typeof approvedByDesignation === 'string' ? approvedByDesignation.trim() : '',
+        typeof cashAvailabilityDesignation === 'string' && cashAvailabilityDesignation.trim()
+          ? cashAvailabilityDesignation.trim()
+          : 'Provincial Treasurer',
+      approvedByName:
+        typeof approvedByName === 'string' && approvedByName.trim()
+          ? approvedByName.trim()
+          : 'JOSE ENRIQUE S. GARCIA III',
+      approvedByDesignation:
+        typeof approvedByDesignation === 'string' && approvedByDesignation.trim()
+          ? approvedByDesignation.trim()
+          : 'Provincial Governor',
       certifiedAName: typeof certifiedAName === 'string' ? certifiedAName.trim() : '',
       certifiedAPosition: typeof certifiedAPosition === 'string' ? certifiedAPosition.trim() : '',
-      certifiedBName: typeof certifiedBName === 'string' ? certifiedBName.trim() : '',
-      certifiedBPosition: typeof certifiedBPosition === 'string' ? certifiedBPosition.trim() : '',
+      certifiedBName:
+        typeof certifiedBName === 'string' && certifiedBName.trim()
+          ? certifiedBName.trim()
+          : 'EDUARDO D. BANZON',
+      certifiedBPosition:
+        typeof certifiedBPosition === 'string' && certifiedBPosition.trim()
+          ? certifiedBPosition.trim()
+          : 'Provincial Budget Officer',
       prItems: Array.isArray(prItems) ? prItems : [],
       purpose: String(purpose).trim(),
       notes: typeof notes === 'string' ? notes : '',

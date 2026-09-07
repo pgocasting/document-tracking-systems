@@ -292,20 +292,20 @@ export function PrTemplatePreview({
                       {model.requestedByName || ""}
                     </div>
                     <div className="border-r border-black h-7 text-center text-[12px] font-bold flex items-center justify-center whitespace-nowrap px-2">
-                      {model.cashAvailabilityName || ""}
+                      {String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}
                     </div>
                     <div className="h-7 text-center text-[12px] font-bold flex items-center justify-center whitespace-nowrap px-2">
-                      {model.approvedByName || ""}
+                      {String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}
                     </div>
 
                     <div className="border-r border-black h-6 text-center text-[12px] flex items-center justify-center px-2">
                       {model.requestedByDesignation || ""}
                     </div>
                     <div className="border-r border-black h-6 text-center text-[12px] flex items-center justify-center px-2">
-                      {model.cashAvailabilityDesignation || ""}
+                      {String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}
                     </div>
                     <div className="h-6 text-center text-[12px] flex items-center justify-center px-2">
-                      {model.approvedByDesignation || ""}
+                      {String(model.approvedByDesignation || "").trim() || "Provincial Governor"}
                     </div>
                   </div>
                 </div>

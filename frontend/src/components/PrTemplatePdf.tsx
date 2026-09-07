@@ -420,13 +420,13 @@ export default function PrTemplatePdf({ model }: { model: PrTemplateModel }) {
                   </View>
 
                   <View style={styles.signCol}>
-                    <Text style={styles.signName}>{model.cashAvailabilityName || ""}</Text>
-                    <Text style={styles.signDesignation}>{model.cashAvailabilityDesignation || ""}</Text>
+                    <Text style={styles.signName}>{String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}</Text>
+                    <Text style={styles.signDesignation}>{String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}</Text>
                   </View>
 
                   <View style={styles.signColLast}>
-                    <Text style={styles.signName}>{model.approvedByName || ""}</Text>
-                    <Text style={styles.signDesignation}>{model.approvedByDesignation || ""}</Text>
+                    <Text style={styles.signName}>{String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}</Text>
+                    <Text style={styles.signDesignation}>{String(model.approvedByDesignation || "").trim() || "Provincial Governor"}</Text>
                   </View>
                 </View>
               </View>

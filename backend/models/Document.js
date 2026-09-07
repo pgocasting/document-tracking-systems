@@ -79,22 +79,22 @@ const documentSchema = new mongoose.Schema({
   },
   cashAvailabilityName: {
     type: String,
-    default: '',
+    default: 'ALICIA R. MAGPANTAY',
     trim: true,
   },
   cashAvailabilityDesignation: {
     type: String,
-    default: '',
+    default: 'Provincial Treasurer',
     trim: true,
   },
   approvedByName: {
     type: String,
-    default: '',
+    default: 'JOSE ENRIQUE S. GARCIA III',
     trim: true,
   },
   approvedByDesignation: {
     type: String,
-    default: '',
+    default: 'Provincial Governor',
     trim: true,
   },
   certifiedAName: {
@@ -109,12 +109,12 @@ const documentSchema = new mongoose.Schema({
   },
   certifiedBName: {
     type: String,
-    default: '',
+    default: 'EDUARDO D. BANZON',
     trim: true,
   },
   certifiedBPosition: {
     type: String,
-    default: '',
+    default: 'Provincial Budget Officer',
     trim: true,
   },
   preparedByName: {

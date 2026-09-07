@@ -2327,10 +2327,10 @@ export default function ApprovalsPage({
                           officeHeads[preview.row.doc.office?.toUpperCase() || '']?.designation ||
                           preview.row.doc.requestedByDesignation ||
                           'Department Head',
-                        cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || '').trim(),
-                        cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || '').trim(),
-                        approvedByName: String((preview.row.doc as any)?.approvedByName || '').trim(),
-                        approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || '').trim(),
+                        cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || '').trim() || 'ALICIA R. MAGPANTAY',
+                        cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || '').trim() || 'Provincial Treasurer',
+                        approvedByName: String((preview.row.doc as any)?.approvedByName || '').trim() || 'JOSE ENRIQUE S. GARCIA III',
+                        approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || '').trim() || 'Provincial Governor',
                         status: preview.row.doc.status,
                         logs: preview.row.doc.logs,
                         hasPr: preview.row.doc.prEnabled,
@@ -2352,24 +2352,38 @@ export default function ApprovalsPage({
                           address: 'N/A',
                           trackingNo: preview.row.doc.trackingNo,
                           fund: preview.row.doc.fund || '',
-                          obrNo: String((preview.row.doc as any)?.obrNo || (preview.row.doc as any)?.referenceNos?.obrNo || '').trim(),
-                          responsibilityCenter: preview.row.doc.responsibilityCenter || '',
-                          particulars: preview.row.doc.purpose || '',
+                          obrNo:
+                            String((preview.row.doc as any)?.obrNo || '').trim() ||
+                            (preview.row.doc.fund === 'SEF' ? '200-26-' : '100-26-'),
+                          responsibilityCenter: String((preview.row.doc as any)?.responsibilityCenter || '').trim(),
+                          particulars:
+                            String((preview.row.doc as any)?.obrParticulars || '').trim() ||
+                            preview.row.doc.purpose ||
+                            '',
                           notes: preview.row.doc.notes || '',
-                          fpp: preview.row.doc.fpp || '',
-                          accountCode: preview.row.doc.accountCode || '',
+                          fpp: String((preview.row.doc as any)?.fpp || '').trim(),
+                          accountCode: String((preview.row.doc as any)?.accountCode || '').trim(),
                           amount: preview.row.doc.amount || '',
-                          preparedByName: preview.row.doc.createdBy || '',
+                          preparedByName:
+                            String((preview.row.doc as any)?.preparedByName || '').trim() ||
+                            preview.row.doc.createdBy ||
+                            '',
                           certifiedAName:
+                            String((preview.row.doc as any)?.certifiedAName || '').trim() ||
                             officeHeads[preview.row.doc.office?.toUpperCase() || '']?.head ||
-                            preview.row.doc.requestedByName ||
+                            String((preview.row.doc as any)?.requestedByName || '').trim() ||
                             'ENGR. FERNANDO E. TANCIONGCO',
                           certifiedAPosition:
+                            String((preview.row.doc as any)?.certifiedAPosition || '').trim() ||
                             officeHeads[preview.row.doc.office?.toUpperCase() || '']?.designation ||
-                            preview.row.doc.requestedByDesignation ||
+                            String((preview.row.doc as any)?.requestedByDesignation || '').trim() ||
                             'OIC-PGSO',
-                          certifiedBName: 'EDUARDO D. BANZON',
-                          certifiedBPosition: 'Provincial Budget Officer',
+                          certifiedBName:
+                            String((preview.row.doc as any)?.certifiedBName || '').trim() ||
+                            'EDUARDO D. BANZON',
+                          certifiedBPosition:
+                            String((preview.row.doc as any)?.certifiedBPosition || '').trim() ||
+                            'Provincial Budget Officer',
                           status: preview.row.doc.status,
                           logs: preview.row.doc.logs,
                           hasPr: preview.row.doc.prEnabled,
@@ -2400,24 +2414,38 @@ export default function ApprovalsPage({
                             address: 'N/A',
                             trackingNo: preview.row.doc.trackingNo,
                             fund: preview.row.doc.fund || '',
-                            obrNo: String((preview.row.doc as any)?.obrNo || (preview.row.doc as any)?.referenceNos?.obrNo || '').trim(),
-                            responsibilityCenter: preview.row.doc.responsibilityCenter || '',
-                            particulars: preview.row.doc.purpose || '',
+                            obrNo:
+                              String((preview.row.doc as any)?.obrNo || '').trim() ||
+                              (preview.row.doc.fund === 'SEF' ? '200-26-' : '100-26-'),
+                            responsibilityCenter: String((preview.row.doc as any)?.responsibilityCenter || '').trim(),
+                            particulars:
+                              String((preview.row.doc as any)?.obrParticulars || '').trim() ||
+                              preview.row.doc.purpose ||
+                              '',
                             notes: preview.row.doc.notes || '',
-                            fpp: preview.row.doc.fpp || '',
-                            accountCode: preview.row.doc.accountCode || '',
+                            fpp: String((preview.row.doc as any)?.fpp || '').trim(),
+                            accountCode: String((preview.row.doc as any)?.accountCode || '').trim(),
                             amount: preview.row.doc.amount || '',
-                            preparedByName: preview.row.doc.createdBy || '',
+                            preparedByName:
+                              String((preview.row.doc as any)?.preparedByName || '').trim() ||
+                              preview.row.doc.createdBy ||
+                              '',
                             certifiedAName:
+                              String((preview.row.doc as any)?.certifiedAName || '').trim() ||
                               officeHeads[preview.row.doc.office?.toUpperCase() || '']?.head ||
-                              preview.row.doc.requestedByName ||
+                              String((preview.row.doc as any)?.requestedByName || '').trim() ||
                               'ENGR. FERNANDO E. TANCIONGCO',
                             certifiedAPosition:
+                              String((preview.row.doc as any)?.certifiedAPosition || '').trim() ||
                               officeHeads[preview.row.doc.office?.toUpperCase() || '']?.designation ||
-                              preview.row.doc.requestedByDesignation ||
+                              String((preview.row.doc as any)?.requestedByDesignation || '').trim() ||
                               'OIC-PGSO',
-                            certifiedBName: 'EDUARDO D. BANZON',
-                            certifiedBPosition: 'Provincial Budget Officer',
+                            certifiedBName:
+                              String((preview.row.doc as any)?.certifiedBName || '').trim() ||
+                              'EDUARDO D. BANZON',
+                            certifiedBPosition:
+                              String((preview.row.doc as any)?.certifiedBPosition || '').trim() ||
+                              'Provincial Budget Officer',
                             status: preview.row.doc.status,
                             logs: preview.row.doc.logs,
                             hasPr: preview.row.doc.prEnabled,
@@ -2444,10 +2472,10 @@ export default function ApprovalsPage({
                       purpose: preview.row.doc.purpose || '',
                       requestedByName: preview.row.doc.requestedByName || 'DEPARTMENT HEAD',
                       requestedByDesignation: preview.row.doc.requestedByDesignation || 'Department Head',
-                      cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || '').trim(),
-                      cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || '').trim(),
-                      approvedByName: String((preview.row.doc as any)?.approvedByName || '').trim(),
-                      approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || '').trim(),
+                      cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || '').trim() || 'ALICIA R. MAGPANTAY',
+                      cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || '').trim() || 'Provincial Treasurer',
+                      approvedByName: String((preview.row.doc as any)?.approvedByName || '').trim() || 'JOSE ENRIQUE S. GARCIA III',
+                      approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || '').trim() || 'Provincial Governor',
                       status: preview.row.doc.status,
                       logs: preview.row.doc.logs,
                       hasPr: preview.row.doc.prEnabled,
