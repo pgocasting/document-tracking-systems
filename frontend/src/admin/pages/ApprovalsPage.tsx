@@ -1606,20 +1606,25 @@ export default function ApprovalsPage({
       {shouldShowHeader ? (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
-            <div className="text-sm text-slate-600">List of documents for review</div>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                The Bunker &bull; Bataan Capitol DTS
+              </span>
+            </div>
+            <div className="mt-1 text-lg font-bold tracking-tight text-slate-900">{title}</div>
+            <div className="text-xs text-slate-500">Official document approvals & workflow queue</div>
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-600" htmlFor="entries">
+              <label className="text-xs font-medium text-slate-500" htmlFor="entries">
                 Show
               </label>
               <select
                 id="entries"
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+                className="h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs font-semibold text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {[10, 25, 50, 100].map((n) => (
                   <option key={n} value={n}>
@@ -1627,19 +1632,19 @@ export default function ApprovalsPage({
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-600">entries</span>
+              <span className="text-xs font-medium text-slate-500">entries</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-600" htmlFor="search">
+              <label className="text-xs font-medium text-slate-500" htmlFor="search">
                 Search:
               </label>
               <input
                 id="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-                placeholder="tracking, requestor, purpose..."
+                className="h-9 w-full min-w-56 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 placeholder:text-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                placeholder="Tracking, requestor, purpose..."
               />
             </div>
           </div>
@@ -1647,14 +1652,14 @@ export default function ApprovalsPage({
       ) : (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600" htmlFor="entries">
+            <label className="text-xs font-medium text-slate-500" htmlFor="entries">
               Show
             </label>
             <select
               id="entries"
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+              className="h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs font-semibold text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               {[10, 25, 50, 100].map((n) => (
                 <option key={n} value={n}>
@@ -1662,25 +1667,25 @@ export default function ApprovalsPage({
                 </option>
               ))}
             </select>
-            <span className="text-sm text-slate-600">entries</span>
+            <span className="text-xs font-medium text-slate-500">entries</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600" htmlFor="search">
+            <label className="text-xs font-medium text-slate-500" htmlFor="search">
               Search:
             </label>
             <input
               id="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-              placeholder="tracking, requestor, purpose..."
+              className="h-9 w-full min-w-56 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 placeholder:text-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              placeholder="Tracking, requestor, purpose..."
             />
           </div>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <div className="overflow-auto">
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}

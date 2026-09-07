@@ -252,12 +252,17 @@ export default function SettingsPage() {
   return (
     <div className="w-full space-y-6">
       <header className="flex flex-col gap-1">
-        <div className="text-lg font-semibold tracking-tight text-slate-900">System Settings</div>
-        <div className="text-sm text-muted-foreground">Update system settings</div>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+            The Bunker &bull; Bataan Capitol DTS
+          </span>
+        </div>
+        <div className="text-xl font-bold tracking-tight text-slate-900">System Settings</div>
+        <div className="text-xs text-slate-500">Configure default working hours, special calendar dates, templates, and account security</div>
       </header>
 
-      <div className="rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-        <div className="border-b border-slate-200 px-4 pt-4 lg:px-6">
+      <div className="rounded-2xl border border-slate-200/80 bg-white text-slate-900 shadow-sm">
+        <div className="border-b border-slate-100 bg-slate-50/50 px-4 pt-4 lg:px-6">
           <div className="flex flex-wrap gap-2">
             {tabs.map((t) => {
               const isActive = tab === t.key
@@ -266,8 +271,8 @@ export default function SettingsPage() {
                   key={t.key}
                   type="button"
                   onClick={() => setTab(t.key)}
-                  className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none ${isActive
-                    ? "bg-slate-900 text-white shadow-sm"
+                  className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-lg px-3.5 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${isActive
+                    ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                 >
@@ -276,61 +281,61 @@ export default function SettingsPage() {
               )
             })}
           </div>
-          <div className="h-4" />
+          <div className="h-3" />
         </div>
 
         <div className="p-4 lg:p-6">
           {tab === "pr-and-obr" ? (
             <div className="space-y-4">
               <div>
-                <div className="text-base font-semibold tracking-tight">PR and OBR Template</div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  Manage the templates used for PR and OBR forms.
+                <div className="text-base font-bold tracking-tight text-slate-900">PR and OBR Template</div>
+                <div className="mt-0.5 text-xs text-slate-500">
+                  Manage the official print templates used for PR and OBR forms across provincial departments.
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
-                    <thead className="bg-slate-50 [&_tr]:border-b">
-                      <tr className="border-b border-slate-200">
-                        <th className="h-10 px-4 text-left align-middle text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-slate-600">
                           Templates
                         </th>
-                        <th className="h-10 px-4 text-left align-middle text-xs font-semibold uppercase tracking-wide text-slate-600">
+                        <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-slate-600">
                           Action
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="[&_tr:last-child]:border-0">
-                      <tr className="border-b border-slate-200 transition-colors hover:bg-slate-50">
-                        <td className="px-4 py-3 align-middle font-medium">PR</td>
-                        <td className="px-4 py-3 align-middle">
+                    <tbody className="divide-y divide-slate-100">
+                      <tr className="transition-colors hover:bg-slate-50/80">
+                        <td className="px-4 py-3.5 align-middle font-semibold text-slate-800">PR (Purchase Request)</td>
+                        <td className="px-4 py-3.5 align-middle">
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
                               onClick={() => setActiveTemplate("PR")}
-                              className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                               title="View / Edit PR Template"
                             >
-                              <Eye className="mr-2 size-4" />
-                              View
+                              <Eye className="size-3.5" />
+                              View / Edit
                             </button>
                           </div>
                         </td>
                       </tr>
-                      <tr className="border-b border-slate-200 transition-colors hover:bg-slate-50">
-                        <td className="px-4 py-3 align-middle font-medium">OBR</td>
-                        <td className="px-4 py-3 align-middle">
+                      <tr className="transition-colors hover:bg-slate-50/80">
+                        <td className="px-4 py-3.5 align-middle font-semibold text-slate-800">OBR (Obligation Request)</td>
+                        <td className="px-4 py-3.5 align-middle">
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
                               onClick={() => setActiveTemplate("OBR")}
-                              className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                               title="View / Edit OBR Template"
                             >
-                              <Eye className="mr-2 size-4" />
-                              View
+                              <Eye className="size-3.5" />
+                              View / Edit
                             </button>
                           </div>
                         </td>
@@ -344,18 +349,18 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <div className="text-base font-semibold tracking-tight">Default Schedules</div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Set default office working hours used by the system.
+                  <div className="text-base font-bold tracking-tight text-slate-900">Default Working Schedules</div>
+                  <div className="mt-0.5 text-xs text-slate-500">
+                    Set default office working hours used for tracking turn-around time (TAT).
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={saveSchedule}
                   disabled={scheduleSaving}
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none disabled:opacity-60"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none disabled:opacity-60"
                 >
-                  {scheduleSaving ? 'Saving…' : 'Save schedules'}
+                  {scheduleSaving ? 'Saving…' : 'Save Schedules'}
                 </button>
               </div>
 
@@ -375,13 +380,20 @@ export default function SettingsPage() {
                   return (
                     <div
                       key={d.key}
-                      className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                      className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-slate-300"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-semibold">{d.label}</div>
-                          <div className="mt-1 text-xs text-muted-foreground">
-                            {day.enabled ? "Working day" : "Closed"}
+                          <div className="truncate text-sm font-bold text-slate-900">{d.label}</div>
+                          <div className="mt-0.5 text-xs text-slate-500">
+                            {day.enabled ? (
+                              <span className="inline-flex items-center text-emerald-600 font-medium">
+                                <span className="mr-1.5 size-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                                Working Day
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">Closed</span>
+                            )}
                           </div>
                         </div>
                         <label
@@ -408,7 +420,7 @@ export default function SettingsPage() {
                           />
                           <span
                             className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors ${day.enabled
-                              ? "border-slate-900 bg-slate-900"
+                              ? "border-blue-600 bg-blue-600"
                               : "border-slate-200 bg-slate-200"
                               }`}
                           >
@@ -421,7 +433,7 @@ export default function SettingsPage() {
                       </div>
 
                       <div className="mt-4 grid grid-cols-2 gap-3">
-                        <div className="grid gap-2">
+                        <div className="grid gap-1.5">
                           <label
                             htmlFor={`${d.key}-from`}
                             className="text-xs font-medium text-slate-600"
@@ -431,8 +443,7 @@ export default function SettingsPage() {
                           <input
                             id={`${d.key}-from`}
                             type="time"
-                            className={`h-9 rounded-md border bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none ${day.enabled ? "border-slate-200" : "border-slate-200 opacity-50"
-                              }`}
+                            className={`h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${!day.enabled ? "opacity-40 cursor-not-allowed" : ""}`}
                             value={day.from}
                             disabled={!day.enabled}
                             onChange={(e) =>
@@ -444,7 +455,7 @@ export default function SettingsPage() {
                           />
                         </div>
 
-                        <div className="grid gap-2">
+                        <div className="grid gap-1.5">
                           <label
                             htmlFor={`${d.key}-to`}
                             className="text-xs font-medium text-slate-600"
@@ -454,8 +465,7 @@ export default function SettingsPage() {
                           <input
                             id={`${d.key}-to`}
                             type="time"
-                            className={`h-9 rounded-md border bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none ${day.enabled ? "border-slate-200" : "border-slate-200 opacity-50"
-                              }`}
+                            className={`h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${!day.enabled ? "opacity-40 cursor-not-allowed" : ""}`}
                             value={day.to}
                             disabled={!day.enabled}
                             onChange={(e) =>
@@ -467,75 +477,71 @@ export default function SettingsPage() {
                           />
                         </div>
                       </div>
-
-                      <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
-                        {day.enabled && day.from && day.to
-                          ? `Active: ${day.from} - ${day.to}`
-                          : "No working hours set"}
-                      </div>
                     </div>
                   )
                 })}
               </div>
             </div>
           ) : tab === "special-dates" ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <div className="text-sm font-semibold">Additional Dates</div>
-                  <div className="mt-1 text-sm text-muted-foreground">Manage holidays and special processing dates.</div>
+                  <div className="text-base font-bold tracking-tight text-slate-900">Special Dates & Holidays</div>
+                  <div className="mt-0.5 text-xs text-slate-500">
+                    Manage non-working holidays and recurrent annual events.
+                  </div>
                 </div>
+
                 <button
                   type="button"
                   onClick={() => {
-                    setSpecialDateDraftError(null)
                     setSpecialDateDraft({
                       date: "",
-                      from: "",
-                      to: "",
+                      from: "08:00",
+                      to: "17:00",
                       description: "",
                       section: "recurrent",
                       noWorkSchedule: false,
                     })
                     setIsAddSpecialDateOpen(true)
                   }}
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                 >
-                  Add New Date
+                  + Add New Date
                 </button>
               </div>
 
               <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                <div className="overflow-hidden rounded-xl border border-slate-200">
-                  <div className="bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Recurrent Events</div>
+                <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+                  <div className="bg-slate-900 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Recurrent Events</div>
                   <div className="overflow-auto">
                     <table className="w-full border-collapse text-sm">
-                      <thead className="bg-slate-50 text-left text-xs text-slate-600">
-                        <tr className="border-b border-slate-200">
-                          <th className="px-3 py-2 font-semibold">Date</th>
-                          <th className="px-3 py-2 font-semibold">From</th>
-                          <th className="px-3 py-2 font-semibold">To</th>
-                          <th className="px-3 py-2 font-semibold">Description</th>
-                          <th className="px-3 py-2 font-semibold">Action</th>
+                      <thead className="bg-slate-50 text-left text-[11px] font-bold uppercase tracking-wider text-slate-600 border-b border-slate-200">
+                        <tr>
+                          <th className="px-3.5 py-2.5">Date</th>
+                          <th className="px-3.5 py-2.5">From</th>
+                          <th className="px-3.5 py-2.5">To</th>
+                          <th className="px-3.5 py-2.5">Description</th>
+                          <th className="px-3.5 py-2.5">Action</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-slate-100">
                         {specialDates.filter((d) => d.section === "recurrent").length === 0 ? (
-                          <tr className="border-b border-slate-200">
-                            <td className="px-3 py-3 text-sm text-slate-600" colSpan={5}>
-                              No entries
+                          <tr>
+                            <td className="px-4 py-4 text-center text-xs text-slate-400" colSpan={5}>
+                              No recurrent events recorded
                             </td>
                           </tr>
                         ) : (
                           specialDates
                             .filter((d) => d.section === "recurrent")
                             .map((d) => (
-                              <tr key={d.id} className="border-b border-slate-200">
-                                <td className="px-3 py-2">{d.date}</td>
-                                <td className="px-3 py-2">{d.from ?? "n/a"}</td>
-                                <td className="px-3 py-2">{d.to ?? "n/a"}</td>
-                                <td className="px-3 py-2">{d.description || ""}</td>
-                                <td className="px-3 py-2">
+                              <tr key={d.id} className="hover:bg-slate-50/80 transition-colors">
+                                <td className="px-3.5 py-2.5 text-xs font-medium text-slate-900">{d.date}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-600">{d.from ?? "n/a"}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-600">{d.to ?? "n/a"}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-700">{d.description || ""}</td>
+                                <td className="px-3.5 py-2.5">
                                   <button
                                     type="button"
                                     onClick={() => {
@@ -543,7 +549,7 @@ export default function SettingsPage() {
                                       setSpecialDates(next)
                                       saveSpecialDates(next)
                                     }}
-                                    className="inline-flex h-8 items-center justify-center rounded-md bg-red-600 px-3 text-xs font-medium text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus-visible:outline-none"
+                                    className="inline-flex h-7 items-center justify-center rounded-md bg-rose-600 px-2.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-rose-700 focus:outline-none focus-visible:outline-none"
                                   >
                                     Delete
                                   </button>
@@ -556,36 +562,36 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-slate-200">
-                  <div className="bg-emerald-700 px-4 py-2 text-sm font-semibold text-white">Non-recurrent Events</div>
+                <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+                  <div className="bg-emerald-700 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Non-recurrent Events</div>
                   <div className="overflow-auto">
                     <table className="w-full border-collapse text-sm">
-                      <thead className="bg-slate-50 text-left text-xs text-slate-600">
-                        <tr className="border-b border-slate-200">
-                          <th className="px-3 py-2 font-semibold">Date</th>
-                          <th className="px-3 py-2 font-semibold">From</th>
-                          <th className="px-3 py-2 font-semibold">To</th>
-                          <th className="px-3 py-2 font-semibold">Description</th>
-                          <th className="px-3 py-2 font-semibold">Action</th>
+                      <thead className="bg-slate-50 text-left text-[11px] font-bold uppercase tracking-wider text-slate-600 border-b border-slate-200">
+                        <tr>
+                          <th className="px-3.5 py-2.5">Date</th>
+                          <th className="px-3.5 py-2.5">From</th>
+                          <th className="px-3.5 py-2.5">To</th>
+                          <th className="px-3.5 py-2.5">Description</th>
+                          <th className="px-3.5 py-2.5">Action</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-slate-100">
                         {specialDates.filter((d) => d.section === "non-recurrent").length === 0 ? (
-                          <tr className="border-b border-slate-200">
-                            <td className="px-3 py-3 text-sm text-slate-600" colSpan={5}>
-                              No entries
+                          <tr>
+                            <td className="px-4 py-4 text-center text-xs text-slate-400" colSpan={5}>
+                              No non-recurrent events recorded
                             </td>
                           </tr>
                         ) : (
                           specialDates
                             .filter((d) => d.section === "non-recurrent")
                             .map((d) => (
-                              <tr key={d.id} className="border-b border-slate-200">
-                                <td className="px-3 py-2">{d.date}</td>
-                                <td className="px-3 py-2">{d.from ?? "n/a"}</td>
-                                <td className="px-3 py-2">{d.to ?? "n/a"}</td>
-                                <td className="px-3 py-2">{d.description || ""}</td>
-                                <td className="px-3 py-2">
+                              <tr key={d.id} className="hover:bg-slate-50/80 transition-colors">
+                                <td className="px-3.5 py-2.5 text-xs font-medium text-slate-900">{d.date}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-600">{d.from ?? "n/a"}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-600">{d.to ?? "n/a"}</td>
+                                <td className="px-3.5 py-2.5 text-xs text-slate-700">{d.description || ""}</td>
+                                <td className="px-3.5 py-2.5">
                                   <button
                                     type="button"
                                     onClick={() => {
@@ -593,7 +599,7 @@ export default function SettingsPage() {
                                       setSpecialDates(next)
                                       saveSpecialDates(next)
                                     }}
-                                    className="inline-flex h-8 items-center justify-center rounded-md bg-red-600 px-3 text-xs font-medium text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus-visible:outline-none"
+                                    className="inline-flex h-7 items-center justify-center rounded-md bg-rose-600 px-2.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-rose-700 focus:outline-none focus-visible:outline-none"
                                   >
                                     Delete
                                   </button>
@@ -608,61 +614,73 @@ export default function SettingsPage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="text-sm font-semibold">Change Password</div>
-                <div className="mt-1 text-sm text-muted-foreground">Update your account password.</div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div className="text-sm font-bold text-slate-900">Change Password</div>
+                <div className="mt-0.5 text-xs text-slate-500">Update your administrator account password.</div>
 
-                <div className="mt-4 grid gap-2">
-                  <label htmlFor="current-password" className="text-xs font-medium text-slate-600">
-                    Current password
-                  </label>
-                  <input
-                    id="current-password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
-                  />
-                  <label htmlFor="new-password" className="mt-2 text-xs font-medium text-slate-600">
-                    New password
-                  </label>
-                  <input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
-                  />
-                  <label htmlFor="confirm-new-password" className="mt-2 text-xs font-medium text-slate-600">
-                    Confirm new password
-                  </label>
-                  <input
-                    id="confirm-new-password"
-                    type="password"
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
-                  />
+                <div className="mt-4 grid gap-3">
+                  <div>
+                    <label htmlFor="current-password" className="text-xs font-medium text-slate-600">
+                      Current password
+                    </label>
+                    <input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="mt-1 h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="new-password" className="text-xs font-medium text-slate-600">
+                      New password
+                    </label>
+                    <input
+                      id="new-password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-1 h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="confirm-new-password" className="text-xs font-medium text-slate-600">
+                      Confirm new password
+                    </label>
+                    <input
+                      id="confirm-new-password"
+                      type="password"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      className="mt-1 h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    />
+                  </div>
 
-                  <div className="mt-3 flex justify-end">
+                  <div className="mt-2 flex justify-end">
                     <button
                       type="button"
                       disabled={passwordSaving}
                       onClick={() => void updatePassword()}
-                      className="inline-flex h-9 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none disabled:opacity-60"
+                      className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none disabled:opacity-60"
                     >
-                      {passwordSaving ? "Updating..." : "Update password"}
+                      {passwordSaving ? "Updating..." : "Update Password"}
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="text-sm font-semibold">Security</div>
-                <div className="mt-1 text-sm text-muted-foreground">Recommended security actions.</div>
-                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                  Password should be at least 8 characters.
+              <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div className="text-sm font-bold text-slate-900">Security Guidance</div>
+                <div className="mt-0.5 text-xs text-slate-500">Recommended security practices for Capitol admin accounts.</div>
+                <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-900 leading-relaxed space-y-2">
+                  <p className="font-semibold text-blue-950">Password Requirements:</p>
+                  <ul className="list-disc pl-4 space-y-1 text-slate-700">
+                    <li>Minimum length: 8 characters</li>
+                    <li>Include both uppercase and lowercase letters</li>
+                    <li>Avoid using predictable patterns or personal names</li>
+                    <li>Do not share administrator credentials with unauthorized staff</li>
+                  </ul>
                 </div>
               </div>
             </div>

@@ -365,33 +365,38 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-base font-semibold tracking-tight text-slate-900">Approvals History</div>
-          <div className="text-sm text-slate-600">Documents reviewed by your office</div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+              The Bunker &bull; Bataan Capitol DTS
+            </span>
+          </div>
+          <div className="mt-1 text-lg font-bold tracking-tight text-slate-900">Approvals & Review History</div>
+          <div className="text-xs text-slate-500">Official log of documents and purchase requests reviewed by your office</div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600" htmlFor="pr-entries">Show</label>
+            <label className="text-xs font-medium text-slate-500" htmlFor="pr-entries">Show</label>
             <select
               id="pr-entries"
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+              className="h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs font-semibold text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               {[10, 25, 50, 100].map((n) => (
                 <option key={n} value={n}>{n}</option>
               ))}
             </select>
-            <span className="text-sm text-slate-600">entries</span>
+            <span className="text-xs font-medium text-slate-500">entries</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600" htmlFor="pr-search">Search:</label>
+            <label className="text-xs font-medium text-slate-500" htmlFor="pr-search">Search:</label>
             <input
               id="pr-search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-full min-w-52 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+              className="h-9 w-full min-w-52 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 placeholder:text-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               placeholder="Tracking, requestor, purpose..."
             />
           </div>
@@ -400,11 +405,11 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
 
       {/* Error */}
       {error ? (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{error}</div>
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 font-medium">{error}</div>
       ) : null}
 
       {/* Table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <div className="overflow-auto">
           {loading ? (
             <div className="p-8 text-center text-sm text-slate-500">Loading...</div>

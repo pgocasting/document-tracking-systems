@@ -631,39 +631,44 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
     <div className="w-full space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
-          <div className="text-sm text-slate-600">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+              The Bunker &bull; Bataan Capitol DTS
+            </span>
+          </div>
+          <div className="mt-1 text-lg font-bold tracking-tight text-slate-900">{title}</div>
+          <div className="text-xs text-slate-500">
             {tab === "offices"
-              ? "Office List"
+              ? "Provincial operating and viewing office directory"
               : tab === "procurement-users"
-                ? "Procurement Users"
+                ? "Procurement office workflow accounts"
                 : tab === "end-users"
-                  ? "End Users"
+                  ? "Department end-user accounts and privileges"
                   : tab === "departments"
-                    ? "Department List"
-                    : "Source of Fund"}
+                    ? "Provincial department list & designations"
+                    : "Source of fund categories and allocation codes"}
           </div>
         </div>
 
         {tab === "offices" ? (
           <button
             type="button"
-            className="inline-flex h-8 items-center justify-center rounded-md bg-sky-600 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
             onClick={() => setIsNewOfficeOpen(true)}
           >
-            New Office
+            + New Office
           </button>
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
-        <div className="flex flex-wrap gap-2">
+      <div className="rounded-xl border border-slate-200/80 bg-white p-1.5 shadow-sm">
+        <div className="flex flex-wrap gap-1.5">
           <button
             type="button"
             onClick={() => setTab("offices")}
-            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "offices"
-                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
-                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+            className={`inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "offices"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
           >
             Offices
@@ -671,9 +676,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
           <button
             type="button"
             onClick={() => setTab("procurement-users")}
-            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "procurement-users"
-                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
-                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+            className={`inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "procurement-users"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
           >
             Procurement Users
@@ -681,9 +686,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
           <button
             type="button"
             onClick={() => setTab("end-users")}
-            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "end-users"
-                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
-                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+            className={`inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "end-users"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
           >
             End Users
@@ -691,9 +696,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
           <button
             type="button"
             onClick={() => setTab("departments")}
-            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "departments"
-                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
-                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+            className={`inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "departments"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
           >
             Department List
@@ -701,9 +706,9 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
           <button
             type="button"
             onClick={() => setTab("source-of-funds")}
-            className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "source-of-funds"
-                ? "border-slate-200 bg-white text-slate-900 shadow-sm"
-                : "border-transparent bg-transparent text-slate-600 hover:bg-white hover:text-slate-900"
+            className={`inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${tab === "source-of-funds"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
           >
             Source of Fund
@@ -713,17 +718,17 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
 
       {tab === "offices" ? (
         <>
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between bg-slate-50/50">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-600" htmlFor="entries">
+              <label className="text-xs font-medium text-slate-500" htmlFor="entries">
                 Show
               </label>
               <select
                 id="entries"
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+                className="h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs font-semibold text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {[10, 25, 50, 100].map((n) => (
                   <option key={n} value={n}>
@@ -731,19 +736,19 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-600">entries</span>
+              <span className="text-xs font-medium text-slate-500">entries</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-600" htmlFor="search">
+              <label className="text-xs font-medium text-slate-500" htmlFor="search">
                 Search:
               </label>
               <input
                 id="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-                placeholder="id, name, head..."
+                className="h-9 w-full min-w-56 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 placeholder:text-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                placeholder="ID, name, head..."
               />
             </div>
           </div>

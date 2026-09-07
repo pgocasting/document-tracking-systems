@@ -195,45 +195,51 @@ export default function UserProfile({ user }: UserProfileProps) {
 
   function tabClass(isActive: boolean) {
     return isActive
-      ? "inline-flex h-9 items-center gap-2 rounded-md bg-slate-900 px-3 text-sm font-medium text-white shadow-sm"
-      : "inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+      ? "inline-flex h-8 items-center gap-2 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition"
+      : "inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200/80 bg-slate-50/50 px-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition"
   }
 
   return (
-    <div className="w-full space-y-6 px-4 py-6 lg:px-8">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">My Profile</h1>
-        <p className="text-sm text-slate-600">Manage your account information and preferences</p>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+            The Bunker &bull; Bataan Capitol DTS
+          </span>
+        </div>
+        <h1 className="mt-1 text-xl font-bold tracking-tight text-slate-900">User Profile & Account</h1>
+        <p className="text-xs text-slate-500">Manage your office details, signatory information, and account security</p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-start justify-between gap-4">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <div className="grid size-10 place-items-center rounded-xl bg-slate-100">
-                <User className="size-5 text-slate-600" />
+            <div className="flex items-center gap-3">
+              <div className="grid size-11 place-items-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
+                <User className="size-5" />
               </div>
               <div className="min-w-0">
-                <div className="truncate text-sm font-semibold text-slate-900">
+                <div className="truncate text-base font-bold text-slate-900">
                   {createdByName}
                 </div>
-                <div className="text-xs text-slate-500">{user?.role === "staff" ? "Staff User" : "Viewer"}</div>
+                <div className="text-xs font-medium text-slate-500">
+                  {user?.role === "staff" ? "Staff User" : user?.role === "procurement" ? "Procurement Officer" : "Office Representative"}
+                  {currentOfficeName ? ` &bull; ${currentOfficeName}` : ""}
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-3">
-              <div className="flex items-center gap-2">
-                <Mail className="size-4 text-slate-400" />
-                <span className="truncate">{officeEmail}</span>
-              </div>
+            <div className="mt-3 flex items-center gap-2 text-xs text-slate-600">
+              <Mail className="size-3.5 text-slate-400" />
+              <span className="font-medium">{officeEmail || "No office email specified"}</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button type="button" className={tabClass(tab === "office_email")} onClick={() => setTab("office_email")}
               title="Office Email">
-              <Mail className="size-4" />
+              <Mail className="size-3.5" />
               Office Email
             </button>
             <button
@@ -242,7 +248,7 @@ export default function UserProfile({ user }: UserProfileProps) {
               onClick={() => setTab("department_head")}
               title="Department Head"
             >
-              <Building2 className="size-4" />
+              <Building2 className="size-3.5" />
               Department Head
             </button>
             <button
@@ -251,7 +257,7 @@ export default function UserProfile({ user }: UserProfileProps) {
               onClick={() => setTab("change_password")}
               title="Change Password"
             >
-              <Key className="size-4" />
+              <Key className="size-3.5" />
               Change Password
             </button>
           </div>
@@ -261,7 +267,7 @@ export default function UserProfile({ user }: UserProfileProps) {
       <div className="grid gap-6 lg:grid-cols-3">
         {status ? (
           <div
-            className={`rounded-xl border px-4 py-3 text-sm lg:col-span-3 ${
+            className={`rounded-xl border px-4 py-3 text-xs font-medium lg:col-span-3 ${
               status.type === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                 : "border-rose-200 bg-rose-50 text-rose-800"
@@ -272,12 +278,14 @@ export default function UserProfile({ user }: UserProfileProps) {
         ) : null}
 
         {tab === "change_password" ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
-            <div className="mb-4 flex items-center gap-2">
-              <Key className="size-5 text-slate-500" />
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-3">
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="grid size-9 place-items-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <Key className="size-4" />
+              </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Change Password Form</div>
-                <div className="text-xs text-slate-500">Update your password to keep your account secure.</div>
+                <div className="text-sm font-bold text-slate-900">Change Password</div>
+                <div className="text-xs text-slate-500">Update your account password to maintain system security.</div>
               </div>
             </div>
             <form
@@ -294,7 +302,7 @@ export default function UserProfile({ user }: UserProfileProps) {
                 setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" })
               }}
             >
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-700">Old Password</label>
                 <input
                   type="password"
@@ -303,10 +311,10 @@ export default function UserProfile({ user }: UserProfileProps) {
                   aria-label="Old Password"
                   title="Old Password"
                   placeholder="Old Password"
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                  className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-700">New Password</label>
                 <input
                   type="password"
@@ -315,10 +323,10 @@ export default function UserProfile({ user }: UserProfileProps) {
                   aria-label="New Password"
                   title="New Password"
                   placeholder="New Password"
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                  className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-700">Re-Enter New Password</label>
                 <input
                   type="password"
@@ -327,29 +335,31 @@ export default function UserProfile({ user }: UserProfileProps) {
                   aria-label="Re-Enter New Password"
                   title="Re-Enter New Password"
                   placeholder="Re-Enter New Password"
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                  className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
                 {passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword ? (
-                  <div className="text-xs text-rose-600">Passwords do not match.</div>
+                  <div className="text-xs text-rose-600 font-medium">Passwords do not match.</div>
                 ) : null}
               </div>
               <div className="flex items-end">
                 <button
                   type="submit"
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                 >
-                  Submit
+                  Submit Changes
                 </button>
               </div>
             </form>
           </div>
         ) : tab === "office_email" ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
-            <div className="mb-4 flex items-center gap-2">
-              <Mail className="size-5 text-slate-500" />
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-3">
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="grid size-9 place-items-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <Mail className="size-4" />
+              </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Office Email</div>
-                <div className="text-xs text-slate-500">Set the email used for office communications.</div>
+                <div className="text-sm font-bold text-slate-900">Office Email Address</div>
+                <div className="text-xs text-slate-500">Set the email used for official notifications and office communications.</div>
               </div>
             </div>
             <form
@@ -408,8 +418,8 @@ export default function UserProfile({ user }: UserProfileProps) {
               }}
             >
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-slate-700">Email</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-700">Official Office Email</label>
                   <input
                     type="email"
                     value={officeEmail}
@@ -417,14 +427,14 @@ export default function UserProfile({ user }: UserProfileProps) {
                     aria-label="Office Email"
                     title="Office Email"
                     placeholder="office@domain.com"
-                    className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                    className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-slate-700">Created by</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-700">Account Username</label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                      <User className="size-4 text-slate-400" />
+                      <User className="size-3.5 text-slate-400" />
                     </div>
                     <input
                       type="text"
@@ -433,7 +443,7 @@ export default function UserProfile({ user }: UserProfileProps) {
                       aria-label="Created by"
                       title="Created by"
                       placeholder="-"
-                      className="h-10 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm focus:outline-none focus-visible:outline-none"
+                      className="h-9 w-full rounded-lg border border-slate-200 bg-slate-100 pl-8 pr-3 text-xs text-slate-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -441,20 +451,22 @@ export default function UserProfile({ user }: UserProfileProps) {
               <div className="flex items-end justify-end">
                 <button
                   type="submit"
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                 >
-                  Update
+                  Update Email
                 </button>
               </div>
             </form>
           </div>
         ) : (
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
-            <div className="mb-4 flex items-center gap-2">
-              <Building2 className="size-5 text-slate-500" />
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-3">
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="grid size-9 place-items-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <Building2 className="size-4" />
+              </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Department Head</div>
-                <div className="text-xs text-slate-500">Maintain the signatory name and designation.</div>
+                <div className="text-sm font-bold text-slate-900">Department Head & Signatory</div>
+                <div className="text-xs text-slate-500">Maintain the signatory name and designation for PR / OBR approval forms.</div>
               </div>
             </div>
             <form
@@ -508,43 +520,43 @@ export default function UserProfile({ user }: UserProfileProps) {
 
                     setDeptHead(nameValue)
                     setDeptHeadDesignation(desigValue)
-                    setStatus({ type: "success", message: "Department Head updated." })
+                    setStatus({ type: "success", message: "Department head details updated." })
                   } catch (err) {
                     setStatus({ type: "error", message: err instanceof Error ? err.message : "Failed to save. Please try again." })
                   }
                 })()
               }}
             >
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-slate-700">Department Head</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-700">Department Head Full Name</label>
                 <input
                   type="text"
                   value={deptHead}
                   onChange={(e) => setDeptHead(e.target.value)}
                   aria-label="Department Head"
                   title="Department Head"
-                  placeholder="Department Head"
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                  placeholder="e.g. JUAN DELA CRUZ, MD"
+                  className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-slate-700">Designation</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-700">Official Designation</label>
                 <input
                   type="text"
                   value={deptHeadDesignation}
                   onChange={(e) => setDeptHeadDesignation(e.target.value)}
-                  aria-label="Designation"
-                  title="Designation"
-                  placeholder="Designation"
-                  className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus-visible:outline-none"
+                  aria-label="Department Head Designation"
+                  title="Department Head Designation"
+                  placeholder="e.g. Provincial Department Head"
+                  className="h-9 w-full rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              <div className="flex items-end">
+              <div className="flex items-end md:col-span-2 justify-end">
                 <button
                   type="submit"
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                 >
-                  Update
+                  Update Department Head
                 </button>
               </div>
             </form>

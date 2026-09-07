@@ -1155,30 +1155,37 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
     <div className="w-full space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="text-base font-semibold tracking-tight text-slate-900">{title}</div>
-          <div className="text-sm text-slate-600">All Documents List</div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 ring-1 ring-inset ring-blue-700/10">
+              The Bunker &bull; Bataan Capitol DTS
+            </span>
+          </div>
+          <div className="mt-1 text-lg font-bold tracking-tight text-slate-900">{title}</div>
+          <div className="text-xs text-slate-500">Master database of all provincial documents & transaction logs</div>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {availableFunds.map((name) => (
             <button
               key={name}
               type="button"
               onClick={() => setFundTab(name)}
-              className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === name ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === name
+                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                  : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
                 }`}
             >
               <span>{name}</span>
-              <span className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${fundTab === name ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+              <span className={`inline-flex h-4 min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] font-bold ${fundTab === name ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'}`}>
                 {fundCounts[name] || 0}
               </span>
             </button>
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
           <button
             type="button"
             onClick={() => {
@@ -1187,7 +1194,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('all')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'all'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             All
@@ -1200,7 +1209,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('ongoing')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'ongoing' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'ongoing'
+                ? 'bg-sky-600 text-white shadow-sm'
+                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             Ongoing
@@ -1214,7 +1225,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               }
               setPhaseFilter('completed')
             }}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'completed' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'completed'
+                ? 'bg-emerald-600 text-white shadow-sm'
+                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             Completed
@@ -1222,11 +1235,13 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
           <button
             type="button"
             onClick={() => setFundTab('discontinued')}
-            className={`h-7 rounded px-3 text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === 'discontinued' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === 'discontinued'
+                ? 'bg-rose-600 text-white shadow-sm'
+                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             <span>Discontinued</span>
-            <span className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${fundTab === 'discontinued' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            <span className={`inline-flex h-4 min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] font-bold ${fundTab === 'discontinued' ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'}`}>
               {fundCounts['discontinued'] || 0}
             </span>
           </button>
@@ -1384,14 +1399,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="entries">
+          <label className="text-xs font-medium text-slate-500" htmlFor="entries">
             Show
           </label>
           <select
             id="entries"
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="h-9 rounded-md border border-slate-200 bg-white px-2 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+            className="h-9 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-2.5 text-xs font-semibold text-slate-800 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
             {[10, 25, 50, 100].map((n) => (
               <option key={n} value={n}>
@@ -1399,24 +1414,24 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               </option>
             ))}
           </select>
-          <span className="text-sm text-slate-600">entries</span>
+          <span className="text-xs font-medium text-slate-500">entries</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600" htmlFor="search">
+          <label className="text-xs font-medium text-slate-500" htmlFor="search">
             Search:
           </label>
           <input
             id="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="h-9 w-full min-w-56 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-            placeholder="tracking, purpose, office..."
+            className="h-9 w-full min-w-56 rounded-lg border border-slate-200 border-l-[3px] border-l-blue-500 bg-slate-50/80 px-3 text-xs text-slate-900 placeholder:text-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            placeholder="Tracking, purpose, office..."
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <div>
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}
