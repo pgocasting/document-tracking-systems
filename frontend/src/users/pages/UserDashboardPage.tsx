@@ -69,56 +69,63 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
 
   function navClass(isActive: boolean) {
     return isActive
-      ? "group flex w-full items-center gap-2 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus-visible:outline-none"
-      : "group flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:outline-none"
+      ? "group flex w-full items-center gap-3 rounded-r-lg border-l-[3px] border-l-blue-600 bg-blue-50/90 px-3.5 py-2.5 text-sm font-semibold text-blue-700 shadow-xs transition-all duration-150 focus:outline-none"
+      : "group flex w-full items-center gap-3 rounded-r-lg border-l-[3px] border-l-transparent px-3.5 py-2.5 text-sm font-medium text-slate-600 transition-all duration-150 hover:border-l-blue-400 hover:bg-blue-50/40 hover:text-blue-700 focus:outline-none"
   }
 
   function navButtonClass(isActive: boolean) {
     const base = navClass(isActive)
-    return isSidebarCollapsed ? `${base} justify-center px-2` : base
+    return isSidebarCollapsed ? `${base} justify-center px-2 rounded-lg border-l-0` : base
   }
 
   return (
-    <div className="min-h-dvh bg-slate-50">
+    <div className="min-h-dvh bg-slate-50/70 font-sans">
       <div
         className={`grid min-h-dvh grid-cols-1 ${isSidebarCollapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[260px_1fr]"
           }`}
       >
         {/* Sidebar */}
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
+        <aside className="hidden border-r border-slate-200/80 bg-white lg:block shadow-xs">
           <div className="flex h-dvh flex-col">
             {/* Logo Header */}
             <div
-              className={`flex h-16 items-center gap-3 border-b border-slate-200 ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
+              className={`flex h-20 items-center gap-3 border-b border-slate-100 bg-linear-to-b from-slate-50/50 to-white ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
                 }`}
             >
               <div
-                className={`grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-background shadow ${isSidebarCollapsed ? "mx-auto" : ""
+                className={`grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-900/5 ${isSidebarCollapsed ? "mx-auto" : ""
                   }`}
               >
                 <img
                   src="/images/Bataan.png"
                   alt="Bataan"
-                  className="size-full object-contain p-1"
+                  className="size-full object-contain p-1.5 drop-shadow-xs"
                 />
               </div>
               {isSidebarCollapsed ? null : (
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-muted-foreground">{user?.fullName || ""}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600">The Bunker</div>
+                  <div className="truncate text-sm font-bold tracking-tight text-slate-900">Bataan Capitol DTS</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="inline-block size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="truncate text-[11px] font-medium text-slate-500">{user?.fullName || user?.office || "End User"}</span>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-1 p-3">
+            <nav className="flex-1 space-y-1.5 p-3">
+              <div className={isSidebarCollapsed ? "hidden" : "px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400"}>
+                Menu
+              </div>
               <button
                 className={navButtonClass(route === "documents")}
                 type="button"
                 onClick={() => setRoute("documents")}
                 title="Office Requests"
               >
-                <FileStack className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <FileStack className={`size-4 transition-colors ${route === "documents" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Office Requests"}
               </button>
               <button
@@ -127,7 +134,7 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
                 onClick={() => setRoute("all-documents")}
                 title="All Documents"
               >
-                <FolderSearch className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <FolderSearch className={`size-4 transition-colors ${route === "all-documents" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "All Documents"}
               </button>
 
@@ -137,32 +144,32 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
                 onClick={() => setRoute("profile")}
                 title="Account Settings"
               >
-                <Settings className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <Settings className={`size-4 transition-colors ${route === "profile" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Account Settings"}
               </button>
             </nav>
 
             {/* Footer Actions */}
-            <div className="border-t border-slate-200 p-3">
+            <div className="border-t border-slate-100 bg-slate-50/50 p-3 space-y-2">
               <button
                 type="button"
                 onClick={() => setIsSidebarCollapsed((v) => !v)}
-                className={`mb-2 inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
+                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white py-2 text-xs font-semibold text-slate-600 shadow-xs transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-3.5"
                   }`}
                 title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+                {isSidebarCollapsed ? <PanelLeftOpen className="size-4 text-slate-500" /> : <PanelLeftClose className="size-4 text-slate-500" />}
                 {isSidebarCollapsed ? null : "Collapse sidebar"}
               </button>
 
               <button
-                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
+                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-lg border border-rose-200/60 bg-white py-2 text-xs font-semibold text-rose-600 shadow-xs transition-colors hover:bg-rose-50 hover:border-rose-300 focus:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-3.5"
                   }`}
                 onClick={onLogout}
                 type="button"
                 title="Logout"
               >
-                <LogOut className="size-4" />
+                <LogOut className="size-4 text-rose-500" />
                 {isSidebarCollapsed ? null : "Logout"}
               </button>
             </div>
@@ -171,65 +178,66 @@ export default function UserDashboardPage({ onLogout, user }: UserDashboardPageP
 
         {/* Mobile Header */}
         <div className="lg:hidden">
-          <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+          <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/95 backdrop-blur shadow-xs">
             <div className="flex h-16 w-full items-center justify-between gap-4 px-4">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center overflow-hidden rounded-xl bg-background shadow">
+                <div className="grid size-10 place-items-center overflow-hidden rounded-xl bg-white shadow-xs ring-1 ring-slate-900/5">
                   <img
                     src="/images/Bataan.png"
                     alt="Bataan"
-                    className="size-full object-contain p-1"
+                    className="size-full object-contain p-1 drop-shadow-xs"
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-muted-foreground">User Portal</div>
+                  <div className="text-[9px] font-bold uppercase tracking-wider text-blue-600">The Bunker</div>
+                  <div className="truncate text-sm font-bold text-slate-900">Bataan Capitol DTS</div>
+                  <div className="truncate text-[11px] font-medium text-slate-500">{user?.fullName || "User Portal"}</div>
                 </div>
               </div>
               <button
-                className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                className="inline-flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-rose-200 bg-rose-50/50 px-3 text-xs font-semibold text-rose-600 shadow-xs transition hover:bg-rose-100"
                 onClick={onLogout}
                 type="button"
               >
-                <LogOut className="size-4" />
+                <LogOut className="size-3.5" />
                 Logout
               </button>
             </div>
           </header>
 
           {/* Mobile Navigation */}
-          <nav className="border-b border-slate-200 bg-white px-4 py-2">
-            <div className="flex gap-2 overflow-x-auto">
-                <button
-                  className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "documents"
-                    ? "bg-slate-100 text-slate-900"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
-                  onClick={() => setRoute("documents")}
-                  type="button"
-                >
-                  <FileStack className="size-4" />
-                  Office Requests
-                </button>
+          <nav className="border-b border-slate-200/80 bg-white px-3 py-2 shadow-xs">
+            <div className="flex gap-1.5 overflow-x-auto">
               <button
-                className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "all-documents"
-                  ? "bg-slate-100 text-slate-900"
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "documents"
+                  ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                onClick={() => setRoute("documents")}
+                type="button"
+              >
+                <FileStack className="size-3.5" />
+                Office Requests
+              </button>
+              <button
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "all-documents"
+                  ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 onClick={() => setRoute("all-documents")}
               >
-                <FolderSearch className="size-4" />
-                All
+                <FolderSearch className="size-3.5" />
+                All Documents
               </button>
 
               <button
-                className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "profile"
-                  ? "bg-slate-100 text-slate-900"
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "profile"
+                  ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 onClick={() => setRoute("profile")}
               >
-                <Settings className="size-4" />
+                <Settings className="size-3.5" />
                 Account Settings
               </button>
             </div>

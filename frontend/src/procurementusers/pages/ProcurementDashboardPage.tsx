@@ -477,29 +477,63 @@ function ProcurementMyDashboard({ officeLabel }: { officeLabel: string }) {
   }, [officeLabel])
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-5">
       <div>
-        <div className="text-base font-semibold text-slate-900">{title}</div>
-        <div className="text-sm text-slate-600">Overview of your office queue</div>
+        <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Queue Overview</div>
+        <div className="text-xl font-bold tracking-tight text-slate-900">{title}</div>
+        <div className="text-xs text-slate-500 font-medium mt-0.5">Real-time status overview of documents assigned to your office</div>
       </div>
 
-      {error ? <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{error}</div> : null}
+      {error ? <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-700">{error}</div> : null}
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-sm font-medium text-slate-600">Pending</div>
-          <div className="mt-2 text-3xl font-semibold text-slate-900">{loading ? "…" : stats.pending}</div>
-          <div className="mt-1 text-xs text-slate-500">Transferred to your office, waiting to be received</div>
+      <div className="grid gap-5 md:grid-cols-3">
+        {/* Pending */}
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-blue-600 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Pending</span>
+            <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <Clock3 className="size-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.pending}</div>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+              <span className="inline-block size-1.5 rounded-full bg-blue-500 animate-ping" />
+              Transferred to your office, waiting to be received
+            </div>
+          </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-sm font-medium text-slate-600">Ongoing</div>
-          <div className="mt-2 text-3xl font-semibold text-slate-900">{loading ? "…" : stats.ongoing}</div>
-          <div className="mt-1 text-xs text-slate-500">Received by your office and currently in progress</div>
+
+        {/* Ongoing */}
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-emerald-600 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Ongoing</span>
+            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <ClipboardCheck className="size-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.ongoing}</div>
+            <div className="mt-1 text-xs text-slate-500 font-medium">
+              Received by your office and currently in progress
+            </div>
+          </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="text-sm font-medium text-slate-600">Exceeded</div>
-          <div className="mt-2 text-3xl font-semibold text-slate-900">{loading ? "…" : stats.exceeded}</div>
-          <div className="mt-1 text-xs text-slate-500">Overdue task durations</div>
+
+        {/* Exceeded */}
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-amber-500 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Exceeded</span>
+            <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <BarChart3 className="size-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.exceeded}</div>
+            <div className="mt-1 text-xs text-slate-500 font-medium">
+              Overdue task durations
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -735,49 +769,58 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
 
   function navClass(isActive: boolean) {
     return isActive
-      ? "group flex w-full items-center gap-2 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus-visible:outline-none"
-      : "group flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:outline-none"
+      ? "group flex w-full items-center gap-3 rounded-r-lg border-l-[3px] border-l-blue-600 bg-blue-50/90 px-3.5 py-2.5 text-sm font-semibold text-blue-700 shadow-xs transition-all duration-150 focus:outline-none"
+      : "group flex w-full items-center gap-3 rounded-r-lg border-l-[3px] border-l-transparent px-3.5 py-2.5 text-sm font-medium text-slate-600 transition-all duration-150 hover:border-l-blue-400 hover:bg-blue-50/40 hover:text-blue-700 focus:outline-none"
   }
 
   function navButtonClass(isActive: boolean) {
     const base = navClass(isActive)
-    return isSidebarCollapsed ? `${base} justify-center px-2` : base
+    return isSidebarCollapsed ? `${base} justify-center px-2 rounded-lg border-l-0` : base
   }
 
   return (
-    <div className="h-dvh overflow-hidden bg-slate-50">
+    <div className="h-dvh overflow-hidden bg-slate-50/70 font-sans">
       <div
         className={`grid h-dvh grid-cols-1 ${isSidebarCollapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[260px_1fr]"
           }`}
       >
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
+        <aside className="hidden border-r border-slate-200/80 bg-white lg:block shadow-xs">
           <div className="flex h-dvh flex-col">
             <div
-              className={`flex h-16 items-center gap-3 border-b border-slate-200 ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
+              className={`flex h-20 items-center gap-3 border-b border-slate-100 bg-linear-to-b from-slate-50/50 to-white ${isSidebarCollapsed ? "justify-center px-3" : "px-5"
                 }`}
             >
               <div
-                className={`grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-background shadow ${isSidebarCollapsed ? "mx-auto" : ""
+                className={`grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-900/5 ${isSidebarCollapsed ? "mx-auto" : ""
                   }`}
               >
-                <img src="/images/Bataan.png" alt="Bataan" className="size-full object-contain p-1" />
+                <img src="/images/Bataan.png" alt="Bataan" className="size-full object-contain p-1.5 drop-shadow-xs" />
               </div>
               {isSidebarCollapsed ? null : (
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-slate-900">Bataan Capitol DTS</div>
-                  <div className="truncate text-xs text-slate-600">{user?.fullName || user?.username || ""}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600">The Bunker</div>
+                  <div className="truncate text-sm font-bold tracking-tight text-slate-900">Bataan Capitol DTS</div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="inline-block size-1.5 rounded-full bg-blue-600 animate-pulse" />
+                    <span className="inline-flex items-center rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 ring-1 ring-blue-700/10 uppercase">
+                      {user?.office || "Procurement"}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
 
-            <nav className="flex-1 space-y-1 p-3">
+            <nav className="flex-1 space-y-1.5 p-3 overflow-y-auto">
+              <div className={isSidebarCollapsed ? "hidden" : "px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400"}>
+                Procurement Menu
+              </div>
               <button
                 className={navButtonClass(route === "dashboard")}
                 type="button"
                 onClick={() => setRoute("dashboard")}
                 title="Dashboard"
               >
-                <LayoutDashboard className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <LayoutDashboard className={`size-4 transition-colors ${route === "dashboard" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Dashboard"}
               </button>
               {canSeeOfficeRequests ? (
@@ -787,7 +830,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                   onClick={() => setRoute("my-documents")}
                   title="Office Requests"
                 >
-                  <FileStack className="size-4 text-slate-500 group-hover:text-slate-700" />
+                  <FileStack className={`size-4 transition-colors ${route === "my-documents" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                   {isSidebarCollapsed ? null : "Office Requests"}
                 </button>
               ) : null}
@@ -797,7 +840,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("all-documents")}
                 title="All Documents"
               >
-                <FolderSearch className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <FolderSearch className={`size-4 transition-colors ${route === "all-documents" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "All Documents"}
               </button>
               {canUseReview ? (
@@ -808,9 +851,9 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                   title="Review"
                 >
                   <span className="relative inline-flex items-center">
-                    <ClipboardCheck className="size-4 text-slate-500 group-hover:text-slate-700" />
+                    <ClipboardCheck className={`size-4 transition-colors ${route === "review" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                     {reviewCount > 0 ? (
-                      <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-rose-600 px-1 text-center text-[10px] font-semibold leading-4 text-white">
+                      <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-rose-600 px-1 text-center text-[10px] font-bold leading-4 text-white shadow-xs">
                         {reviewCount}
                       </span>
                     ) : null}
@@ -819,7 +862,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                     <span className="flex flex-1 items-center justify-between">
                       <span>Review</span>
                       {reviewCount > 0 ? (
-                        <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
+                        <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
                           {reviewCount}
                         </span>
                       ) : null}
@@ -833,7 +876,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("reports")}
                 title="Reports"
               >
-                <BarChart3 className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <BarChart3 className={`size-4 transition-colors ${route === "reports" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Reports"}
               </button>
               <button
@@ -842,7 +885,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("history")}
                 title="History"
               >
-                <Clock3 className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <Clock3 className={`size-4 transition-colors ${route === "history" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "History"}
               </button>
               <button
@@ -851,7 +894,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("recently-transferred")}
                 title="Recently Transferred"
               >
-                <FileText className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <FileText className={`size-4 transition-colors ${route === "recently-transferred" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Recently Transferred"}
               </button>
               <button
@@ -860,31 +903,31 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("account-settings")}
                 title="Account Settings"
               >
-                <Settings className="size-4 text-slate-500 group-hover:text-slate-700" />
+                <Settings className={`size-4 transition-colors ${route === "account-settings" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
                 {isSidebarCollapsed ? null : "Account Settings"}
               </button>
             </nav>
 
-            <div className="border-t border-slate-200 p-3">
+            <div className="border-t border-slate-100 bg-slate-50/50 p-3 space-y-2">
               <button
                 type="button"
                 onClick={() => setIsSidebarCollapsed((v) => !v)}
-                className={`mb-2 inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
+                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white py-2 text-xs font-semibold text-slate-600 shadow-xs transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-3.5"
                   }`}
                 title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+                {isSidebarCollapsed ? <PanelLeftOpen className="size-4 text-slate-500" /> : <PanelLeftClose className="size-4 text-slate-500" />}
                 {isSidebarCollapsed ? null : "Collapse sidebar"}
               </button>
 
               <button
-                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white py-2 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-4"
+                className={`inline-flex h-9 w-full items-center gap-2 whitespace-nowrap rounded-lg border border-rose-200/60 bg-white py-2 text-xs font-semibold text-rose-600 shadow-xs transition-colors hover:bg-rose-50 hover:border-rose-300 focus:outline-none ${isSidebarCollapsed ? "justify-center px-2" : "justify-start px-3.5"
                   }`}
                 onClick={onLogout}
                 type="button"
                 title="Logout"
               >
-                <LogOut className="size-4" />
+                <LogOut className="size-4 text-rose-500" />
                 {isSidebarCollapsed ? null : "Logout"}
               </button>
             </div>
@@ -893,59 +936,60 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
 
         <div className="flex h-dvh flex-col overflow-hidden">
           <div className="lg:hidden">
-            <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+            <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/95 backdrop-blur shadow-xs">
               <div className="flex h-16 w-full items-center justify-between gap-4 px-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-background shadow">
-                    <img src="/images/Bataan.png" alt="Bataan" className="size-full object-contain p-1" />
+                  <div className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-white shadow-xs ring-1 ring-slate-900/5">
+                    <img src="/images/Bataan.png" alt="Bataan" className="size-full object-contain p-1 drop-shadow-xs" />
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold">Bataan Capitol DTS</div>
-                    <div className="truncate text-xs text-muted-foreground">{mobileRouteLabel}</div>
+                    <div className="text-[9px] font-bold uppercase tracking-wider text-blue-600">The Bunker</div>
+                    <div className="truncate text-sm font-bold text-slate-900">Bataan Capitol DTS</div>
+                    <div className="truncate text-[11px] font-medium text-slate-500">{mobileRouteLabel}</div>
                   </div>
                 </div>
                 <button
-                  className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                  className="inline-flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-rose-200 bg-rose-50/50 px-3 text-xs font-semibold text-rose-600 shadow-xs transition hover:bg-rose-100"
                   onClick={onLogout}
                   type="button"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut className="size-3.5" />
                   Logout
                 </button>
               </div>
             </header>
 
-            <nav className="border-b border-slate-200 bg-white px-4 py-2">
-              <div className="flex gap-2 overflow-x-auto">
+            <nav className="border-b border-slate-200/80 bg-white px-3 py-2 shadow-xs">
+              <div className="flex gap-1.5 overflow-x-auto">
                 <button
-                  className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "dashboard"
-                    ? "bg-slate-100 text-slate-900"
+                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "dashboard"
+                    ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   onClick={() => setRoute("dashboard")}
                   type="button"
                 >
-                  <LayoutDashboard className="size-4" />
+                  <LayoutDashboard className="size-3.5" />
                   Dashboard
                 </button>
 
                 {canSeeOfficeRequests ? (
                   <button
-                    className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "my-documents"
-                      ? "bg-slate-100 text-slate-900"
+                    className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "my-documents"
+                      ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     onClick={() => setRoute("my-documents")}
                     type="button"
                   >
-                    <FileStack className="size-4" />
+                    <FileStack className="size-3.5" />
                     Office Requests
                   </button>
                 ) : null}
 
                 <button
-                  className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${route === "all-documents"
-                    ? "bg-slate-100 text-slate-900"
+                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "all-documents"
+                    ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   onClick={() => setRoute("all-documents")}

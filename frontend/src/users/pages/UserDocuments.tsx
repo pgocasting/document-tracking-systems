@@ -1414,21 +1414,25 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   }
 
   return (
-    <div className="w-full space-y-4 px-4 py-6 lg:px-8">
+    <div className="w-full space-y-5 px-4 py-6 lg:px-8 font-sans">
       {/* Header with Title and Action Buttons */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">Office Requests</h1>
-        <div className="flex items-center gap-2">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600">User Portal</div>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">Office Requests</h1>
+          <p className="text-xs text-slate-500 font-medium mt-0.5">Manage and track your office purchase and obligation requests</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5">
           {!hideReviewLogsButton && (
             <button
               type="button"
               onClick={() => setReviewLogsOpen(true)}
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-emerald-700 hover:shadow-sm focus:outline-none"
               title="Review Logs"
             >
               <History className="size-3.5" />
               Review Logs
-              <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] tabular-nums">
+              <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold tabular-nums">
                 {reviewLogsUnreadCount}
               </span>
             </button>
@@ -1436,24 +1440,24 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           <button
             type="button"
             onClick={() => setReturnedModalOpen(true)}
-            className="inline-flex h-8 items-center justify-center gap-2 rounded bg-rose-600 px-3 text-xs font-medium text-white transition hover:bg-rose-700"
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-rose-600 px-3.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-rose-700 hover:shadow-sm focus:outline-none"
             title="Returned Documents"
           >
             <FileText className="size-3.5" />
             Returned Documents
-            <span className="ml-1 rounded bg-white/20 px-1.5 py-0.5 text-[10px]">{returnedCount}</span>
+            <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold">{returnedCount}</span>
           </button>
           <button
             type="button"
             onClick={openNewRequest}
-            className="relative inline-flex h-8 items-center justify-center gap-2 rounded bg-sky-600 px-3 text-xs font-medium text-white shadow-sm transition hover:bg-sky-700"
+            className="relative inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-sm focus:outline-none"
             title={hasDraft ? "New Request (Draft available)" : "New Request"}
           >
             <Plus className="size-3.5" />
             New Request
             {hasDraft && (
               <span
-                className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
+                className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-extrabold text-white shadow-sm ring-2 ring-white animate-pulse"
                 title="Saved Draft Available"
               >
                 1
@@ -1464,20 +1468,20 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200">
-        <nav className="-mb-px flex space-x-6">
+      <div className="border-b border-slate-200/90">
+        <nav className="-mb-px flex space-x-2 sm:space-x-4 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative whitespace-nowrap pb-3 text-sm font-medium transition ${activeTab === tab.id
-                ? "border-b-2 border-sky-600 text-sky-600"
-                : "border-b-2 border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700"
+              className={`relative whitespace-nowrap px-3.5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-150 rounded-t-lg ${activeTab === tab.id
+                ? "border-b-[3px] border-blue-600 bg-blue-50/60 text-blue-700 font-bold"
+                : "border-b-[3px] border-transparent text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
                 }`}
             >
               {tab.label}
               <span
-                className={`ml-2 rounded px-1.5 py-0.5 text-[10px] ${activeTab === tab.id ? "bg-sky-100 text-sky-700" : "bg-slate-100 text-slate-600"
+                className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold transition-colors ${activeTab === tab.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600"
                   }`}
               >
                 {tab.count}
@@ -1487,37 +1491,22 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         </nav>
       </div>
 
-      {/* Section Title */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">{activeTabLabel}</h2>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-600">Show</span>
-          <select
-            aria-label="Show entries"
-            title="Show entries"
-            className="h-8 rounded border border-slate-200 bg-white px-2 text-sm"
-          >
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
-          </select>
-          <span className="text-sm text-slate-600">entries</span>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="flex items-center justify-end gap-2">
-        <span className="text-sm text-slate-600">Search:</span>
-        <div className="relative">
-          <input
-            type="text"
-            aria-label="Search documents"
-            title="Search documents"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-8 w-64 rounded border border-slate-200 bg-white px-3 text-sm focus:border-sky-500 focus:outline-none"
-          />
-          <Search className="absolute right-2 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+      {/* Section Title & Search Bar Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+        <h2 className="text-base font-bold text-slate-900">{activeTabLabel}</h2>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <input
+              type="text"
+              aria-label="Search documents"
+              title="Search documents"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tracking no, purpose..."
+              className="h-9 w-64 sm:w-72 rounded-lg border border-slate-200/80 border-l-[3px] border-l-blue-500 bg-slate-50/80 pl-3 pr-8 text-xs text-slate-800 placeholder:text-slate-400 shadow-xs transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
+            <Search className="absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+          </div>
         </div>
       </div>
 
