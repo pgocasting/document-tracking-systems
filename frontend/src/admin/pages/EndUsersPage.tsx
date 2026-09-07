@@ -439,17 +439,17 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
             </div>
           ) : (
           <table className="w-full min-w-[900px] text-center text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-900 text-white border-b border-slate-800">
               <tr>
-                <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Full Name</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Username</th>
-                <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Date Created</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Full Name</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Username</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Date Created</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
+                <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-100">
               {office ? (
                 visible.length > 0 ? (
                   visible.map((r) => (

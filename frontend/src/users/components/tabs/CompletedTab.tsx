@@ -28,23 +28,23 @@ export default function CompletedTab({
   formatLogLabelCompact,
 }: Props) {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Timestamp</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Tracking #</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Created By</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Purpose</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Particulars</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Amount</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Supplier</th>
-              <th className="border-b border-r border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Logs</th>
-              <th className="border-b border-slate-200 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-700">Action</th>
+          <thead className="bg-slate-900 text-white">
+            <tr className="border-b border-slate-800">
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Created By</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Particulars</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Supplier</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Logs</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-100">
             {docs.map((doc) => {
               const isExpanded = expandedRows.has(doc.id)
               const hasSubDocs = Array.isArray(doc.subDocuments) && doc.subDocuments.length > 0

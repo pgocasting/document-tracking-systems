@@ -453,21 +453,21 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
                     <div className="p-6 pt-4">
                       <div className="relative w-full overflow-auto rounded-xl border border-slate-200/80">
                         <table className="w-full caption-bottom text-sm">
-                          <thead className="bg-slate-50 border-b border-slate-200">
+                          <thead className="bg-slate-900 text-white border-b border-slate-800">
                             <tr>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
+                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-100">
                                 Office
                               </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
+                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-100">
                                 Ongoing
                               </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
+                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-100">
                                 Completed
                               </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
+                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-100">
                                 Discontinued
                               </th>
-                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-700">
+                              <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-slate-100">
                                 Exceeded
                               </th>
                             </tr>

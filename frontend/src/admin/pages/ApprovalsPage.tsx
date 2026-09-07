@@ -1690,25 +1690,25 @@ export default function ApprovalsPage({
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}
           <table className="w-full min-w-[1200px] table-auto text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-slate-50 [&_th]:text-center">
-              <tr className="border-b border-slate-200">
-                <th className="w-[120px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Timestamp</th>
-                <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tracking #</th>
-                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Requestor</th>
-                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">References</th>
-                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Created By</th>
-                <th className="w-[190px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Purpose</th>
-                <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Supplier</th>
-                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Attachments</th>
-                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Source of Fund</th>
+            <thead className="sticky top-0 z-10 bg-slate-900 text-white [&_th]:text-center">
+              <tr className="border-b border-slate-800">
+                <th className="w-[120px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Timestamp</th>
+                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Requestor</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">References</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Created By</th>
+                <th className="w-[190px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
+                <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Supplier</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Attachments</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Source of Fund</th>
                 {(actionIsGso || actionIsAdmin) ? (
-                  <th className="w-[200px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Routing Slip</th>
+                  <th className="w-[200px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Routing Slip</th>
                 ) : null}
-                <th className="w-[90px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Amount</th>
+                <th className="w-[90px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
                 {actionMode === "logsOnly" ? null : (
-                  <th className="w-[140px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Logs</th>
+                  <th className="w-[140px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Logs</th>
                 )}
-                <th className="w-[110px] px-3 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                <th className="w-[110px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">

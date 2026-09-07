@@ -757,22 +757,22 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
             {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
             {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
             <table className="w-full min-w-[1200px] text-center text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-slate-900 text-white border-b border-slate-800">
                 <tr>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office ID</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Name</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Description</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Email</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Office Head Designation</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Created</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Type</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Privileges</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office ID</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Name</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Description</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Email</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Head</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Office Head Designation</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Created</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Type</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Privileges</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-100">
                 {visible.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 align-middle text-center font-medium text-slate-900">{r.id}</td>

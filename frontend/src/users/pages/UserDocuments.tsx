@@ -3206,18 +3206,18 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                   </div>
 
                   <div className="flex-1 overflow-auto p-4">
-                    <div className="overflow-hidden rounded-lg border border-slate-200">
+                    <div className="overflow-hidden rounded-xl border border-slate-200">
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50">
-                          <tr className="border-b border-slate-200">
-                            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">Returned At</th>
-                            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">Tracking #</th>
-                            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">Purpose</th>
-                            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">Amount</th>
-                            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">Action</th>
+                        <thead className="bg-slate-900 text-white">
+                          <tr className="border-b border-slate-800">
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Returned At</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Tracking #</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
+                            <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-slate-100">Action</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200">
+                        <tbody className="divide-y divide-slate-100">
                           {returnedDocs.map((doc) => (
                             <tr key={doc.id} className="align-top hover:bg-slate-50">
                               <td className="px-3 py-2 text-xs text-slate-700">{getReturnedTimestamp(doc)}</td>

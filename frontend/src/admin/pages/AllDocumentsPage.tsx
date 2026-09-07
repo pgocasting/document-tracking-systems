@@ -3,6 +3,7 @@ import {
   Download,
   ExternalLink,
   History,
+  LogOut,
   Pencil,
   Printer,
   XCircle,
@@ -164,36 +165,36 @@ function StatusBlock({
   const phaseClass = useMemo(() => {
     switch (status.phase) {
       case "completed":
-        return "bg-emerald-600"
+        return "bg-emerald-600 shadow-xs"
       case "returned":
-        return "bg-rose-600"
+        return "bg-rose-600 shadow-xs"
       default:
-        return "bg-sky-600"
+        return "bg-blue-600 shadow-xs"
     }
   }, [status.phase])
 
   return (
     <div className="w-64 space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <span className={`inline-flex h-6 items-center rounded-md px-2 text-[11px] font-semibold text-white ${phaseClass}`}>
+        <span className={`inline-flex h-5 items-center rounded-full px-2.5 text-[10px] font-bold uppercase tracking-wider text-white ${phaseClass}`}>
           {status.phase === "completed" ? "completed" : status.phase === "returned" ? "returned" : "ongoing"}
         </span>
       </div>
 
-      <div className="space-y-1">
-        <div className="inline-flex max-w-full items-center gap-1 rounded-md bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+      <div className="space-y-1.5">
+        <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-xs">
           <span className="truncate">Current Location: {status.currentLocation}</span>
           <ExternalLink className="size-3 shrink-0" />
         </div>
 
-        <div className="text-[11px] text-slate-900">
+        <div className="text-xs text-slate-900">
           <div className="flex items-start justify-between gap-2">
-            <span className="font-semibold">Supplier:</span>
+            <span className="font-bold text-slate-700">Supplier:</span>
             {readOnly || !canEditSupplier ? null : (
               <button
                 type="button"
                 onClick={onEditSupplier}
-                className="ml-1 inline-flex items-center text-rose-600 hover:text-rose-700 focus:outline-none focus-visible:outline-none"
+                className="ml-1 inline-flex items-center rounded p-0.5 text-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:outline-none"
                 title="Edit supplier"
               >
                 <Pencil className="size-3" />
@@ -207,7 +208,7 @@ function StatusBlock({
               : [{ name: 'Not Updated', amount: '' }]
             ).map((it, idx) => (
               <div key={idx} className="flex items-start justify-between gap-2">
-                <div className="min-w-0 whitespace-normal break-words">
+                <div className="min-w-0 whitespace-normal break-words text-slate-800">
                   {idx + 1}. {it.name}
                 </div>
                 <div className="shrink-0 text-right tabular-nums">
@@ -1602,21 +1603,21 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
           <div className="hidden overflow-auto sm:block">
             <table className="w-full min-w-[1200px] text-left text-sm">
-              <thead className="bg-slate-50 [&_th]:text-center">
-                <tr className="border-b border-slate-200">
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tracking #</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">References</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Purpose</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Source of Fund</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Office (Requestor)</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Particulars</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Duration</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Action</th>
+              <thead className="bg-slate-900 text-white [&_th]:text-center">
+                <tr className="border-b border-slate-800">
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100 first:text-left first:pl-5">Tracking #</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">References</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Purpose</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Source of Fund</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Office (Requestor)</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Particulars</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Amount</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Duration</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100">Status</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-100 last:text-center last:pr-5">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-100">
                 {visible.map((r) => {
                   const canEditSupplier = !readOnly && (isAdminRole || (isProcurementRole && hasPrivilege('Update Supplier')))
                   const canEditBacNotes = !readOnly && (isAdminRole || (isProcurementRole && hasPrivilege('BAC Notes')))
@@ -1779,12 +1780,12 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                         </div>
                       </td>
                       <td className="px-4 py-3 align-top">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           {r.particulars.pr ? (
                             <button
                               type="button"
                               onClick={() => setPreview({ type: "PR", row: r })}
-                              className="inline-flex h-5 items-center rounded bg-sky-600 px-2 text-[10px] font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-6 items-center justify-center rounded-lg bg-blue-600 px-2.5 text-[11px] font-bold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-95 focus:outline-none"
                             >
                               PR
                             </button>
@@ -1793,7 +1794,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             <button
                               type="button"
                               onClick={() => setPreview({ type: "OBR", row: r })}
-                              className="inline-flex h-5 items-center rounded bg-slate-900 px-2 text-[10px] font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-6 items-center justify-center rounded-lg bg-slate-900 px-2.5 text-[11px] font-bold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-95 focus:outline-none"
                             >
                               OBR
                             </button>
@@ -1806,7 +1807,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                 if (!url) return
                                 window.open(url, '_blank', 'noopener,noreferrer')
                               }}
-                              className="inline-flex h-5 items-center gap-1 rounded bg-emerald-600 px-2 text-[10px] font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-6 items-center justify-center gap-1 rounded-lg bg-emerald-600 px-2.5 text-[11px] font-bold text-white shadow-xs transition-all hover:bg-emerald-700 active:scale-95 focus:outline-none"
                               title="Open Drive Link"
                             >
                               <ExternalLink className="size-3" />
@@ -1817,7 +1818,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             <button
                               type="button"
                               onClick={() => setRoutingSlipDoc(r.doc)}
-                              className="inline-flex h-5 items-center whitespace-nowrap rounded bg-emerald-600 px-2 text-[10px] font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                              className="inline-flex h-6 items-center justify-center gap-1 whitespace-nowrap rounded-lg bg-teal-600 px-2.5 text-[11px] font-bold text-white shadow-xs transition-all hover:bg-teal-700 active:scale-95 focus:outline-none"
                             >
                               Routing Slip
                             </button>
@@ -1826,7 +1827,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                       </td>
                       <td className="px-4 py-3 align-top text-slate-700">
                         <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0 truncate" title={r.amount}>
+                          <div className="min-w-0 truncate font-semibold text-slate-900" title={r.amount}>
                             {r.amount}
                           </div>
                           {canEditAmount ? (
@@ -1836,7 +1837,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                 setEditAmountRow(r)
                                 setEditAmountValue(formatPesoInput(String(r.doc?.amount || '').trim(), true))
                               }}
-                              className="mt-0.5 inline-flex items-center text-slate-600 hover:text-slate-900 focus:outline-none focus-visible:outline-none"
+                              className="mt-0.5 inline-flex items-center rounded p-0.5 text-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none"
                               title="Edit amount"
                             >
                               <Pencil className="size-3" />
@@ -1844,7 +1845,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                           ) : null}
                         </div>
                       </td>
-                      <td className="px-4 py-3 align-top text-slate-700 whitespace-pre-line">{r.duration}</td>
+                      <td className="px-4 py-3 align-top text-slate-700 whitespace-pre-line font-medium">{r.duration}</td>
                       <td className="px-4 py-3 align-top">
                         <StatusBlock
                           status={r.status}
@@ -1868,21 +1869,21 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                           <button
                             type="button"
                             onClick={() => setLogsDoc(r)}
-                            className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2.5 text-[10px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                            className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-blue-600 focus:outline-none"
                           >
-                            <History className="size-3" />
+                            <History className="size-3.5" />
                             History
                           </button>
                         ) : (
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-1.5">
                             {isAdminRole && fundTab === 'discontinued' ? (
                               <>
                                 <button
                                   type="button"
                                   onClick={() => setLogsDoc(r)}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2.5 text-[10px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-blue-600 focus:outline-none"
                                 >
-                                  <History className="size-3" />
+                                  <History className="size-3.5" />
                                   History
                                 </button>
                                 <button
@@ -1891,9 +1892,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                   onClick={async () => {
                                     setStatusConfirm({ kind: 'continue', row: r })
                                   }}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-emerald-600 px-2.5 text-[10px] font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-emerald-600 px-3 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                  <CheckCircle2 className="size-3" />
+                                  <CheckCircle2 className="size-3.5" />
                                   Continue
                                 </button>
                               </>
@@ -1903,9 +1904,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                               <button
                                 type="button"
                                 onClick={() => setLogsDoc(r)}
-                                className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2.5 text-[10px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                                className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-blue-600 focus:outline-none"
                               >
-                                <History className="size-3" />
+                                <History className="size-3.5" />
                                 History
                               </button>
                             ) : (
@@ -1914,17 +1915,17 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                   type="button"
                                   disabled={actionBusyId === String(r.doc._id)}
                                   onClick={() => setPrintRow(r)}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-sky-700 px-2.5 text-[10px] font-semibold text-white transition hover:bg-sky-800 focus:outline-none focus-visible:outline-none"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 focus:outline-none disabled:opacity-60"
                                 >
-                                  <Printer className="size-3" />
+                                  <Printer className="size-3.5" />
                                   Print
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setLogsDoc(r)}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2.5 text-[10px] font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-blue-600 focus:outline-none"
                                 >
-                                  <History className="size-3" />
+                                  <History className="size-3.5" />
                                   History
                                 </button>
                                 <button
@@ -1945,10 +1946,10 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                       setActionBusyId(null)
                                     }
                                   }}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-emerald-600 px-2.5 text-[10px] font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus-visible:outline-none"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-emerald-600 px-3 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 focus:outline-none disabled:opacity-60"
                                 >
-                                  <CheckCircle2 className="size-3" />
-                                  Complete
+                                  <CheckCircle2 className="size-3.5" />
+                                  Completed
                                 </button>
                                 <button
                                   type="button"
@@ -1956,9 +1957,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                   onClick={async () => {
                                     setStatusConfirm({ kind: 'discontinue', row: r })
                                   }}
-                                  className="inline-flex h-6 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-rose-600 px-2.5 text-[10px] font-semibold text-white transition hover:bg-rose-700 focus:outline-none focus-visible:outline-none"
+                                  className="inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-rose-600 px-3 text-xs font-semibold text-white shadow-xs transition-all hover:bg-rose-700 focus:outline-none disabled:opacity-60"
                                 >
-                                  <XCircle className="size-3" />
+                                  <LogOut className="size-3.5 rotate-180" />
                                   Discontinue
                                 </button>
                               </>
