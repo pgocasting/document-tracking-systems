@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Printer, Save, CheckCircle } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Printer, Save, CheckCircle, Loader2 } from "lucide-react"
 import type { DocumentRow } from "../types/documentTypes"
 import { toast } from "../../lib/toast"
 
@@ -24,10 +24,74 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
   if (!rsDoc) return null
 
   const docId = String(rsDoc.id || (rsDoc as any)._id || "")
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    String(rsDoc.gsoRoutingSlip || "").trim()
-  )
+  const initialCategory = String(
+    rsDoc.gsoRoutingSlip ||
+    (rsDoc as any).doc?.gsoRoutingSlip ||
+    (rsDoc as any).gso_routing_slip ||
+    ""
+  ).trim()
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory)
+  const [liveCategory, setLiveCategory] = useState<string>(initialCategory)
+  const [isLoading, setIsLoading] = useState<boolean>(!initialCategory && !!docId)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Fetch the latest document info from backend upon opening modal to ensure we have the most recent GSO assignment
+  useEffect(() => {
+    const currentInit = String(
+      rsDoc.gsoRoutingSlip ||
+      (rsDoc as any).doc?.gsoRoutingSlip ||
+      (rsDoc as any).gso_routing_slip ||
+      ""
+    ).trim()
+
+    setLiveCategory(currentInit)
+    if (currentInit) setSelectedCategory(currentInit)
+
+    if (!docId) return
+
+    let isMounted = true
+    if (!currentInit) setIsLoading(true)
+
+    const fetchLatest = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch(`${API_URL}/documents/${docId}`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        })
+        if (res.ok) {
+          const data = await res.json()
+          const docData = data.document || data
+          const fetchedCategory = String(
+            docData.gsoRoutingSlip ||
+            docData.doc?.gsoRoutingSlip ||
+            docData.gso_routing_slip ||
+            docData.routingSlip ||
+            ""
+          ).trim()
+
+          if (isMounted && fetchedCategory) {
+            setLiveCategory(fetchedCategory)
+            setSelectedCategory(fetchedCategory)
+            rsDoc.gsoRoutingSlip = fetchedCategory
+            if ((rsDoc as any).doc) (rsDoc as any).doc.gsoRoutingSlip = fetchedCategory
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch fresh routing slip info:", err)
+      } finally {
+        if (isMounted) setIsLoading(false)
+      }
+    }
+
+    fetchLatest()
+
+    return () => {
+      isMounted = false
+    }
+  }, [docId, rsDoc])
 
   const handleSaveCategory = async (category: string) => {
     if (!docId || !category) return false
@@ -50,6 +114,8 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
       }
 
       toast.success("Routing slip category updated")
+      setLiveCategory(category)
+      setSelectedCategory(category)
       rsDoc.gsoRoutingSlip = category
       if ((rsDoc as any).doc) (rsDoc as any).doc.gsoRoutingSlip = category
       return true
@@ -63,7 +129,7 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
 
   const handleGenerateRoutingSlip = async (categoryToUse?: string) => {
     if (!rsDoc) return
-    let slip = categoryToUse || selectedCategory || String(rsDoc.gsoRoutingSlip || "").trim()
+    let slip = categoryToUse || selectedCategory || liveCategory || String(rsDoc.gsoRoutingSlip || "").trim()
 
     if (!slip && selectedCategory) {
       const saved = await handleSaveCategory(selectedCategory)
@@ -104,7 +170,7 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
         "Notification Letter (if applicable)",
         "Project Proposal / Program Design (if applicable)",
       ]
-    } else if (slipUpper.includes("IT") || slipUpper.includes("EQUIPMENT")) {
+    } else if (slipUpper.includes("IT") || slipUpper.includes("EQUIPMENT") || slipUpper.includes("ICT")) {
       formNo = "GSO-PRP-F02"; revisionNo = "01"; lastRowLabel = "Routing Slip No.:"; focalPerson = "IT and Equipment"
       requirementItems = [
         "Obligation Request", "Purchase Request",
@@ -124,7 +190,7 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
         "Pre-repair inspection and Evaluation Report (if applicable)",
         "Cost estimate (if applicable)",
       ]
-    } else if (slipUpper.includes("REPAIR") || slipUpper.includes("MOTOR") || slipUpper.includes("MAINTENANCE")) {
+    } else if (slipUpper.includes("REPAIR") || slipUpper.includes("MOTOR") || slipUpper.includes("MAINTENANCE") || slipUpper.includes("VEHICLE")) {
       formNo = "GSO-PRP-F05"; revisionNo = "02"; lastRowLabel = "Routing Slip No.:"; focalPerson = "Repair and Maintenance"
       requirementItems = [
         "Obligation Request",
@@ -308,7 +374,14 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
     }
   })()
 
-  const assignedCategory = String(rsDoc.gsoRoutingSlip || "").trim()
+  const assignedCategory = String(
+    liveCategory ||
+    selectedCategory ||
+    rsDoc.gsoRoutingSlip ||
+    (rsDoc as any).doc?.gsoRoutingSlip ||
+    (rsDoc as any).gso_routing_slip ||
+    ""
+  ).trim()
 
   return (
     <div
@@ -336,7 +409,12 @@ export default function RoutingSlipModal({ rsDoc, onClose }: RoutingSlipModalPro
         </div>
 
         <div className="p-6 space-y-5">
-          {isGSO ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Loader2 className="size-7 animate-spin text-blue-600 mb-2" />
+              <p className="text-xs font-medium text-slate-500">Checking latest routing slip status...</p>
+            </div>
+          ) : isGSO ? (
             /* GSO / Admin View: Can select & save category */
             <>
               <div className="space-y-2">
