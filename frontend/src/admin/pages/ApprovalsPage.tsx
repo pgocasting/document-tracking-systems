@@ -9,6 +9,7 @@ import PrTemplatePreview from "../../components/PrTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { getSubDocAmount } from "../../users/types/documentTypes"
+import { formatLogRemarks } from "../../utils/formatLogRemarks"
 
 type ApprovalRow = {
   timestamp: string
@@ -186,9 +187,10 @@ function parseLogActionAndRemarks(labelRaw: string, byOfficeRaw: string) {
       return upper
     })()
 
+    const remarksRaw = task || taskFromParens || taskFromColon || '-'
     return {
       action: officeUpper ? `Received by ${officeUpper}` : 'Received',
-      remarks: task || taskFromParens || taskFromColon || '-',
+      remarks: formatLogRemarks(remarksRaw),
     }
   }
 
@@ -198,19 +200,35 @@ function parseLogActionAndRemarks(labelRaw: string, byOfficeRaw: string) {
       return String(m?.[1] || '').trim()
     })()
 
-    const remarks = taskFromParens || taskFromColon || '-'
+    const remarksRaw = taskFromParens || taskFromColon || '-'
 
-    if (!dest) return { action: 'Transferred', remarks }
+    if (!dest) return { action: 'Transferred', remarks: formatLogRemarks(remarksRaw) }
     const destUpper = dest.toUpperCase()
     const isEndUser = destUpper.includes('END USER') || destUpper.includes('END USERS')
-    return { action: isEndUser ? 'Transferred to END USER' : `Transferred to ${destUpper}`, remarks }
+    return { action: isEndUser ? 'Transferred to END USER' : `Transferred to ${destUpper}`, remarks: formatLogRemarks(remarksRaw) }
+  }
+
+  const cleaned = formatLogRemarks(label)
+  const actionMatched = (() => {
+    if (labelLower.startsWith('returned') || labelLower.includes('returned')) return 'Returned'
+    if (labelLower.startsWith('approved') || labelLower.includes('approved')) return 'Approved'
+    if (labelLower.startsWith('submitted')) return 'Submitted'
+    if (labelLower.startsWith('discontinued')) return 'Discontinued'
+    return ''
+  })()
+
+  if (actionMatched) {
+    return {
+      action: actionMatched,
+      remarks: cleaned !== actionMatched ? cleaned : '-',
+    }
   }
 
   const parts = label.split(':')
   if (parts.length >= 2) {
     return {
       action: String(parts[0] || '').trim() || '-',
-      remarks: parts.slice(1).join(':').trim() || '-',
+      remarks: formatLogRemarks(parts.slice(1).join(':').trim()) || '-',
     }
   }
 
@@ -2967,7 +2985,7 @@ export default function ApprovalsPage({
                                       <div className="text-xs font-bold leading-tight uppercase">{processedBy}</div>
                                     </td>
                                     <td className="px-4 py-3 align-top text-xs font-medium leading-relaxed">
-                                      {l.label}
+                                      {formatLogRemarks(l.label)}
                                     </td>
                                     <td className="px-4 py-3 align-top text-right">
                                       <span className="inline-flex rounded bg-black/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">
@@ -3554,7 +3572,7 @@ export default function ApprovalsPage({
                                     >
                                       {tone === "ok" ? "Approved" : tone === "danger" ? "Returned" : "Info"}
                                     </span>
-                                    <div className="min-w-0 text-sm text-slate-700">{l.label}</div>
+                                    <div className="min-w-0 text-sm text-slate-700">{formatLogRemarks(l.label)}</div>
                                   </div>
                                 </td>
                               </tr>

@@ -13,7 +13,7 @@ import PreValidationTab from "../components/tabs/PreValidationTab"
 import OngoingTab from "../components/tabs/OngoingTab"
 import CompletedTab from "../components/tabs/CompletedTab"
 import DiscontinuedTab from "../components/tabs/DiscontinuedTab"
-import RoutingSlipModal from "../components/RoutingSlipModal"
+import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import { getSubDocAmount } from "../types/documentTypes"
 
 type TabType = "pre-validation" | "ongoing" | "completed" | "discontinued"
@@ -493,9 +493,10 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         const mFor = label.match(/^received\s*(?:for\s*)?(.*)$/i)
         return String(mFor?.[1] || '').trim()
       })()
+      const remarksRaw = task || taskFromParens || taskFromColon || '-'
       return {
         action: office ? `Received by ${office.toUpperCase()}` : 'Received',
-        remarks: task || taskFromParens || taskFromColon || '-',
+        remarks: formatLogRemarks(remarksRaw),
       }
     }
 
@@ -506,11 +507,6 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
       })()
 
       const { dest, taskFromFor } = (() => {
-        // Support labels like:
-        // - "Transferred to BUDGET (For DV checking)"
-        // - "Transferred to BUDGET: For DV checking"
-        // - "Transferred to BUDGET for DV checking"
-        // - "Transferred to BUDGET FOR DV CHECKING"
         const forSplit = afterTransfer.split(/\s+for\s+/i)
         if (forSplit.length >= 2) {
           return { dest: String(forSplit[0] || '').trim(), taskFromFor: String(forSplit.slice(1).join(' for ') || '').trim() }
@@ -519,24 +515,39 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
       })()
 
       const destClean = (() => {
-        // remove trailing punctuation / parentheses if present
         const d = String(dest || '').trim()
         if (!d) return ''
         const cut = d.match(/^([^(:]+?)(?:\(|:|$)/)
         return String(cut?.[1] || d).trim()
       })()
 
-      const remarks = taskFromParens || taskFromColon || taskFromFor || '-'
+      const remarksRaw = taskFromParens || taskFromColon || taskFromFor || '-'
       return {
         action: destClean ? `Transferred to ${destClean.toUpperCase()}` : 'Transferred',
-        remarks,
+        remarks: formatLogRemarks(remarksRaw),
+      }
+    }
+
+    const cleaned = formatLogRemarks(label)
+    const actionMatched = (() => {
+      if (labelLower.startsWith('returned') || labelLower.includes('returned')) return 'Returned'
+      if (labelLower.startsWith('approved') || labelLower.includes('approved')) return 'Approved'
+      if (labelLower.startsWith('submitted')) return 'Submitted'
+      if (labelLower.startsWith('discontinued')) return 'Discontinued'
+      return ''
+    })()
+
+    if (actionMatched) {
+      return {
+        action: actionMatched,
+        remarks: cleaned !== actionMatched ? cleaned : '-',
       }
     }
 
     const parts = label.split(':')
     if (parts.length >= 2) {
       const action = String(parts[0] || '').trim()
-      const remarks = parts.slice(1).join(':').trim()
+      const remarks = formatLogRemarks(parts.slice(1).join(':').trim())
       return { action: action || '-', remarks: remarks || '-' }
     }
 
@@ -899,15 +910,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   }
 
   const formatLogLabel = (log: DocumentLog) => {
-    const rawLabel = String(log?.label || "").trim()
-    const byOffice = String(log?.byOffice || "").trim()
-    if (!byOffice) return rawLabel
-
-    const match = rawLabel.match(/^(Approved|Returned)\b\s*:?(.*)$/i)
-    const typeLabel = match?.[1] ? String(match[1]).trim() : ""
-    const rest = match?.[2] ? String(match[2]).trim() : ""
-    if (!typeLabel) return rawLabel
-    return rest ? `${byOffice}: ${typeLabel.toUpperCase()}: ${rest}` : `${byOffice}: ${typeLabel.toUpperCase()}`
+    return formatLogRemarks(log?.label)
   }
 
   const formatLogLabelCompact = (log: DocumentLog) => {

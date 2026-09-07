@@ -18,6 +18,7 @@ import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
+import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import RoutingSlipModal from "../../users/components/RoutingSlipModal"
 import type { DocumentRow } from "../../users/types/documentTypes"
 
@@ -921,9 +922,10 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         }
         return raw
       })()
+      const remarksRaw = taskFromParens || task || '-'
       return {
         action: office ? `Received by ${office.toUpperCase()}` : 'Received',
-        remarks: taskFromParens || task || '-',
+        remarks: formatLogRemarks(remarksRaw),
       }
     }
 
@@ -932,16 +934,33 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         const m = label.match(/transferred\s+to\s+([^(:]+?)(?:\(|:|$)/i)
         return String(m?.[1] || '').trim()
       })()
+      const remarksRaw = taskFromParens || '-'
       return {
         action: dest ? `Transferred to ${dest.toUpperCase()}` : 'Transferred',
-        remarks: taskFromParens || '-',
+        remarks: formatLogRemarks(remarksRaw),
+      }
+    }
+
+    const cleaned = formatLogRemarks(label)
+    const actionMatched = (() => {
+      if (labelLower.startsWith('returned') || labelLower.includes('returned')) return 'Returned'
+      if (labelLower.startsWith('approved') || labelLower.includes('approved')) return 'Approved'
+      if (labelLower.startsWith('submitted')) return 'Submitted'
+      if (labelLower.startsWith('discontinued')) return 'Discontinued'
+      return ''
+    })()
+
+    if (actionMatched) {
+      return {
+        action: actionMatched,
+        remarks: cleaned !== actionMatched ? cleaned : '-',
       }
     }
 
     const parts = label.split(':')
     if (parts.length >= 2) {
       const action = String(parts[0] || '').trim()
-      const remarks = parts.slice(1).join(':').trim()
+      const remarks = formatLogRemarks(parts.slice(1).join(':').trim())
       return { action: action || '-', remarks: remarks || '-' }
     }
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { History } from "lucide-react"
-import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
+import { formatLogRemarks } from "../../utils/formatLogRemarks"
 
 const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"
 const API_URL = RAW_API_URL.replace(/\/$/, "").endsWith("/api")
@@ -609,7 +609,7 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
                               <div className="text-xs font-bold leading-tight uppercase">{processedBy}</div>
                             </td>
                             <td className="px-4 py-3 align-top text-xs font-medium leading-relaxed">
-                              {l.label}
+                              {formatLogRemarks(l.label)}
                             </td>
                             <td className="px-4 py-3 align-top text-right">
                               <span className="inline-flex rounded bg-black/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">
