@@ -14,6 +14,7 @@ import OngoingTab from "../components/tabs/OngoingTab"
 import CompletedTab from "../components/tabs/CompletedTab"
 import DiscontinuedTab from "../components/tabs/DiscontinuedTab"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
+import RoutingSlipModal from "../components/RoutingSlipModal"
 import { getSubDocAmount } from "../types/documentTypes"
 
 type TabType = "pre-validation" | "ongoing" | "completed" | "discontinued"
