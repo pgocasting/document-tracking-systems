@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Document = require('../models/Document');
 const Office = require('../models/Office');
 const User = require('../models/User');
@@ -243,6 +244,27 @@ router.get('/', authenticateToken, async (req, res) => {
     res.json({ documents: docs });
   } catch (error) {
     console.error('Get documents error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET /api/documents/:id - Get single document by ID or tracking number
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    let doc = null;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      doc = await Document.findById(id);
+    }
+    if (!doc) {
+      doc = await Document.findOne({ trackingNo: String(id).trim() });
+    }
+    if (!doc) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+    res.json({ document: doc });
+  } catch (error) {
+    console.error('Get single document error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
