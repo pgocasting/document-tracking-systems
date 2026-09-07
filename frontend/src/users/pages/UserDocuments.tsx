@@ -184,6 +184,30 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   const [subDocActionBusy, setSubDocActionBusy] = useState(false)
   const [mainDocActionBusy, setMainDocActionBusy] = useState(false)
   const [documents, setDocuments] = useState<DocumentRow[]>([])
+  const [hasDraft, setHasDraft] = useState(false)
+
+  const checkDraft = useCallback(() => {
+    try {
+      const raw = localStorage.getItem("user")
+      const parsed = raw ? (JSON.parse(raw) as { username?: string } | null) : null
+      const uname = String(parsed?.username || "").trim()
+      const key = `new_request_draft:${uname || "_"}`
+      const draft = localStorage.getItem(key)
+      setHasDraft(!!draft)
+    } catch {
+      setHasDraft(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    checkDraft()
+    window.addEventListener("dts:draft_changed", checkDraft)
+    window.addEventListener("storage", checkDraft)
+    return () => {
+      window.removeEventListener("dts:draft_changed", checkDraft)
+      window.removeEventListener("storage", checkDraft)
+    }
+  }, [checkDraft])
 
   useEffect(() => {
     if (preview) {
@@ -1420,11 +1444,21 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
             <span className="ml-1 rounded bg-white/20 px-1.5 py-0.5 text-[10px]">{returnedCount}</span>
           </button>
           <button
+            type="button"
             onClick={openNewRequest}
-            className="inline-flex h-8 items-center justify-center gap-2 rounded bg-sky-600 px-3 text-xs font-medium text-white transition hover:bg-sky-700"
+            className="relative inline-flex h-8 items-center justify-center gap-2 rounded bg-sky-600 px-3 text-xs font-medium text-white shadow-sm transition hover:bg-sky-700"
+            title={hasDraft ? "New Request (Draft available)" : "New Request"}
           >
             <Plus className="size-3.5" />
             New Request
+            {hasDraft && (
+              <span
+                className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
+                title="Saved Draft Available"
+              >
+                1
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -1936,6 +1970,15 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                 }
 
                 await fetchDocuments()
+                try {
+                  const rawUser = localStorage.getItem("user")
+                  const parsedU = rawUser ? (JSON.parse(rawUser) as { username?: string } | null) : null
+                  const uname = String(parsedU?.username || "").trim()
+                  localStorage.removeItem(`new_request_draft:${uname || "_"}`)
+                  window.dispatchEvent(new CustomEvent("dts:draft_changed"))
+                } catch {
+                  // ignore
+                }
                 setIsModalOpen(false)
                 toast.success(`Request submitted successfully! Tracking No: ${trackingNo}`)
               } catch (e) {

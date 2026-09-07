@@ -1,5 +1,6 @@
 import { X } from "lucide-react"
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
+import { toast } from "../../lib/toast"
 
 const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"
 const API_URL = RAW_API_URL.replace(/\/$/, "").endsWith("/api")
@@ -186,6 +187,8 @@ export default function NewRequestModal({
       // ignore
     }
     setHasDraft(false)
+    toast.info("Draft cleared.")
+    window.dispatchEvent(new CustomEvent("dts:draft_changed"))
   }
 
   const saveDraft = () => {
@@ -207,8 +210,11 @@ export default function NewRequestModal({
       localStorage.setItem(getDraftStorageKey(), JSON.stringify(payload))
       setHasDraft(true)
       setSubmitError("Draft saved.")
+      toast.success("Draft saved successfully.")
+      window.dispatchEvent(new CustomEvent("dts:draft_changed"))
     } catch {
       setSubmitError("Failed to save draft.")
+      toast.error("Failed to save draft.")
     }
   }
 
