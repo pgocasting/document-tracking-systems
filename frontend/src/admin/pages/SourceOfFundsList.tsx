@@ -257,7 +257,7 @@ export default function SourceOfFundsList() {
           {loading && sources.length === 0 ? (
             <div className="p-4 text-center text-sm text-slate-600">Loading source of funds...</div>
           ) : null}
-          <table className="w-full min-w-[900px] text-center text-sm">
+          <table className="w-full min-w-[900px] text-center text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">ID</th>

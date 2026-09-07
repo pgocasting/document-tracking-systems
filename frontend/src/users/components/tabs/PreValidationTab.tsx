@@ -62,7 +62,7 @@ export default function PreValidationTab({
     <>
       <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
             <thead className="bg-blue-600 text-white">
               <tr className="border-b border-blue-700">
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>

@@ -1602,7 +1602,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
           </div>
 
           <div className="hidden overflow-auto sm:block">
-            <table className="w-full min-w-[1200px] text-left text-sm">
+            <table className="w-full min-w-[1200px] text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
               <thead className="bg-blue-600 text-white [&_th]:text-center">
                 <tr className="border-b border-blue-700">
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white first:text-left first:pl-5">Tracking #</th>
@@ -2336,7 +2336,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                   <div className="space-y-2">
                     <div className="text-xs font-semibold text-slate-700">Items</div>
                     <div className="overflow-x-auto rounded-md border border-slate-200">
-                      <table className="w-full min-w-[720px] border-collapse">
+                      <table className="w-full min-w-[720px] border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                         <thead className="bg-blue-600 text-white">
                           <tr className="text-left text-[11px] font-semibold text-white">
                             <th className="border-b border-blue-700 px-2 py-2">Unit</th>
@@ -3022,7 +3022,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                               <span className="font-medium">Purpose:</span> {sub.purpose || '-'}
                             </div>
                           </div>
-                          <table className="w-full text-left text-sm">
+                          <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                             <thead className="bg-blue-600 text-white">
                               <tr className="border-b border-blue-700">
                                 <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
@@ -3057,7 +3057,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                   </div>
                 ) : (
                   <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                       <thead className="bg-blue-600 text-white">
                         <tr className="border-b border-blue-700">
                           <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>

@@ -452,7 +452,7 @@ export default function AdminDashboardPage({ onLogout }: AdminDashboardPageProps
                   {showTable && (
                     <div className="p-6 pt-4">
                       <div className="relative w-full overflow-auto rounded-xl border border-slate-200/80">
-                        <table className="w-full caption-bottom text-sm">
+                        <table className="w-full caption-bottom text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                           <thead className="bg-blue-600 text-white border-b border-blue-700">
                             <tr>
                               <th className="h-10 px-4 text-left align-middle text-xs font-bold uppercase tracking-wider text-white">

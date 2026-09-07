@@ -1689,7 +1689,7 @@ export default function ApprovalsPage({
         <div className="overflow-auto">
           {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
           {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading documents...</div> : null}
-          <table className="w-full min-w-[1200px] table-auto text-left text-sm">
+          <table className="w-full min-w-[1200px] table-auto text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
             <thead className="sticky top-0 z-10 bg-blue-600 text-white [&_th]:text-center">
               <tr className="border-b border-blue-700">
                 <th className="w-[120px] px-3 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>
@@ -2575,7 +2575,7 @@ export default function ApprovalsPage({
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-slate-700">Items</div>
                   <div className="overflow-x-auto rounded-md border border-slate-200">
-                    <table className="w-full min-w-[720px] border-collapse">
+                    <table className="w-full min-w-[720px] border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                       <thead className="bg-blue-600 text-white">
                         <tr className="text-left text-[11px] font-semibold text-white">
                           <th className="border-b border-blue-700 px-2 py-2">Unit</th>
@@ -2912,7 +2912,7 @@ export default function ApprovalsPage({
 
                     <div className="flex-1 overflow-auto p-5">
                       <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
-                        <table className="w-full text-left text-sm border-collapse">
+                        <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                           <thead className="bg-blue-600 text-white border-b border-blue-700">
                             <tr>
                               <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
@@ -3224,7 +3224,7 @@ export default function ApprovalsPage({
                                         <span className="font-medium">Purpose:</span> {sub.purpose || '-'}
                                       </div>
                                     </div>
-                                    <table className="w-full text-left text-sm">
+                                    <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                                       <thead className="bg-blue-600 text-white">
                                         <tr className="border-b border-blue-700">
                                           <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
@@ -3261,7 +3261,7 @@ export default function ApprovalsPage({
                             </div>
                           ) : (
                             <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
-                              <table className="w-full text-left text-sm">
+                              <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                                 <thead className="bg-blue-600 text-white">
                                   <tr className="border-b border-blue-700">
                                     <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
@@ -3521,7 +3521,7 @@ export default function ApprovalsPage({
 
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-lg border border-slate-200">
-                      <table className="w-full text-left text-sm">
+                      <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                         <thead className="bg-blue-600 text-white">
                           <tr className="border-b border-blue-700">
                             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white">User</th>

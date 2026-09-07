@@ -296,7 +296,7 @@ export default function SettingsPage() {
 
               <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
                 <div className="relative w-full overflow-auto">
-                  <table className="w-full caption-bottom text-sm">
+                  <table className="w-full caption-bottom text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                     <thead className="bg-blue-600 text-white">
                       <tr>
                         <th className="h-10 px-4 text-left align-middle text-[11px] font-bold uppercase tracking-wider text-white">
@@ -515,7 +515,7 @@ export default function SettingsPage() {
                 <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
                   <div className="bg-blue-600 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Recurrent Events</div>
                   <div className="overflow-auto">
-                    <table className="w-full border-collapse text-sm">
+                    <table className="w-full border-collapse text-sm border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                       <thead className="bg-blue-600 text-left text-[11px] font-bold uppercase tracking-wider text-white">
                         <tr>
                           <th className="px-3.5 py-2.5">Date</th>
@@ -565,7 +565,7 @@ export default function SettingsPage() {
                 <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
                   <div className="bg-emerald-700 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">Non-recurrent Events</div>
                   <div className="overflow-auto">
-                    <table className="w-full border-collapse text-sm">
+                    <table className="w-full border-collapse text-sm border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                       <thead className="bg-blue-600 text-left text-[11px] font-bold uppercase tracking-wider text-white">
                         <tr>
                           <th className="px-3.5 py-2.5">Date</th>

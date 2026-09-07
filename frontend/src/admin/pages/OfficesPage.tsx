@@ -756,7 +756,7 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
           <div className="overflow-auto">
             {error ? <div className="p-4 text-center text-sm text-rose-600">Error: {error}</div> : null}
             {loading ? <div className="p-4 text-center text-sm text-slate-600">Loading offices...</div> : null}
-            <table className="w-full min-w-[1200px] text-center text-sm">
+            <table className="w-full min-w-[1200px] text-center text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
               <thead className="bg-blue-600 text-white border-b border-blue-700">
                 <tr>
                   <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office ID</th>
@@ -1393,7 +1393,7 @@ export default function OfficesPage({ title = "Offices" }: OfficesPageProps) {
 
                   <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
                     <div className="overflow-auto">
-                      <table className="w-full table-fixed text-left text-sm">
+                      <table className="w-full table-fixed text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                         <thead className="bg-blue-600 text-white">
                           <tr className="border-b border-blue-700">
                             <th className="w-20 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white">

@@ -2364,7 +2364,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                                     <span className="font-medium">Purpose:</span> {sub.purpose || '-'}
                                   </div>
                                 </div>
-                                <table className="w-full text-left text-sm">
+                                <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                                   <thead className="bg-blue-600 text-white">
                                     <tr className="border-b border-blue-700">
                                       <th className="px-3 py-2 text-xs font-semibold text-white">Date</th>
@@ -2399,7 +2399,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         </div>
                       ) : (
                         <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
-                          <table className="w-full text-left text-sm">
+                          <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                             <thead className="bg-blue-600 text-white">
                               <tr className="border-b border-blue-700">
                                 <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">Date</th>
@@ -2663,7 +2663,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-lg border border-slate-200">
-                      <table className="w-full text-left text-sm">
+                      <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                         <thead className="bg-blue-600 text-white">
                           <tr className="border-b border-blue-700">
                             <th className="w-40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white">User</th>
@@ -2810,7 +2810,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                 {/* Body (Logs Table) */}
                 <div className="flex-1 overflow-auto p-5">
                   <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
-                    <table className="w-full text-left text-sm border-collapse">
+                    <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                       <thead className="bg-blue-600 text-white border-b border-blue-700">
                         <tr>
                           <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
@@ -3207,7 +3207,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
                   <div className="flex-1 overflow-auto p-4">
                     <div className="overflow-hidden rounded-xl border border-slate-200">
-                      <table className="w-full text-left text-sm">
+                      <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                         <thead className="bg-blue-600 text-white">
                           <tr className="border-b border-blue-700">
                             <th className="px-3.5 py-3 text-xs font-bold uppercase tracking-wider text-white">Returned At</th>

@@ -438,7 +438,7 @@ export default function EndUsersPage({ title = "End Users" }: EndUsersPageProps)
               Loading users...
             </div>
           ) : (
-          <table className="w-full min-w-[900px] text-center text-sm">
+          <table className="w-full min-w-[900px] text-center text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
             <thead className="bg-blue-600 text-white border-b border-blue-700">
               <tr>
                 <th className="hidden md:table-cell px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Office</th>

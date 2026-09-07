@@ -414,7 +414,7 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
           {loading ? (
             <div className="p-8 text-center text-sm text-slate-500">Loading...</div>
           ) : (
-            <table className="w-full min-w-[900px] text-left text-sm">
+            <table className="w-full min-w-[900px] text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
               <thead className="bg-blue-600 text-white">
                 <tr className="border-b border-blue-700">
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Timestamp</th>
@@ -569,7 +569,7 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
             <div className="flex-1 overflow-auto p-5">
               {/* Logs table */}
               <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
-                <table className="w-full text-left text-sm border-collapse">
+                <table className="w-full text-left text-sm border-collapse border border-slate-200 [&_th]:border [&_th]:border-blue-700 [&_td]:border [&_td]:border-slate-200">
                   <thead className="bg-blue-600 text-white border-b border-blue-700">
                     <tr>
                       <th className="w-32 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white">Timestamp</th>
