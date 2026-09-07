@@ -298,6 +298,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
   const [commentText, setCommentText] = useState("")
   const [editSupplierRow, setEditSupplierRow] = useState<RequestRow | null>(null)
   const [editSupplierValue, setEditSupplierValue] = useState("")
+  const [editSubDocSuppliers, setEditSubDocSuppliers] = useState<string[]>([])
   const [editSupplierBusy, setEditSupplierBusy] = useState(false)
   const [editBacNotesRow, setEditBacNotesRow] = useState<RequestRow | null>(null)
   const [editBacNotesValue, setEditBacNotesValue] = useState("")
@@ -591,32 +592,25 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                 const mainSupplier = String((d as any)?.supplier || '').trim()
 
                 if (subs.length > 0) {
-                  if (mainSupplier && mainSupplier.toLowerCase() !== 'not updated') {
-                    const parentTotal = parseNum((d as any)?.amount)
-                    let sumSubDocs = 0
-                    subs.forEach((s: any, sidx: number) => {
-                      const subAmtStr = s?.amount || getSubDocAmount(d as any, sidx)
-                      sumSubDocs += parseNum(subAmtStr)
-                    })
-                    const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
-                    const mainAmt = (d as any)?.supplierAmount || (mainRemaining > 0 ? String(mainRemaining) : (d as any)?.amount)
+                  const parentTotal = parseNum((d as any)?.amount)
+                  let sumSubDocs = 0
+                  subs.forEach((s: any, sidx: number) => {
+                    const subAmtStr = s?.amount || getSubDocAmount(d as any, sidx)
+                    sumSubDocs += parseNum(subAmtStr)
+                  })
+                  const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
+                  const mainAmt = (d as any)?.supplierAmount || (mainRemaining > 0 ? String(mainRemaining) : (d as any)?.amount)
 
-                    return [
-                      {
-                        name: mainSupplier,
-                        amount: toPeso(mainAmt),
-                      },
-                      ...subs.map((s: any, sidx: number) => ({
-                        name: String(s?.supplier || '').trim() || 'Not Updated',
-                        amount: toPeso(s?.amount || getSubDocAmount(d as any, sidx)),
-                      })),
-                    ]
-                  }
-
-                  return subs.map((s: any, sidx: number) => ({
-                    name: String(s?.supplier || '').trim() || 'Not Updated',
-                    amount: toPeso(s?.amount || getSubDocAmount(d as any, sidx)),
-                  }))
+                  return [
+                    {
+                      name: mainSupplier || 'Not Updated',
+                      amount: toPeso(mainAmt),
+                    },
+                    ...subs.map((s: any, sidx: number) => ({
+                      name: String(s?.supplier || '').trim() || 'Not Updated',
+                      amount: toPeso(s?.amount || getSubDocAmount(d as any, sidx)),
+                    })),
+                  ]
                 }
 
                 return [
@@ -1903,6 +1897,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                             if (!canEditSupplier) return
                             setEditSupplierRow(r)
                             setEditSupplierValue(String(r.doc?.supplier || '').trim())
+                            setEditSubDocSuppliers(Array.isArray(r.doc?.subDocuments) ? r.doc.subDocuments.map((s: any) => String(s?.supplier || '').trim()) : [])
                           }}
                           onEditBacNotes={() => {
                             if (!canEditBacNotes) return
@@ -3419,19 +3414,57 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                     </div>
                   </div>
 
-                  <div className="space-y-3 px-4 py-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-700" htmlFor="supplier">
-                        Supplier
-                      </label>
-                      <input
-                        id="supplier"
-                        value={editSupplierValue}
-                        onChange={(e) => setEditSupplierValue(e.target.value)}
-                        className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
-                        placeholder="Enter supplier"
-                      />
-                    </div>
+                  <div className="space-y-4 px-4 py-4 max-h-[60vh] overflow-y-auto">
+                    {Array.isArray(editSupplierRow.doc?.subDocuments) && editSupplierRow.doc.subDocuments.length > 0 ? (
+                      <>
+                        <div className="space-y-1">
+                          <label className="text-xs font-semibold text-slate-700" htmlFor="supplier-main">
+                            1. Main Document Supplier
+                          </label>
+                          <input
+                            id="supplier-main"
+                            value={editSupplierValue}
+                            onChange={(e) => setEditSupplierValue(e.target.value)}
+                            className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+                            placeholder="Enter main document supplier"
+                          />
+                        </div>
+                        {editSupplierRow.doc.subDocuments.map((s: any, idx: number) => (
+                          <div key={idx} className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-700" htmlFor={`supplier-sub-${idx}`}>
+                              {idx + 2}. Sub-Document #{idx + 1} Supplier ({s?.trackingNo || `Item ${idx + 2}`})
+                            </label>
+                            <input
+                              id={`supplier-sub-${idx}`}
+                              value={editSubDocSuppliers[idx] ?? ''}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                setEditSubDocSuppliers((prev) => {
+                                  const copy = [...prev]
+                                  copy[idx] = val
+                                  return copy
+                                })
+                              }}
+                              className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+                              placeholder={`Enter supplier for Sub-Document #${idx + 1}`}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-700" htmlFor="supplier">
+                          Supplier
+                        </label>
+                        <input
+                          id="supplier"
+                          value={editSupplierValue}
+                          onChange={(e) => setEditSupplierValue(e.target.value)}
+                          className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus-visible:outline-none"
+                          placeholder="Enter supplier"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3">
@@ -3440,6 +3473,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                       onClick={() => {
                         setEditSupplierRow(null)
                         setEditSupplierValue("")
+                        setEditSubDocSuppliers([])
                       }}
                       className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
                     >
@@ -3452,12 +3486,21 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                         if (!editSupplierRow) return
                         try {
                           setEditSupplierBusy(true)
+                          const nextSubDocs = Array.isArray(editSupplierRow.doc?.subDocuments) && editSupplierRow.doc.subDocuments.length > 0
+                            ? editSupplierRow.doc.subDocuments.map((s: any, idx: number) => ({
+                                ...s,
+                                supplier: (editSubDocSuppliers[idx] ?? s?.supplier ?? '').trim(),
+                              }))
+                            : undefined
+
                           await patchDocument(String(editSupplierRow.doc._id), {
                             supplier: editSupplierValue.trim(),
+                            ...(nextSubDocs ? { subDocuments: nextSubDocs } : {}),
                           })
                           await fetchRows()
                           setEditSupplierRow(null)
                           setEditSupplierValue("")
+                          setEditSubDocSuppliers([])
                         } catch (e) {
                           setError(e instanceof Error ? e.message : 'Failed to update')
                         } finally {
