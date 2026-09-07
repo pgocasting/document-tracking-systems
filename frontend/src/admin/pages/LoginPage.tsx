@@ -27,8 +27,14 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
     e.preventDefault()
     setError(null)
     setLoading(true)
+    
+    const loginEndpoint = `${API_URL}/auth/login`
+    console.log("[LOGIN] Environment VITE_API_URL:", import.meta.env.VITE_API_URL)
+    console.log("[LOGIN] Resolved API_URL:", API_URL)
+    console.log("[LOGIN] Sending POST to:", loginEndpoint, { username: username.trim() })
+
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(loginEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,9 +45,18 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         }),
       })
 
+      console.log("[LOGIN] Server Response:", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url,
+      })
+
       const data = await response.json()
+      console.log("[LOGIN] Parsed Response Data:", data)
 
       if (!response.ok) {
+        console.error("[LOGIN] Login request failed with status:", response.status, data)
         setError(data.message || 'Login failed.')
         toast.error(data.message || 'Login failed.')
         return
@@ -52,6 +67,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
       storage.setItem('token', data.token)
       storage.setItem('user', JSON.stringify(data.user))
 
+      console.log("[LOGIN] Login successful for user:", data.user)
       onLoginSuccess({
         username: data.user.username,
         role: data.user.role,
@@ -61,7 +77,8 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
       })
       toast.success('Login successful.')
       setPassword('')
-    } catch {
+    } catch (err) {
+      console.error("[LOGIN] Catch error during login fetch:", err)
       setError('Login failed. Please try again.')
       toast.error('Login failed. Please try again.')
     } finally {
