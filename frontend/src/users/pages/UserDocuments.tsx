@@ -15,7 +15,7 @@ import CompletedTab from "../components/tabs/CompletedTab"
 import DiscontinuedTab from "../components/tabs/DiscontinuedTab"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import RoutingSlipModal from "../components/RoutingSlipModal"
-import { getSubDocAmount } from "../types/documentTypes"
+import { getSubDocAmount, getMainDocSupplierInfo } from "../types/documentTypes"
 
 type TabType = "pre-validation" | "ongoing" | "completed" | "discontinued"
 
@@ -1690,26 +1690,9 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           onHistoryModal={(doc) => setHistoryModalDoc(doc)}
           onEditDoc={(doc) => { setEditDoc(doc); setIsModalOpen(true) }}
           onEditMainSupplier={(doc) => {
-            const existingSupplier = String(doc.supplier || "").trim()
-            const subSuppliers = Array.from(new Set((doc.subDocuments || []).map(s => String(s.supplier || "").trim()).filter(Boolean)))
-            const initialSupplier = existingSupplier || subSuppliers.join(", ")
-
-            const parseNum = (val: any) => {
-              const cleaned = String(val || "").replace(/[^0-9.-]/g, "").replace(/,/g, "").trim()
-              const n = Number.parseFloat(cleaned)
-              return Number.isFinite(n) ? n : 0
-            }
-
-            const parentTotal = parseNum(doc.amount || (doc as any).supplierAmount)
-            let sumSubDocs = 0
-            if (Array.isArray(doc.subDocuments) && doc.subDocuments.length > 0) {
-              doc.subDocuments.forEach((_, sidx) => {
-                const subAmtStr = getSubDocAmount(doc, sidx)
-                sumSubDocs += parseNum(subAmtStr)
-              })
-            }
-            const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
-            const initialAmount = String(mainRemaining)
+            const { supplier: calculatedSupplier, amount: calculatedAmount } = getMainDocSupplierInfo(doc)
+            const initialSupplier = calculatedSupplier
+            const initialAmount = calculatedAmount || (doc as any).supplierAmount || doc.amount
 
             setEditingMainDoc({
               id: doc.id,
@@ -2294,8 +2277,45 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         <div className="md:col-span-2">
                           <span className="font-semibold">Purpose:</span> {historyModalDoc.purpose || ''}
                         </div>
-                        <div>
-                          <span className="font-semibold">Supplier:</span> {'N/A'}
+                        <div className={Array.isArray((historyModalDoc as any)?.subDocuments) && (historyModalDoc as any).subDocuments.length > 0 ? "md:col-span-2" : ""}>
+                          <span className="font-semibold">Supplier:</span>{' '}
+                          {(() => {
+                            const subs = Array.isArray((historyModalDoc as any)?.subDocuments)
+                              ? ((historyModalDoc as any).subDocuments as any[])
+                              : []
+                            if (subs.length > 0) {
+                              const { supplier: mainSupplier, amount: mainAmt } = getMainDocSupplierInfo(historyModalDoc)
+                              const list = [
+                                {
+                                  name: mainSupplier || 'Not Updated',
+                                  amount: mainAmt ? `₱ ${formatPeso(mainAmt)}` : '',
+                                },
+                                ...subs.map((s: any, sidx: number) => ({
+                                  name: String(s?.supplier || '').trim() || 'Not Updated',
+                                  amount: (() => {
+                                    const a = s?.amount || getSubDocAmount(historyModalDoc, sidx)
+                                    return a ? `₱ ${formatPeso(a)}` : ''
+                                  })(),
+                                })),
+                              ]
+                              return (
+                                <div className="mt-1 space-y-0.5 pl-3 text-xs">
+                                  {list.map((it, idx) => (
+                                    <div key={idx} className="text-slate-800">
+                                      <span className="font-medium">{idx + 1}. {it.name}</span>
+                                      {it.amount ? <span className="text-slate-600 font-medium"> - {it.amount}</span> : ''}
+                                    </div>
+                                  ))}
+                                </div>
+                              )
+                            }
+
+                            const { supplier, amount: amt } = getMainDocSupplierInfo(historyModalDoc)
+                            if (supplier && amt) return `${supplier} - ₱ ${formatPeso(amt)}`
+                            if (supplier) return supplier
+                            if (amt) return `₱ ${formatPeso(amt)}`
+                            return 'N/A'
+                          })()}
                         </div>
                         <div>
                           <span className="font-semibold">Source of Fund:</span> {historyModalDoc.fund || ''}
@@ -3331,7 +3351,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                       const subCountRaw = Array.isArray(returnedReceiveConfirmDoc?.subDocuments)
                         ? returnedReceiveConfirmDoc.subDocuments.length
                         : 0
-                      const voucherCount = subCountRaw > 0 ? subCountRaw : 1
+                      const voucherCount = 1 + subCountRaw
                       const voucherLabel = voucherCount === 1 ? 'Voucher' : 'Vouchers'
 
                       return (
@@ -3706,24 +3726,19 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Amount</label>
-                  <div className="relative flex rounded-md border border-slate-200 overflow-hidden focus-within:border-sky-500 focus-within:ring-1 focus-within:ring-sky-500">
-                    <span className="flex items-center justify-center bg-slate-50 px-3 text-sm text-slate-500 border-r border-slate-200 font-semibold select-none">
-                      ₱
-                    </span>
-                    <input
-                      type="text"
-                      value={editingSubDoc.amount}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setEditingSubDoc(prev => prev ? { ...prev, amount: formatPesoInput(val, false) } : null)
-                      }}
-                      onBlur={() => {
-                        setEditingSubDoc(prev => prev && prev.amount ? { ...prev, amount: formatPesoInput(prev.amount, true) } : prev)
-                      }}
-                      className="h-10 w-full px-3 text-sm focus:outline-none bg-white"
-                      placeholder="Enter amount"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={editingSubDoc.amount}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setEditingSubDoc(prev => prev ? { ...prev, amount: formatPesoInput(val, false) } : null)
+                    }}
+                    onBlur={() => {
+                      setEditingSubDoc(prev => prev && prev.amount ? { ...prev, amount: formatPesoInput(prev.amount, true) } : prev)
+                    }}
+                    className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm focus:border-sky-500 focus:outline-none"
+                    placeholder="Enter amount"
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Supplier</label>
@@ -3864,24 +3879,19 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700">Amount</label>
-                  <div className="relative flex rounded-md border border-slate-200 overflow-hidden focus-within:border-sky-500 focus-within:ring-1 focus-within:ring-sky-500">
-                    <span className="flex items-center justify-center bg-slate-50 px-3 text-sm text-slate-500 border-r border-slate-200 font-semibold select-none">
-                      ₱
-                    </span>
-                    <input
-                      type="text"
-                      value={editingMainDoc.supplierAmount}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setEditingMainDoc((prev) => (prev ? { ...prev, supplierAmount: formatPesoInput(val, false) } : null))
-                      }}
-                      onBlur={() => {
-                        setEditingMainDoc((prev) => (prev && prev.supplierAmount ? { ...prev, supplierAmount: formatPesoInput(prev.supplierAmount, true) } : prev))
-                      }}
-                      className="h-10 w-full px-3 text-sm focus:outline-none bg-white"
-                      placeholder="Enter amount"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={editingMainDoc.supplierAmount}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setEditingMainDoc((prev) => (prev ? { ...prev, supplierAmount: formatPesoInput(val, false) } : null))
+                    }}
+                    onBlur={() => {
+                      setEditingMainDoc((prev) => (prev && prev.supplierAmount ? { ...prev, supplierAmount: formatPesoInput(prev.supplierAmount, true) } : prev))
+                    }}
+                    className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm focus:border-sky-500 focus:outline-none"
+                    placeholder="Enter amount"
+                  />
                 </div>
               </div>
 

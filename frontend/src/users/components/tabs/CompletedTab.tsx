@@ -1,6 +1,6 @@
 import { Fragment } from "react"
 import { FileText, History, ChevronDown, ChevronRight, Printer } from "lucide-react"
-import { type DocumentRow, type DocumentLog, getSubDocAmount } from "../../types/documentTypes"
+import { type DocumentRow, type DocumentLog, getSubDocAmount, getMainDocSupplierInfo } from "../../types/documentTypes"
 
 type Props = {
   docs: DocumentRow[]
@@ -119,14 +119,12 @@ export default function CompletedTab({
                     <td className="border-r border-slate-200 px-3 py-3 text-xs font-medium text-slate-900">₱ {formatPeso(doc.amount)}</td>
                     <td className="border-r border-slate-200 px-3 py-3 text-xs font-medium text-slate-900 whitespace-normal wrap-break-word">
                       {(() => {
-                        const supplier = String(doc.supplier || "").trim()
+                        const { supplier, amount: amt } = getMainDocSupplierInfo(doc)
                         if (supplier) {
-                          const amt = String((doc as any).supplierAmount || "").trim()
                           return amt ? `${supplier} - ₱ ${formatPeso(amt)}` : supplier
                         }
-                        const subSuppliers = Array.from(new Set((doc.subDocuments || []).map(s => String(s.supplier || "").trim()).filter(Boolean)))
-                        if (subSuppliers.length > 0) {
-                          return subSuppliers.join(", ")
+                        if (amt) {
+                          return `₱ ${formatPeso(amt)}`
                         }
                         if (!hasSubDocs) return "-"
                         const filled = (doc.subDocuments || []).filter((s) => s.supplier && String(s.supplier).trim() !== "").length

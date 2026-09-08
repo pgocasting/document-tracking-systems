@@ -123,4 +123,44 @@ export const getSubDocAmount = (
   return String(remaining)
 }
 
+export const getMainDocSupplierInfo = (
+  doc: {
+    amount?: string
+    supplierAmount?: string
+    supplier?: string
+    subDocuments?: Array<{ amount?: string; supplier?: string }>
+  }
+): { supplier: string; amount: string } => {
+  const parseNum = (val: any) => {
+    const cleaned = String(val || "").replace(/[^0-9.-]/g, "").replace(/,/g, "").trim()
+    const n = Number.parseFloat(cleaned)
+    return Number.isFinite(n) ? n : 0
+  }
 
+  const hasSubDocs = Array.isArray(doc.subDocuments) && doc.subDocuments.length > 0
+  const existingSupplier = String(doc.supplier || "").trim()
+  const subSuppliers = Array.from(
+    new Set((doc.subDocuments || []).map((s) => String(s.supplier || "").trim()).filter(Boolean))
+  )
+  const supplierName = existingSupplier || subSuppliers.join(", ")
+
+  let mainAmt = String(doc.supplierAmount || "").trim()
+
+  if (!mainAmt && hasSubDocs) {
+    const parentTotal = parseNum(doc.amount)
+    let sumSubDocs = 0
+    doc.subDocuments?.forEach((s, sidx) => {
+      const subAmtStr = s?.amount || getSubDocAmount(doc, sidx)
+      sumSubDocs += parseNum(subAmtStr)
+    })
+    const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
+    if (mainRemaining > 0) {
+      mainAmt = String(mainRemaining)
+    }
+  }
+
+  return {
+    supplier: supplierName,
+    amount: mainAmt,
+  }
+}

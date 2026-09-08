@@ -8,7 +8,7 @@ import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
-import { getSubDocAmount } from "../../users/types/documentTypes"
+import { getSubDocAmount, getMainDocSupplierInfo } from "../../users/types/documentTypes"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 
 type ApprovalRow = {
@@ -3143,8 +3143,42 @@ export default function ApprovalsPage({
                             <div className="md:col-span-2">
                               <span className="font-semibold">Purpose:</span> {String(logsRow?.doc?.purpose || '-')}
                             </div>
-                            <div>
-                              <span className="font-semibold">Supplier:</span> {String((logsRow?.doc as any)?.supplier || '-')}
+                            <div className={Array.isArray((logsRow?.doc as any)?.subDocuments) && (logsRow?.doc as any).subDocuments.length > 0 ? "md:col-span-2" : ""}>
+                              <span className="font-semibold">Supplier:</span>{' '}
+                              {(() => {
+                                const d = logsRow?.doc as any
+                                if (!d) return '-'
+                                const subs = Array.isArray(d?.subDocuments) ? (d.subDocuments as any[]) : []
+                                if (subs.length > 0) {
+                                  const { supplier: mainSupplier, amount: mainAmt } = getMainDocSupplierInfo(d)
+                                  const list = [
+                                    {
+                                      name: mainSupplier || 'Not Updated',
+                                      amount: mainAmt ? `₱ ${mainAmt}` : '',
+                                    },
+                                    ...subs.map((s: any, sidx: number) => ({
+                                      name: String(s?.supplier || '').trim() || 'Not Updated',
+                                      amount: (() => {
+                                        const a = s?.amount || getSubDocAmount(d, sidx)
+                                        return a ? `₱ ${a}` : ''
+                                      })(),
+                                    })),
+                                  ]
+                                  return (
+                                    <div className="mt-1 space-y-0.5 pl-3 text-xs">
+                                      {list.map((it, idx) => (
+                                        <div key={idx} className="text-slate-800">
+                                          <span className="font-medium">{idx + 1}. {it.name}</span>
+                                          {it.amount ? <span className="text-slate-600 font-medium"> - {it.amount}</span> : ''}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )
+                                }
+                                const { supplier, amount: amt } = getMainDocSupplierInfo(d)
+                                if (supplier && amt) return `${supplier} - ₱ ${amt}`
+                                return supplier || String(d?.supplier || '-')
+                              })()}
                             </div>
                             <div>
                               <span className="font-semibold">Source of Fund:</span> {String(logsRow?.doc?.fund || '-')}

@@ -20,7 +20,7 @@ import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import RoutingSlipModal from "../../users/components/RoutingSlipModal"
-import { getSubDocAmount, type DocumentRow } from "../../users/types/documentTypes"
+import { getSubDocAmount, getMainDocSupplierInfo, type DocumentRow } from "../../users/types/documentTypes"
 
 type RequestRow = {
   trackingNo: string
@@ -598,22 +598,13 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                 }
 
                 const subs = Array.isArray((d as any).subDocuments) ? ((d as any).subDocuments as any[]) : []
-                const mainSupplier = String((d as any)?.supplier || '').trim()
+                const { supplier: mainSupplier, amount: mainAmtRaw } = getMainDocSupplierInfo(d as any)
 
                 if (subs.length > 0) {
-                  const parentTotal = parseNum((d as any)?.amount)
-                  let sumSubDocs = 0
-                  subs.forEach((s: any, sidx: number) => {
-                    const subAmtStr = s?.amount || getSubDocAmount(d as any, sidx)
-                    sumSubDocs += parseNum(subAmtStr)
-                  })
-                  const mainRemaining = Math.max(0, parentTotal - sumSubDocs)
-                  const mainAmt = (d as any)?.supplierAmount || (mainRemaining > 0 ? String(mainRemaining) : (d as any)?.amount)
-
                   return [
                     {
                       name: mainSupplier || 'Not Updated',
-                      amount: toPeso(mainAmt),
+                      amount: toPeso(mainAmtRaw),
                     },
                     ...subs.map((s: any, sidx: number) => ({
                       name: String(s?.supplier || '').trim() || 'Not Updated',
@@ -625,7 +616,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                 return [
                   {
                     name: mainSupplier || 'Not Updated',
-                    amount: toPeso(String((d as any)?.supplierAmount || '').trim() || (d as any)?.amount),
+                    amount: toPeso(mainAmtRaw || (d as any)?.amount),
                   },
                 ]
               })(),
@@ -1905,7 +1896,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                           onEditSupplier={() => {
                             if (!canEditSupplier) return
                             setEditSupplierRow(r)
-                            setEditSupplierValue(String(r.doc?.supplier || '').trim())
+                            const { supplier: resolvedMainSupplier } = getMainDocSupplierInfo(r.doc as any)
+                            setEditSupplierValue(String(r.doc?.supplier || '').trim() || resolvedMainSupplier)
                             setEditSubDocSuppliers(Array.isArray(r.doc?.subDocuments) ? r.doc.subDocuments.map((s: any) => String(s?.supplier || '').trim()) : [])
                           }}
                           onEditBacNotes={() => {

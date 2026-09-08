@@ -1,4 +1,5 @@
 import type { DocumentRow, DocumentLog } from "../../types/documentTypes"
+import { getMainDocSupplierInfo } from "../../types/documentTypes"
 
 type Props = {
   docs: DocumentRow[]
@@ -75,10 +76,12 @@ export default function DiscontinuedTab({
                   <td className="border-r border-slate-200 px-3 py-3 text-xs font-medium text-slate-600">₱ {formatPeso(doc.amount)}</td>
                   <td className="border-r border-slate-200 px-3 py-3 text-xs font-medium text-slate-600 whitespace-normal wrap-break-word">
                     {(() => {
-                      const supplier = String(doc.supplier || "").trim()
+                      const { supplier, amount: amt } = getMainDocSupplierInfo(doc)
                       if (supplier) {
-                        const amt = String((doc as any).supplierAmount || "").trim()
                         return amt ? `${supplier} - ₱ ${formatPeso(amt)}` : supplier
+                      }
+                      if (amt) {
+                        return `₱ ${formatPeso(amt)}`
                       }
                       if (!hasSubDocs) return "-"
                       const filled = (doc.subDocuments || []).filter((s) => s.supplier && String(s.supplier).trim() !== "").length
