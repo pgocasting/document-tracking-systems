@@ -1651,13 +1651,12 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
             const fundLower = String(doc.fund || "").trim().toLowerCase()
             const isTrustFund = Boolean(fundLower) && fundLower.includes("trust")
             const gsoApproved = hasApprovedByOffice(doc, "gso")
-            const bacApproved = hasApprovedByOffice(doc, "bac")
             const alreadyTransferred = hasTransferredLog(doc)
             // Trust Fund → PTO only; General/other funds → both BUDGET and PTO
-            const canBudget = !alreadyTransferred && !isTrustFund && (gsoApproved && bacApproved)
-            const canPto = !alreadyTransferred && (gsoApproved && bacApproved)
+            const canBudget = !alreadyTransferred && !isTrustFund && gsoApproved
+            const canPto = !alreadyTransferred && gsoApproved
             // Default selection: trust fund pre-selects PTO; others pre-select BUDGET
-            setTransferModalDest(isTrustFund ? "PTO" : "BUDGET")
+            setTransferModalDest(isTrustFund ? "PTO" : (obrEnabled ? "BUDGET" : "PTO"))
             setTransferModalDoc(doc)
           }}
           onRoutingSlip={(doc) => setRoutingSlipDoc(doc)}
@@ -3054,7 +3053,6 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                           const isTrustFund = Boolean(fundLower) && fundLower.includes("trust")
                           const isGeneralFund = Boolean(fundLower) && fundLower.includes("general")
                           const gsoApproved = hasApprovedByOffice(doc, "gso")
-                          const bacApproved = hasApprovedByOffice(doc, "bac")
                           const alreadyTransferred = hasTransferredLog(doc)
 
                           // Smart routing logic
@@ -3065,7 +3063,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                           let autoHighlight: "BUDGET" | "PTO" | null = null
 
                           // Check if document can be transferred (not already transferred and approved)
-                          const canTransfer = !alreadyTransferred && (gsoApproved && bacApproved)
+                          const canTransfer = !alreadyTransferred && gsoApproved
 
                           if (canTransfer) {
                             if (isTrustFund) {

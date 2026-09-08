@@ -135,16 +135,13 @@ export default function PreValidationTab({
                 const fundLower = String(doc.fund || "").trim().toLowerCase()
                 const isTrustFund = Boolean(fundLower) && fundLower.includes("trust")
                 const gsoApproved = hasApprovedByOffice(doc, "gso")
-                const bacApproved = hasApprovedByOffice(doc, "bac")
                 const alreadyTransferred = hasTransferredLog(doc)
 
                 const canTransferBudget =
-                  !alreadyTransferred &&
-                  ((prEnabled && obrEnabled && !isTrustFund && gsoApproved && bacApproved) ||
-                    (!prEnabled && obrEnabled && bacApproved))
+                  !alreadyTransferred && !isTrustFund && obrEnabled && gsoApproved
 
                 const canTransferPto =
-                  !alreadyTransferred && prEnabled && !obrEnabled && gsoApproved && bacApproved
+                  !alreadyTransferred && gsoApproved && (isTrustFund || !obrEnabled)
 
                 const hasRoutingSlip = Boolean(String(doc.gsoRoutingSlip || "").trim())
 
@@ -271,7 +268,7 @@ export default function PreValidationTab({
                               Update
                             </button>
                           )}
-                          {!alreadyTransferred && !hasApprovedByOffice(doc, "bac") && (
+                          {!alreadyTransferred && !hasApprovedByOffice(doc, "gso") && (
                             <button type="button" disabled={actionBusyId === doc.id} onClick={() => onCancelDoc(doc)} className="inline-flex items-center gap-1 rounded bg-rose-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50">
                               Cancel
                             </button>
