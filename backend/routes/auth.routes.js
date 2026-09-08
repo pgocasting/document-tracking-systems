@@ -77,14 +77,17 @@ router.post('/login', async (req, res) => {
     if (userType === 'enduser' || userType === 'procurement') {
       try {
         const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        // Use Philippine Standard Time (UTC+8) for schedule checks
         const now = new Date();
-        const dayKey = DAYS[now.getDay()];
-        const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const PH_OFFSET_MS = 8 * 60 * 60 * 1000;
+        const nowPH = new Date(now.getTime() + PH_OFFSET_MS);
+        const dayKey = DAYS[nowPH.getUTCDay()];
+        const hhmm = `${String(nowPH.getUTCHours()).padStart(2, '0')}:${String(nowPH.getUTCMinutes()).padStart(2, '0')}`;
 
-        // "YYYY-MM-DD" of today (local)
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
+        // "YYYY-MM-DD" of today in Philippine time
+        const yyyy = nowPH.getUTCFullYear();
+        const mm = String(nowPH.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(nowPH.getUTCDate()).padStart(2, '0');
         const todayFull = `${yyyy}-${mm}-${dd}`;   // e.g. "2026-03-24"
         const todayMmDd = `${mm}-${dd}`;           // e.g. "03-24"
 
