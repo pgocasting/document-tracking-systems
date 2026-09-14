@@ -5,7 +5,9 @@ import {
   History,
   LogOut,
   Pencil,
+  Plus,
   Printer,
+  RotateCcw,
   XCircle,
 } from "lucide-react"
 import Barcode from "react-barcode"
@@ -16,10 +18,12 @@ import ObrTemplatePreview, { type ObrTemplateModel } from "../../components/ObrT
 import ObrTemplatePdf from "../../components/ObrTemplatePdf"
 import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
+import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
 import RoutingSlipModal from "../../users/components/RoutingSlipModal"
+import NewRequestModal, { type NewRequestPayload } from "../../users/components/NewRequestModal"
 import { getSubDocAmount, getMainDocSupplierInfo, type DocumentRow } from "../../users/types/documentTypes"
 
 type RequestRow = {
@@ -79,6 +83,8 @@ type ApiDocument = {
   purpose: string
   amount?: string
   status?: string
+  returnToApprovalsRequested?: boolean
+  returnToApprovalsReason?: string
   createdAt?: string
   subDocuments?: Array<{
     trackingNo?: string
@@ -269,11 +275,124 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
   const [fundTab, setFundTab] = useState<string>('General Fund')
   const [availableFunds, setAvailableFunds] = useState<string[]>([])
   const [phaseFilter, setPhaseFilter] = useState<'all' | 'ongoing' | 'returned' | 'completed'>('all')
-  const [preview, setPreview] = useState<{ type: "PR" | "OBR"; row: RequestRow } | null>(null)
+  const [preview, setPreview] = useState<{ type: "PR" | "OBR" | "DV"; row: RequestRow } | null>(null)
   const [routingSlipDoc, setRoutingSlipDoc] = useState<ApiDocument | null>(null)
   const [logsDoc, setLogsDoc] = useState<RequestRow | null>(null)
   const [historyTab, setHistoryTab] = useState<"prevalidation" | "transactions" | "subdocuments">("transactions")
   const [actionBusyId, setActionBusyId] = useState<string | null>(null)
+  const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
+  const [hasDraft, setHasDraft] = useState(false)
+
+  const checkDraft = useCallback(() => {
+    try {
+      const raw = localStorage.getItem("user")
+      const parsed = raw ? (JSON.parse(raw) as { username?: string } | null) : null
+      const uname = String(parsed?.username || "").trim()
+      const key = `new_request_draft:${uname || "_"}`
+      const draft = localStorage.getItem(key)
+      setHasDraft(!!draft)
+    } catch {
+      setHasDraft(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    checkDraft()
+    window.addEventListener("dts:draft_changed", checkDraft)
+    window.addEventListener("storage", checkDraft)
+    return () => {
+      window.removeEventListener("dts:draft_changed", checkDraft)
+      window.removeEventListener("storage", checkDraft)
+    }
+  }, [checkDraft])
+
+  const handleCreateNewRequest = async (payload: NewRequestPayload) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const now = new Date()
+      const pad2 = (n: number) => String(n).padStart(2, "0")
+      const hour12 = now.getHours() % 12 || 12
+
+      const yyyymmdd = `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}`
+      const hhmmss = `${pad2(hour12)}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`
+      const rand5 = Math.floor(Math.random() * 100000)
+        .toString()
+        .padStart(5, "0")
+      const trackingNo = `${yyyymmdd}-${hhmmss}-${rand5}`
+
+      const userRaw = localStorage.getItem("user")
+      const parsedUser = userRaw
+        ? (JSON.parse(userRaw) as { username?: string; fullName?: string; office?: string } | null)
+        : null
+      const createdBy = parsedUser?.fullName || parsedUser?.username || "Admin"
+      const office = parsedUser?.office || "ADMIN"
+
+      const token = localStorage.getItem("token")
+      const response = await fetch(`${API_URL}/documents`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          trackingNo,
+          createdBy,
+          office,
+          fund: payload.fund,
+          section: payload.section,
+          fpp: payload.fpp,
+          department: payload.department,
+          contactNumber: payload.contactNumber,
+          responsibilityCenter: payload.responsibilityCenter,
+          accountCode: payload.accountCode,
+          email: payload.email,
+          requestedByName: payload.requestedByName,
+          requestedByDesignation: payload.requestedByDesignation,
+          cashAvailabilityName: payload.cashAvailabilityName,
+          cashAvailabilityDesignation: payload.cashAvailabilityDesignation,
+          approvedByName: payload.approvedByName,
+          approvedByDesignation: payload.approvedByDesignation,
+          certifiedAName: payload.certifiedAName,
+          certifiedAPosition: payload.certifiedAPosition,
+          certifiedBName: payload.certifiedBName,
+          certifiedBPosition: payload.certifiedBPosition,
+          driveLink: payload.driveLink,
+          prItems: payload.prItems,
+          purpose: payload.purpose,
+          notes: payload.notes,
+          particulars: [
+            ...(payload.prEnabled ? [{ label: "PR", color: "bg-blue-500" }] : []),
+            ...(payload.obrEnabled ? [{ label: "OBR", color: "bg-amber-500" }] : []),
+          ],
+          prEnabled: payload.prEnabled,
+          obrEnabled: payload.obrEnabled,
+          amount: payload.amount,
+        }),
+      })
+
+      if (!response.ok) {
+        const msg = await response.text().catch(() => "")
+        throw new Error(msg || "Failed to submit request")
+      }
+
+      await fetchRows()
+      try {
+        const uname = String(parsedUser?.username || "").trim()
+        localStorage.removeItem(`new_request_draft:${uname || "_"}`)
+        window.dispatchEvent(new CustomEvent("dts:draft_changed"))
+      } catch {
+        // ignore
+      }
+      setIsNewRequestModalOpen(false)
+      toast.success(`Request submitted successfully! Tracking No: ${trackingNo}`)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to submit request")
+      toast.error(e instanceof Error ? e.message : "Failed to submit request")
+    } finally {
+      setLoading(false)
+    }
+  }
   const [editPreviewOpen, setEditPreviewOpen] = useState(false)
   const [editPreviewBusy, setEditPreviewBusy] = useState(false)
   const [editPreviewError, setEditPreviewError] = useState<string | null>(null)
@@ -371,6 +490,10 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
     | { kind: 'discontinue' | 'continue'; row: RequestRow }
     | null
   >(null)
+
+  const [returnToApprovalsConfirm, setReturnToApprovalsConfirm] = useState<RequestRow | null>(null)
+  const [returnToApprovalsRemarks, setReturnToApprovalsRemarks] = useState("")
+  const [returnToApprovalsBusy, setReturnToApprovalsBusy] = useState(false)
 
   const [printRow, setPrintRow] = useState<RequestRow | null>(null)
   const barcodeRef = useRef<HTMLDivElement | null>(null)
@@ -662,7 +785,12 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
   }, [fetchRows])
 
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const handleDocumentChange = useCallback(() => {
+  const handleDocumentChange = useCallback((action?: string, data?: any) => {
+    if (action === 'return_requested') {
+      const tracking = data?.trackingNo || data?.document?.trackingNo || ''
+      const user = data?.requestedBy || ''
+      toast.info(`🔔 Return to Approvals requested for #${tracking}${user ? ` by ${user}` : ''}`)
+    }
     if (refreshTimerRef.current) return
     refreshTimerRef.current = setTimeout(() => {
       refreshTimerRef.current = null
@@ -1088,6 +1216,86 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
     }
   }
 
+  const [dvPdfBusy, setDvPdfBusy] = useState(false)
+  const dvVisibleRef = useRef<HTMLDivElement | null>(null)
+  const dvCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const captureDvPreviewToPdf = async (row: RequestRow) => {
+    const root = dvVisibleRef.current || dvCaptureRef.current
+    if (!root) return
+
+    let previewTab: Window | null = null
+    try {
+      setDvPdfBusy(true)
+
+      previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) {
+        window.alert('Please allow pop-ups to preview the PDF.')
+        return
+      }
+
+      await new Promise((r) => setTimeout(r, 150))
+
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || root.querySelector<HTMLElement>(".print-area") || (root.classList.contains("print-page") ? root : null) || (root.firstElementChild as HTMLElement) || root
+      if (!pageEl) {
+        if (previewTab) previewTab.close()
+        return
+      }
+
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        width: 816,
+        height: 1056,
+        windowWidth: 816,
+        windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('style').forEach((s) => {
+            if (s.textContent) {
+              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+            }
+          })
+          clonedDoc.querySelectorAll('[style]').forEach((el) => {
+            const styleAttr = el.getAttribute('style')
+            if (styleAttr && /oklch/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            }
+          })
+        },
+      })
+
+      const imgData = canvas.toDataURL("image/png")
+      const pageW = pdfDoc.internal.pageSize.getWidth()
+      const pageH = pdfDoc.internal.pageSize.getHeight()
+
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch {
+        URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error("Failed to generate DV PDF", err)
+      if (previewTab) previewTab.close()
+    } finally {
+      setDvPdfBusy(false)
+    }
+  }
+
   const captureObrPreviewToPdf = async (_row: RequestRow) => {
     const root = obrVisibleRef.current || obrCaptureRef.current
     if (!root) return
@@ -1205,6 +1413,28 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
           <div className="mt-1 text-lg font-bold tracking-tight text-slate-900">{title}</div>
           <div className="text-xs text-slate-500">Master database of all provincial documents & transaction logs</div>
         </div>
+
+        {!readOnly && (
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setIsNewRequestModalOpen(true)}
+              className="relative inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-sm focus:outline-none"
+              title={hasDraft ? "New Request (Draft available)" : "New Request"}
+            >
+              <Plus className="size-3.5" />
+              New Request
+              {hasDraft && (
+                <span
+                  className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-extrabold text-white shadow-sm ring-2 ring-white animate-pulse"
+                  title="Saved Draft Available"
+                >
+                  1
+                </span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1439,6 +1669,100 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         </div>
       ) : null}
 
+      {returnToApprovalsConfirm ? (
+        <div
+          className="fixed inset-0 z-60 overflow-y-auto bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          onMouseDown={(e) => {
+            if (e.currentTarget === e.target && !returnToApprovalsBusy) {
+              setReturnToApprovalsConfirm(null)
+              setReturnToApprovalsRemarks("")
+            }
+          }}
+        >
+          <div className="min-h-full w-full">
+            <div className="flex min-h-full items-start justify-center py-10">
+              <div className="w-full max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+                <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-base font-semibold text-slate-900">Return to Approvals</div>
+                    <div className="truncate text-xs text-slate-600">{returnToApprovalsConfirm.trackingNo}</div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 px-4 py-4 text-sm text-slate-700">
+                  <div className="rounded-lg border border-amber-200 bg-amber-50/80 p-3">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-amber-800">Action</div>
+                    <div className="mt-1 text-sm font-semibold text-slate-900">
+                      Return this document back to Approvals?
+                    </div>
+                    <div className="mt-1 text-xs text-slate-600">
+                      This will revoke active office transfers and move the document back to the <strong>Approvals / Pre-Validation</strong> stage.
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700" htmlFor="returnApprovalsRemarks">
+                      Remarks / Reason (optional)
+                    </label>
+                    <textarea
+                      id="returnApprovalsRemarks"
+                      value={returnToApprovalsRemarks}
+                      onChange={(e) => setReturnToApprovalsRemarks(e.target.value)}
+                      placeholder="Enter remarks or reason for returning..."
+                      className="min-h-20 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-4 py-3">
+                  <button
+                    type="button"
+                    disabled={returnToApprovalsBusy}
+                    onClick={() => {
+                      setReturnToApprovalsConfirm(null)
+                      setReturnToApprovalsRemarks("")
+                    }}
+                    className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={returnToApprovalsBusy}
+                    onClick={async () => {
+                      const row = returnToApprovalsConfirm
+                      if (!row) return
+                      try {
+                        setReturnToApprovalsBusy(true)
+                        setActionBusyId(String(row.doc._id))
+                        await patchDocument(String(row.doc._id), {
+                          returnToApprovals: true,
+                          returnRemarks: returnToApprovalsRemarks.trim(),
+                        })
+                        toast.success(`Document ${row.trackingNo} returned to Approvals`)
+                        setReturnToApprovalsConfirm(null)
+                        setReturnToApprovalsRemarks("")
+                        await fetchRows()
+                      } catch (e) {
+                        setError(e instanceof Error ? e.message : 'Failed to return to approvals')
+                      } finally {
+                        setReturnToApprovalsBusy(false)
+                        setActionBusyId(null)
+                      }
+                    }}
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-amber-600 px-4 text-sm font-semibold text-white transition hover:bg-amber-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {returnToApprovalsBusy ? "Returning…" : "Confirm Return"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium text-slate-500" htmlFor="entries">
@@ -1611,6 +1935,16 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                         OBR
                       </button>
                     ) : null}
+                    {Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim()) && (
+                      <button
+                        type="button"
+                        onClick={() => setPreview({ type: "DV", row: r })}
+                        className="inline-flex h-8 items-center justify-center rounded-md bg-purple-600 px-3 text-xs font-semibold text-white transition hover:bg-purple-700 focus:outline-none focus-visible:outline-none"
+                        title="Preview DV"
+                      >
+                        DV
+                      </button>
+                    )}
                     {r.particulars.driveLink ? (
                       <button
                         type="button"
@@ -1651,7 +1985,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Source of Fund</th>
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Office (Requestor)</th>
-                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+                  <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Documents</th>
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Duration</th>
                   <th className="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Status</th>
@@ -1728,6 +2062,14 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                           {deadlineStatus.elapsedText && <span className="ml-1 text-[10px] opacity-60 font-normal">({deadlineStatus.elapsedText})</span>}
                           {deadlineStatus.isExceeded && <span className="ml-1 animate-pulse">⚠️</span>}
                         </div>
+                        {Boolean(r.doc.returnToApprovalsRequested) && (
+                          <div
+                            className="mt-1 inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800 border border-amber-300"
+                            title={`Reason: ${r.doc.returnToApprovalsReason || 'No reason provided'}`}
+                          >
+                            <span>⚠️</span> Return Requested
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 align-top text-slate-700">
                         <div className="flex items-start justify-between gap-2">
@@ -1840,6 +2182,16 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                               OBR
                             </button>
                           ) : null}
+                          {Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim()) && (
+                            <button
+                              type="button"
+                              onClick={() => setPreview({ type: "DV", row: r })}
+                              className="inline-flex h-6 items-center justify-center gap-1 rounded-lg bg-purple-600 px-2.5 text-[11px] font-bold text-white shadow-xs transition-all hover:bg-purple-700 active:scale-95 focus:outline-none"
+                              title="Preview DV"
+                            >
+                              DV
+                            </button>
+                          )}
                           {r.particulars.driveLink ? (
                             <button
                               type="button"
@@ -1971,6 +2323,30 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                   <History className="size-3.5" />
                                   History
                                 </button>
+                                {isAdminRole ? (
+                                  <button
+                                    type="button"
+                                    disabled={!r.doc.returnToApprovalsRequested || actionBusyId === String(r.doc._id)}
+                                    onClick={() => {
+                                      if (!r.doc.returnToApprovalsRequested) return
+                                      setReturnToApprovalsConfirm(r)
+                                      setReturnToApprovalsRemarks(String(r.doc.returnToApprovalsReason || ''))
+                                    }}
+                                    className={`inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-xs font-semibold shadow-xs transition-all focus:outline-none ${
+                                      r.doc.returnToApprovalsRequested
+                                        ? 'bg-amber-600 text-white ring-2 ring-amber-400 ring-offset-1 hover:bg-amber-700 animate-pulse cursor-pointer'
+                                        : 'border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
+                                    }`}
+                                    title={
+                                      r.doc.returnToApprovalsRequested
+                                        ? `Return Requested by End User: ${r.doc.returnToApprovalsReason || 'Click to process return'}`
+                                        : 'No return request from End User'
+                                    }
+                                  >
+                                    <RotateCcw className="size-3.5" />
+                                    Return to Approvals
+                                  </button>
+                                ) : null}
                                 <button
                                   type="button"
                                   disabled={actionBusyId === String(r.doc._id)}
@@ -2099,6 +2475,18 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                     title="Download PDF"
                   >
                     {obrPdfBusy ? '...' : <Download className="size-4" />}
+                  </button>
+                ) : null}
+
+                {preview.type === 'DV' ? (
+                  <button
+                    type="button"
+                    onClick={() => captureDvPreviewToPdf(preview.row)}
+                    disabled={dvPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {dvPdfBusy ? '...' : <Download className="size-4" />}
                   </button>
                 ) : null}
               </div>
@@ -3957,6 +4345,13 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
       {/* Routing Slip Modal */}
       <RoutingSlipModal rsDoc={routingSlipDoc as unknown as DocumentRow} onClose={() => setRoutingSlipDoc(null)} />
+
+      {/* New Request Modal */}
+      <NewRequestModal
+        isOpen={isNewRequestModalOpen}
+        onClose={() => setIsNewRequestModalOpen(false)}
+        onSubmit={handleCreateNewRequest}
+      />
     </div >
   )
 }

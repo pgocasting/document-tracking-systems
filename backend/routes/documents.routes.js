@@ -57,7 +57,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
 
     documents.forEach((doc) => {
       const status = String(doc.status || '').toLowerCase();
-      
+
       // Skip draft/pre-validation documents from dashboard stats
       if (prevalidationStatuses.has(status) && !hasTransferredLog(doc)) {
         return;
@@ -486,6 +486,11 @@ router.patch('/:id', authenticateToken, async (req, res) => {
       obrEnabled,
       removeLastLog,
       cancelTransfer,
+      returnToApprovals,
+      returnRemarks,
+      requestReturnToApprovals,
+      returnReason,
+      clearReturnRequest,
       subDocuments,
       gsoRoutingSlip,
     } = req.body || {};
@@ -623,6 +628,93 @@ router.patch('/:id', authenticateToken, async (req, res) => {
           return res.status(400).json({ message: 'Last action was not a transfer, cannot cancel' });
         }
       }
+    }
+
+    if (requestReturnToApprovals) {
+      doc.returnToApprovalsRequested = true;
+      doc.returnToApprovalsReason = typeof returnReason === 'string' ? returnReason.trim() : '';
+
+      const userLabel = String(req.user?.fullName || req.user?.username || 'End User').trim();
+      const userOffice = String(currentDoc.office || req.user?.office || '').trim();
+      const reasonText = doc.returnToApprovalsReason ? `: ${doc.returnToApprovalsReason}` : '';
+
+      doc.logs.push({
+        label: `Requested Return to Approvals${reasonText}`,
+        color: 'bg-amber-600',
+        byOffice: userOffice,
+        byUser: userLabel,
+        createdAt: Date.now(),
+      });
+      doc.updatedAt = Date.now();
+      await doc.save();
+
+      if (global.io) {
+        const notifData = {
+          type: 'RETURN_TO_APPROVALS_REQUEST',
+          title: 'Return to Approvals Requested',
+          message: `${userLabel} (${userOffice}) requested return to approvals for tracking #${doc.trackingNo}`,
+          documentId: doc._id,
+          trackingNo: doc.trackingNo,
+          office: userOffice,
+          requestedBy: userLabel,
+          reason: doc.returnToApprovalsReason,
+          timestamp: new Date().toISOString(),
+        };
+        global.io.emit('document:return_requested', notifData);
+        global.io.emit('notification:admin', notifData);
+      }
+    }
+
+    if (clearReturnRequest) {
+      if (!isAdminRole) {
+        return res.status(403).json({ message: 'Forbidden: Only admin can dismiss return requests' });
+      }
+      doc.returnToApprovalsRequested = false;
+      doc.returnToApprovalsReason = '';
+      doc.updatedAt = Date.now();
+      await doc.save();
+    }
+
+    if (returnToApprovals) {
+      if (!isAdminRole) {
+        return res.status(403).json({ message: 'Forbidden: Only admin can return documents to approvals' });
+      }
+      if (Array.isArray(doc.logs)) {
+        doc.logs = doc.logs.filter((l) => {
+          const lbl = String(l?.label || '').trim().toLowerCase();
+          return !lbl.includes('transferred to') && !lbl.startsWith('received');
+        });
+      }
+      if (Array.isArray(doc.subDocuments)) {
+        doc.subDocuments.forEach((sub) => {
+          if (Array.isArray(sub.logs)) {
+            sub.logs = sub.logs.filter((l) => {
+              const lbl = String(l?.label || '').trim().toLowerCase();
+              return !lbl.includes('transferred to') && !lbl.startsWith('received');
+            });
+          }
+          sub.status = 'pending-gso';
+        });
+      }
+
+      doc.status = 'pending-gso';
+      doc.returnToApprovalsRequested = false;
+      doc.returnToApprovalsReason = '';
+
+      const adminUserName = String(req.user?.fullName || req.user?.username || 'Admin').trim();
+      const returnLogLabel = typeof returnRemarks === 'string' && returnRemarks.trim()
+        ? `Returned to Approvals: ${returnRemarks.trim()}`
+        : 'Returned to Approvals';
+
+      doc.logs.push({
+        label: returnLogLabel,
+        color: 'bg-amber-600',
+        byOffice: 'ADMIN',
+        byUser: adminUserName,
+        createdAt: Date.now(),
+      });
+      doc.updatedAt = Date.now();
+      await doc.save();
     }
 
     if (addLog && typeof addLog === 'object') {

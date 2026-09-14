@@ -12,6 +12,7 @@ type Props = {
   onToggleRow: (id: string) => void
   onPreviewPR: (doc: DocumentRow) => void
   onPreviewOBR: (doc: DocumentRow) => void
+  onPreviewDV?: (doc: DocumentRow) => void
   onOpenLogsModal: (doc: DocumentRow) => void
   onOpenLogsPreview: (doc: DocumentRow) => void
   onEditDoc: (doc: DocumentRow) => void
@@ -41,6 +42,7 @@ export default function PreValidationTab({
   onToggleRow,
   onPreviewPR,
   onPreviewOBR,
+  onPreviewDV,
   onOpenLogsModal,
   onOpenLogsPreview,
   onEditDoc,
@@ -69,7 +71,7 @@ export default function PreValidationTab({
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
-                <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+                <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Documents</th>
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Source of Funds</th>
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
                 <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
@@ -190,6 +192,16 @@ export default function PreValidationTab({
                             ) : (
                               <span key={idx} className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium text-white ${p.color}`}>{p.label}</span>
                             )
+                          )}
+                          {Boolean(getMainDocSupplierInfo(doc).supplier) && (
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); onPreviewDV?.(doc) }}
+                              className="inline-flex items-center rounded bg-purple-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-purple-700 focus:outline-none shadow-sm transition"
+                              title="Preview DV"
+                            >
+                              DV
+                            </button>
                           )}
                           {(() => {
                             const href = String(doc.driveLink || "").trim()

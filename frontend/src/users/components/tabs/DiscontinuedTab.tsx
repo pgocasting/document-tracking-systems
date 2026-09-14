@@ -26,7 +26,7 @@ export default function DiscontinuedTab({
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Documents</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Discontinued At</th>

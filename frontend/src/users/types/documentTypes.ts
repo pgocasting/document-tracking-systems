@@ -61,6 +61,8 @@ export type DocumentRow = {
   prNo?: string
   obrNo?: string
   gsoRoutingSlip?: string
+  returnToApprovalsRequested?: boolean
+  returnToApprovalsReason?: string
   subDocuments?: SubDocument[]
 }
 

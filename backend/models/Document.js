@@ -207,6 +207,15 @@ const documentSchema = new mongoose.Schema({
     ],
     default: 'pending',
   },
+  returnToApprovalsRequested: {
+    type: Boolean,
+    default: false,
+  },
+  returnToApprovalsReason: {
+    type: String,
+    default: '',
+    trim: true,
+  },
   logs: [
     {
       label: { type: String, default: '' },

@@ -1,4 +1,4 @@
-import { Download, History, Pencil } from "lucide-react"
+import { Download, History, Pencil, Plus } from "lucide-react"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -6,10 +6,12 @@ import ObrTemplatePreview, { type ObrTemplateModel } from "../../components/ObrT
 import ObrTemplatePdf from "../../components/ObrTemplatePdf"
 import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
+import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { getSubDocAmount, getMainDocSupplierInfo } from "../../users/types/documentTypes"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
+import NewRequestModal, { type NewRequestPayload } from "../../users/components/NewRequestModal"
 
 type ApprovalRow = {
   timestamp: string
@@ -301,7 +303,7 @@ type ApprovalsPageProps = {
   excludeTerminalStatuses?: boolean
 }
 
-type PreviewType = "OBR" | "PR"
+type PreviewType = "OBR" | "PR" | "DV"
 
 export default function ApprovalsPage({
   title = "Approvals",
@@ -328,6 +330,95 @@ export default function ApprovalsPage({
   const [prActivePage, setPrActivePage] = useState(0)
   const [prPdfBusy, setPrPdfBusy] = useState(false)
   const [obrPdfBusy, setObrPdfBusy] = useState(false)
+  const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
+  const [hasDraft, setHasDraft] = useState(false)
+
+  const checkDraft = useCallback(() => {
+    try {
+      const raw = localStorage.getItem("user")
+      const parsed = raw ? (JSON.parse(raw) as { username?: string } | null) : null
+      const uname = String(parsed?.username || "").trim()
+      setHasDraft(!!localStorage.getItem(`new_request_draft:${uname || "_"}`))
+    } catch {
+      setHasDraft(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    checkDraft()
+    window.addEventListener("dts:draft_changed", checkDraft)
+    window.addEventListener("storage", checkDraft)
+    return () => {
+      window.removeEventListener("dts:draft_changed", checkDraft)
+      window.removeEventListener("storage", checkDraft)
+    }
+  }, [checkDraft])
+
+  const handleCreateNewRequest = async (payload: NewRequestPayload) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const now = new Date()
+      const pad2 = (n: number) => String(n).padStart(2, "0")
+      const hour12 = now.getHours() % 12 || 12
+      const yyyymmdd = `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}`
+      const hhmmss = `${pad2(hour12)}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`
+      const rand5 = Math.floor(Math.random() * 100000).toString().padStart(5, "0")
+      const trackingNo = `${yyyymmdd}-${hhmmss}-${rand5}`
+
+      const userRaw = localStorage.getItem("user")
+      const parsedUser = userRaw
+        ? (JSON.parse(userRaw) as { username?: string; fullName?: string; office?: string } | null)
+        : null
+      const createdBy = parsedUser?.fullName || parsedUser?.username || "Admin"
+      const office = parsedUser?.office || "ADMIN"
+      const token = localStorage.getItem("token")
+
+      const response = await fetch(`${API_URL}/documents`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackingNo, createdBy, office,
+          fund: payload.fund, section: payload.section, fpp: payload.fpp,
+          department: payload.department, contactNumber: payload.contactNumber,
+          responsibilityCenter: payload.responsibilityCenter, accountCode: payload.accountCode,
+          email: payload.email, requestedByName: payload.requestedByName,
+          requestedByDesignation: payload.requestedByDesignation,
+          cashAvailabilityName: payload.cashAvailabilityName,
+          cashAvailabilityDesignation: payload.cashAvailabilityDesignation,
+          approvedByName: payload.approvedByName, approvedByDesignation: payload.approvedByDesignation,
+          certifiedAName: payload.certifiedAName, certifiedAPosition: payload.certifiedAPosition,
+          certifiedBName: payload.certifiedBName, certifiedBPosition: payload.certifiedBPosition,
+          driveLink: payload.driveLink, prItems: payload.prItems,
+          purpose: payload.purpose, notes: payload.notes,
+          particulars: [
+            ...(payload.prEnabled ? [{ label: "PR", color: "bg-blue-500" }] : []),
+            ...(payload.obrEnabled ? [{ label: "OBR", color: "bg-amber-500" }] : []),
+          ],
+          prEnabled: payload.prEnabled, obrEnabled: payload.obrEnabled, amount: payload.amount,
+        }),
+      })
+
+      if (!response.ok) {
+        const msg = await response.text().catch(() => "")
+        throw new Error(msg || "Failed to submit request")
+      }
+
+      await fetchRows()
+      try {
+        const uname = String(parsedUser?.username || "").trim()
+        localStorage.removeItem(`new_request_draft:${uname || "_"}`)
+        window.dispatchEvent(new CustomEvent("dts:draft_changed"))
+      } catch { /* ignore */ }
+      setIsNewRequestModalOpen(false)
+      toast.success(`Request submitted! Tracking No: ${trackingNo}`)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to submit request")
+      toast.error(e instanceof Error ? e.message : "Failed to submit request")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const [editPrPreviewOpen, setEditPrPreviewOpen] = useState(false)
   const [editPrPreviewBusy, setEditPrPreviewBusy] = useState(false)
@@ -668,19 +759,8 @@ export default function ApprovalsPage({
   }, [])
 
   useEffect(() => {
-    const officeKey = String(transferDest || '').trim().toUpperCase()
-    const tasks = officeKey === 'RETURNED'
-      ? (transferTasksByOffice[currentOfficeKey] || [])
-      : (transferTasksByOffice[officeKey] || [])
-    const firstTask = String(tasks?.[0]?.task || '').trim()
-    setTransferTask((current) => {
-      const cur = String(current || '').trim()
-      if (!officeKey) return ""
-      if (!cur) return firstTask
-      const stillExists = tasks.some((t) => String(t?.task || '').trim() === cur)
-      return stillExists ? cur : firstTask
-    })
-  }, [transferDest, transferTasksByOffice])
+    setTransferTask("")
+  }, [transferDest])
 
   useEffect(() => {
     if (!receiveConfirmRow) return
@@ -1517,6 +1597,86 @@ export default function ApprovalsPage({
     }
   }
 
+  const [dvPdfBusy, setDvPdfBusy] = useState(false)
+  const dvVisibleRef = useRef<HTMLDivElement | null>(null)
+  const dvCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const captureDvPreviewToPdf = async (row: ApprovalRow) => {
+    const root = dvVisibleRef.current || dvCaptureRef.current
+    if (!root) return
+
+    let previewTab: Window | null = null
+    try {
+      setDvPdfBusy(true)
+
+      previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) {
+        window.alert('Please allow pop-ups to preview the PDF.')
+        return
+      }
+
+      await new Promise((r) => setTimeout(r, 150))
+
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || root.querySelector<HTMLElement>(".print-area") || (root.classList.contains("print-page") ? root : null) || (root.firstElementChild as HTMLElement) || root
+      if (!pageEl) {
+        if (previewTab) previewTab.close()
+        return
+      }
+
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        width: 816,
+        height: 1056,
+        windowWidth: 816,
+        windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('style').forEach((s) => {
+            if (s.textContent) {
+              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+            }
+          })
+          clonedDoc.querySelectorAll('[style]').forEach((el) => {
+            const styleAttr = el.getAttribute('style')
+            if (styleAttr && /oklch/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            }
+          })
+        },
+      })
+
+      const imgData = canvas.toDataURL("image/png")
+      const pageW = pdfDoc.internal.pageSize.getWidth()
+      const pageH = pdfDoc.internal.pageSize.getHeight()
+
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch {
+        URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error("Failed to generate DV PDF", err)
+      if (previewTab) previewTab.close()
+    } finally {
+      setDvPdfBusy(false)
+    }
+  }
+
   const captureObrPreviewToPdf = async (_row: ApprovalRow) => {
     const root = obrVisibleRef.current || obrCaptureRef.current
     if (!root) return
@@ -1634,6 +1794,25 @@ export default function ApprovalsPage({
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            {actionIsAdmin && (
+              <button
+                type="button"
+                onClick={() => setIsNewRequestModalOpen(true)}
+                className="relative inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-sm focus:outline-none"
+                title={hasDraft ? "New Request (Draft available)" : "New Request"}
+              >
+                <Plus className="size-3.5" />
+                New Request
+                {hasDraft && (
+                  <span
+                    className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-extrabold text-white shadow-sm ring-2 ring-white animate-pulse"
+                    title="Saved Draft Available"
+                  >
+                    1
+                  </span>
+                )}
+              </button>
+            )}
             <div className="flex items-center gap-2">
               <label className="text-xs font-medium text-slate-500" htmlFor="entries">
                 Show
@@ -1946,6 +2125,16 @@ export default function ApprovalsPage({
                             PR
                           </button>
                         )}
+                        {Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim()) && (
+                          <button
+                            type="button"
+                            onClick={() => setPreview({ type: "DV", row: r })}
+                            className={`inline-flex h-7 w-full items-center justify-center rounded text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${deadlineStatus.isExceeded ? 'bg-white text-rose-600 hover:bg-rose-50' : 'bg-purple-600 text-white hover:bg-purple-700'}`}
+                            title="Preview DV"
+                          >
+                            DV
+                          </button>
+                        )}
                         <a
                           href={r.attachments.driveLink ?? "#"}
                           className={`inline-flex h-7 w-full items-center justify-center rounded text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${deadlineStatus.isExceeded ? 'bg-amber-400 text-slate-900 hover:bg-amber-300' : 'bg-amber-400 text-slate-900 hover:bg-amber-300'}`}
@@ -2161,8 +2350,9 @@ export default function ApprovalsPage({
                                         onClick={() => {
                                           if (hasReceivedForCurrentOffice(r)) {
                                             setTransferRow(r)
-                                            setTransferDest("")
-                                            setTransferRemarks("")
+                                             setTransferDest("")
+                                             setTransferTask("")
+                                             setTransferRemarks("")
                                             setSubDocCount(0)
                                             setSubDocItems([])
                                             return
@@ -2304,6 +2494,18 @@ export default function ApprovalsPage({
                     title="Download PDF"
                   >
                     {obrPdfBusy ? '...' : <Download className="size-4" />}
+                  </button>
+                ) : null}
+
+                {preview.type === 'DV' ? (
+                  <button
+                    type="button"
+                    onClick={() => captureDvPreviewToPdf(preview.row)}
+                    disabled={dvPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {dvPdfBusy ? '...' : <Download className="size-4" />}
                   </button>
                 ) : null}
               </div>
@@ -3887,6 +4089,8 @@ export default function ApprovalsPage({
           onMouseDown={(e) => {
             if (e.currentTarget === e.target) {
               setTransferRow(null)
+              setTransferTask("")
+              setTransferRemarks("")
             }
           }}
         >
@@ -3954,71 +4158,34 @@ export default function ApprovalsPage({
                         }
                       }
 
-                      const typed = String(transferTask || '').trim().toLowerCase()
-                      const filtered = typed
-                        ? taskList.filter((t) => t.toLowerCase().includes(typed))
-                        : taskList
-                      const showDropdown = filtered.length > 0
-
                       return (
-                        <div className="relative">
-                          <input
-                            type="text"
-                            id="transfer-task-input"
+                        <div className="space-y-2">
+                          <select
+                            id="transfer-task-select"
                             value={transferTask}
                             onChange={(e) => setTransferTask(e.target.value)}
                             disabled={!String(transferDest || '').trim()}
-                            placeholder="Type or pick a task / remarks..."
                             aria-label="Task / Remarks"
-                            autoComplete="off"
-                            className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 pr-8 text-sm text-slate-900 placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60"
-                            onFocus={(e) => {
-                              const list = document.getElementById('transfer-task-list')
-                              if (!list) return
-                              const rect = e.currentTarget.getBoundingClientRect()
-                              list.style.top = `${rect.bottom + window.scrollY + 4}px`
-                              list.style.left = `${rect.left + window.scrollX}px`
-                              list.style.width = `${rect.width}px`
-                              list.style.display = 'block'
-                            }}
-                            onBlur={() => {
-                              setTimeout(() => {
-                                const list = document.getElementById('transfer-task-list')
-                                if (list) list.style.display = 'none'
-                              }, 150)
-                            }}
-                          />
-                          {/* Chevron icon */}
-                          {taskList.length > 0 && (
-                            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
-                              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                              </svg>
-                            </span>
-                          )}
-                          {/* Suggestion dropdown — fixed so it escapes modal overflow */}
-                          {showDropdown && (
-                            <div
-                              id="transfer-task-list"
-                              style={{ display: 'none', position: 'fixed', zIndex: 9999 }}
-                              className="max-h-52 overflow-y-auto rounded-md border border-slate-200 bg-white shadow-xl"
-                            >
-                              {filtered.map((t, i) => (
-                                <button
-                                  key={i}
-                                  type="button"
-                                  onMouseDown={(e) => {
-                                    e.preventDefault()
-                                    setTransferTask(t)
-                                    const list = document.getElementById('transfer-task-list')
-                                    if (list) list.style.display = 'none'
-                                  }}
-                                  className="flex w-full items-center px-3 py-2 text-left text-sm text-slate-700 hover:bg-sky-50 hover:text-sky-700"
-                                >
-                                  {t}
-                                </button>
-                              ))}
-                            </div>
+                            className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60"
+                          >
+                            <option value="">Select Task / Remarks</option>
+                            {taskList.map((t, i) => (
+                              <option key={i} value={t}>
+                                {t}
+                              </option>
+                            ))}
+                            <option value="__others__">Others / Custom Remarks</option>
+                          </select>
+
+                          {transferTask === "__others__" && (
+                            <input
+                              type="text"
+                              value={transferRemarks}
+                              onChange={(e) => setTransferRemarks(e.target.value)}
+                              placeholder="Enter custom remarks..."
+                              className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                              autoFocus
+                            />
                           )}
                         </div>
                       )
@@ -4095,7 +4262,7 @@ export default function ApprovalsPage({
                 <div className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-4 py-3">
                   <button
                     type="button"
-                    onClick={() => setTransferRow(null)}
+                    onClick={() => { setTransferRow(null); setTransferTask(""); setTransferRemarks(""); }}
                     className="inline-flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
                   >
                     Cancel
@@ -4106,8 +4273,10 @@ export default function ApprovalsPage({
                     onClick={async () => {
                       const row = transferRow
                       const dest = transferDest
-                      const task = String(transferTask || '').trim()
+                      const task = transferTask === "__others__" ? String(transferRemarks || "").trim() : String(transferTask || "").trim()
                       setTransferRow(null)
+                      setTransferTask("")
+                      setTransferRemarks("")
 
                       // Handle RETURNED option
                       if (dest.toUpperCase() === 'RETURNED') {
@@ -4539,6 +4708,13 @@ export default function ApprovalsPage({
           </div>
         ) : null
       }
+
+      {/* New Request Modal */}
+      <NewRequestModal
+        isOpen={isNewRequestModalOpen}
+        onClose={() => setIsNewRequestModalOpen(false)}
+        onSubmit={handleCreateNewRequest}
+      />
     </div >
   )
 }

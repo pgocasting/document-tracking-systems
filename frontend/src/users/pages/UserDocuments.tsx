@@ -1,4 +1,4 @@
-import { Download, FileText, Search, Plus, History } from "lucide-react"
+import { Download, FileText, Search, Plus, History, RotateCcw } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "../../lib/toast"
 import NewRequestModal, { type NewRequestPayload } from "../components/NewRequestModal"
@@ -6,6 +6,7 @@ import ObrTemplatePreview, { type ObrTemplateModel } from "../../components/ObrT
 import ObrTemplatePdf from "../../components/ObrTemplatePdf"
 import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
+import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
 import { useDocumentSocket } from "../../hooks/useSocket"
@@ -77,6 +78,8 @@ type DocumentRow = {
   prNo?: string
   obrNo?: string
   gsoRoutingSlip?: string
+  returnToApprovalsRequested?: boolean
+  returnToApprovalsReason?: string
   subDocuments?: Array<{
     trackingNo: string
     purpose: string
@@ -87,7 +90,7 @@ type DocumentRow = {
   }>
 }
 
-type PreviewType = "PR" | "OBR"
+type PreviewType = "PR" | "OBR" | "DV"
 
 const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"
 const API_URL = RAW_API_URL.replace(/\/$/, "").endsWith("/api")
@@ -137,6 +140,9 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   const [activeTab, setActiveTab] = useState<TabType>("pre-validation")
   const [searchQuery, setSearchQuery] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [requestReturnDoc, setRequestReturnDoc] = useState<DocumentRow | null>(null)
+  const [requestReturnReason, setRequestReturnReason] = useState("")
+  const [requestReturnBusy, setRequestReturnBusy] = useState(false)
   const [editDoc, setEditDoc] = useState<DocumentRow | null>(null)
   const [preview, setPreview] = useState<{ type: PreviewType; doc: DocumentRow } | null>(null)
   const [prActivePage, setPrActivePage] = useState(0)
@@ -338,7 +344,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
 
       await new Promise((r) => setTimeout(r, 150))
 
-      const pageEl = root.querySelector<HTMLElement>(".print-page") || (root.classList.contains("print-page") ? root : null)
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || root.querySelector<HTMLElement>(".print-area") || (root.classList.contains("print-page") ? root : null) || (root.firstElementChild as HTMLElement) || root
       if (!pageEl) {
         if (previewTab) previewTab.close()
         return
@@ -395,6 +401,86 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
       if (previewTab) previewTab.close()
     } finally {
       setObrPdfBusy(false)
+    }
+  }
+
+  const [dvPdfBusy, setDvPdfBusy] = useState(false)
+  const dvVisibleRef = useRef<HTMLDivElement | null>(null)
+  const dvCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const captureDvPreviewToPdf = async () => {
+    const root = dvVisibleRef.current || dvCaptureRef.current
+    if (!root) return
+
+    let previewTab: Window | null = null
+    try {
+      setDvPdfBusy(true)
+
+      previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) {
+        window.alert('Please allow pop-ups to preview the PDF.')
+        return
+      }
+
+      await new Promise((r) => setTimeout(r, 150))
+
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || (root.classList.contains("print-page") ? root : null)
+      if (!pageEl) {
+        if (previewTab) previewTab.close()
+        return
+      }
+
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        width: 816,
+        height: 1056,
+        windowWidth: 816,
+        windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('style').forEach((s) => {
+            if (s.textContent) {
+              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+            }
+          })
+          clonedDoc.querySelectorAll('[style]').forEach((el) => {
+            const styleAttr = el.getAttribute('style')
+            if (styleAttr && /oklch/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            }
+          })
+        },
+      })
+
+      const imgData = canvas.toDataURL("image/png")
+      const pageW = pdfDoc.internal.pageSize.getWidth()
+      const pageH = pdfDoc.internal.pageSize.getHeight()
+
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch {
+        URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error("Failed to generate DV PDF", err)
+      if (previewTab) previewTab.close()
+    } finally {
+      setDvPdfBusy(false)
     }
   }
 
@@ -1056,6 +1142,8 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           prNo: String(d.prNo || ''),
           obrNo: String(d.obrNo || ''),
           gsoRoutingSlip: String(d.gsoRoutingSlip || ''),
+          returnToApprovalsRequested: Boolean((d as any).returnToApprovalsRequested),
+          returnToApprovalsReason: String((d as any).returnToApprovalsReason || ''),
         } satisfies DocumentRow
       })
 
@@ -1067,7 +1155,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
     }
   }
   // Real-time document updates handler
-  const handleDocumentChange = useCallback((action: 'created' | 'updated' | 'deleted', data: any) => {
+  const handleDocumentChange = useCallback((action: 'created' | 'updated' | 'deleted' | 'return_requested', data: any) => {
     console.log(`Document ${action}:`, data.document?.trackingNo || data.documentId);
 
     // For created/updated documents, refresh the list
@@ -1641,6 +1729,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           }}
           onPreviewPR={(doc) => setPreview({ type: "PR", doc })}
           onPreviewOBR={(doc) => setPreview({ type: "OBR", doc })}
+          onPreviewDV={(doc) => setPreview({ type: "DV", doc })}
           onOpenLogsModal={(doc) => setLogsModalDoc(doc)}
           onOpenLogsPreview={(doc) => setLogsPreviewDoc(doc)}
           onEditDoc={(doc) => { setEditDoc(doc); setIsModalOpen(true) }}
@@ -1685,6 +1774,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           }}
           onPreviewPR={(doc) => setPreview({ type: "PR", doc })}
           onPreviewOBR={(doc) => setPreview({ type: "OBR", doc })}
+          onPreviewDV={(doc) => setPreview({ type: "DV", doc })}
           onRoutingSlip={(doc) => setRoutingSlipDoc(doc)}
           onHistoryModal={(doc) => setHistoryModalDoc(doc)}
           onEditDoc={(doc) => { setEditDoc(doc); setIsModalOpen(true) }}
@@ -1704,6 +1794,10 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           onCancelDoc={cancelPrevalidationDocument}
           onReprocessDoc={(doc) => setReprocessConfirmDoc(doc)}
           onReprocessSubDoc={(parentDoc, index, sub) => setReprocessConfirmSubDoc({ parentDoc, index, subDoc: sub })}
+          onRequestReturnToApprovals={(doc) => {
+            setRequestReturnDoc(doc)
+            setRequestReturnReason("")
+          }}
           formatPeso={formatPeso}
           parseDurationToMs={parseDurationToMs}
           formatElapsedShort={formatElapsedShort}
@@ -1724,6 +1818,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           }}
           onPreviewPR={(doc) => setPreview({ type: "PR", doc })}
           onPreviewOBR={(doc) => setPreview({ type: "OBR", doc })}
+          onPreviewDV={(doc) => setPreview({ type: "DV", doc })}
           onRoutingSlip={(doc) => setRoutingSlipDoc(doc)}
           onHistoryModal={(doc) => setHistoryModalDoc(doc)}
           onOpenLogsPreview={(doc) => setLogsPreviewDoc(doc)}
@@ -1978,7 +2073,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
             <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
               <div className="min-w-0 flex-1">
                 <div className="truncate text-base font-semibold text-slate-900">
-                  Preview: {preview.type === "PR" ? "Purchase Request" : "Obligation Request"}
+                  Preview: {preview.type === "PR" ? "Purchase Request" : preview.type === "OBR" ? "Obligation Request" : "Disbursement Voucher"}
                 </div>
                 <div className="truncate text-xs text-slate-600">
                   Tracking No: {preview.doc.trackingNo}
@@ -2029,6 +2124,18 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                   title="Download PDF"
                 >
                   {obrPdfBusy ? "..." : <Download className="size-4" />}
+                </button>
+              )}
+
+              {preview.type === "DV" && (
+                <button
+                  type="button"
+                  onClick={() => captureDvPreviewToPdf()}
+                  disabled={dvPdfBusy}
+                  className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                  title="Download PDF"
+                >
+                  {dvPdfBusy ? "..." : <Download className="size-4" />}
                 </button>
               )}
 
@@ -2118,6 +2225,90 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                         hasObr: preview.doc.particulars?.some((p: any) => p.label === "OBR"),
                       }}
                     />
+                  </div>
+                </>
+              ) : preview.type === "DV" ? (
+                <>
+                  {/* Visible DV Preview */}
+                  <div ref={dvVisibleRef} className="print-area mx-auto w-[816px]">
+                    <DvTemplatePreview
+                      model={{
+                        payee: String(preview.doc.supplier || (preview.doc as any)?.doc?.supplier || "").trim() || "PR",
+                        address: String((preview.doc as any)?.supplierAddress || "N/A"),
+                        trackingNo: preview.doc.trackingNo,
+                        fund: preview.doc.fund || "",
+                        dvNo: String((preview.doc as any)?.dvNo || "").trim(),
+                        date: preview.doc.date || "",
+                        obrNo: String(preview.doc.obrNo || "").trim(),
+                        responsibilityCenter: preview.doc.responsibilityCenter || "",
+                        particulars: preview.doc.purpose || "",
+                        amount: preview.doc.supplierAmount || preview.doc.amount || "",
+                        amountDue: preview.doc.supplierAmount || preview.doc.amount || "",
+                        preparedByName: preview.doc.createdBy || "",
+                        certifiedAName:
+                          String(preview.doc.certifiedAName || "").trim() ||
+                          String(preview.doc.requestedByName || "").trim() ||
+                          String(deptHeadContext.deptHead || "").trim(),
+                        certifiedAPosition:
+                          String(preview.doc.certifiedAPosition || "").trim() ||
+                          String(preview.doc.requestedByDesignation || "").trim() ||
+                          String(deptHeadContext.deptHeadDesignation || "").trim(),
+                        certifiedBName: String(preview.doc.certifiedBName || "").trim(),
+                        certifiedBPosition: String(preview.doc.certifiedBPosition || "").trim(),
+                        status: preview.doc.status,
+                        logs: preview.doc.logs,
+                        hasPr: preview.doc.particulars?.some((p: any) => p.label === "PR"),
+                        hasObr: preview.doc.particulars?.some((p: any) => p.label === "OBR"),
+                      } satisfies DvTemplateModel}
+                    />
+                  </div>
+
+                  {/* Hidden capture container for PDF */}
+                  <div
+                    ref={dvCaptureRef}
+                    style={{
+                      position: "fixed",
+                      left: -10000,
+                      top: 0,
+                      width: 816,
+                      height: "auto",
+                      overflow: "visible",
+                      background: "white",
+                    }}
+                    aria-hidden="true"
+                  >
+                    <div className="print-area">
+                      <DvTemplatePreview
+                        model={{
+                          payee: String(preview.doc.supplier || (preview.doc as any)?.doc?.supplier || "").trim() || "PR",
+                          address: String((preview.doc as any)?.supplierAddress || "N/A"),
+                          trackingNo: preview.doc.trackingNo,
+                          fund: preview.doc.fund || "",
+                          dvNo: String((preview.doc as any)?.dvNo || "").trim(),
+                          date: preview.doc.date || "",
+                          obrNo: String(preview.doc.obrNo || "").trim(),
+                          responsibilityCenter: preview.doc.responsibilityCenter || "",
+                          particulars: preview.doc.purpose || "",
+                          amount: preview.doc.supplierAmount || preview.doc.amount || "",
+                          amountDue: preview.doc.supplierAmount || preview.doc.amount || "",
+                          preparedByName: preview.doc.createdBy || "",
+                          certifiedAName:
+                            String(preview.doc.certifiedAName || "").trim() ||
+                            String(preview.doc.requestedByName || "").trim() ||
+                            String(deptHeadContext.deptHead || "").trim(),
+                          certifiedAPosition:
+                            String(preview.doc.certifiedAPosition || "").trim() ||
+                            String(preview.doc.requestedByDesignation || "").trim() ||
+                            String(deptHeadContext.deptHeadDesignation || "").trim(),
+                          certifiedBName: String(preview.doc.certifiedBName || "").trim(),
+                          certifiedBPosition: String(preview.doc.certifiedBPosition || "").trim(),
+                          status: preview.doc.status,
+                          logs: preview.doc.logs,
+                          hasPr: preview.doc.particulars?.some((p: any) => p.label === "PR"),
+                          hasObr: preview.doc.particulars?.some((p: any) => p.label === "OBR"),
+                        } satisfies DvTemplateModel}
+                      />
+                    </div>
                   </div>
                 </>
               ) : (
@@ -3689,6 +3880,105 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           </div>
         ) : null
       }
+
+      {/* Request Return to Approvals Modal */}
+      {requestReturnDoc ? (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !requestReturnBusy && setRequestReturnDoc(null)} />
+          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-amber-100 bg-amber-50/80 px-5 py-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                  <RotateCcw className="size-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">Request Return to Approvals</h3>
+                  <p className="text-xs text-slate-500">{requestReturnDoc.trackingNo}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={requestReturnBusy}
+                onClick={() => setRequestReturnDoc(null)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 p-5">
+              <div className="rounded-lg border border-amber-200/80 bg-amber-50/60 p-3 text-xs text-amber-900">
+                <p className="font-semibold">Notify Admin</p>
+                <p className="mt-0.5 text-amber-700 text-[11px]">
+                  This will submit a request to Admin to return this ongoing document back to the Approvals / Pre-Validation stage.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700" htmlFor="returnReasonText">
+                  Reason for Return <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  id="returnReasonText"
+                  rows={3}
+                  value={requestReturnReason}
+                  onChange={(e) => setRequestReturnReason(e.target.value)}
+                  placeholder="e.g. Need to adjust items or signatories before proceeding..."
+                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50 px-5 py-3">
+              <button
+                type="button"
+                disabled={requestReturnBusy}
+                onClick={() => setRequestReturnDoc(null)}
+                className="h-9 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={requestReturnBusy || !requestReturnReason.trim()}
+                onClick={async () => {
+                  try {
+                    setRequestReturnBusy(true)
+                    const token = localStorage.getItem("token")
+                    const res = await fetch(`${API_URL}/documents/${requestReturnDoc.id}`, {
+                      method: "PATCH",
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        requestReturnToApprovals: true,
+                        returnReason: requestReturnReason.trim(),
+                      }),
+                    })
+                    if (!res.ok) {
+                      const errText = await res.text()
+                      throw new Error(errText || "Failed to submit request")
+                    }
+                    toast.success("Request for return submitted. Admin has been notified.")
+                    setRequestReturnDoc(null)
+                    setRequestReturnReason("")
+                    await fetchDocuments({ silent: true })
+                  } catch (err: any) {
+                    toast.error(err.message || "Failed to submit request")
+                  } finally {
+                    setRequestReturnBusy(false)
+                  }
+                }}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-amber-600 px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {requestReturnBusy ? "Submitting…" : "Submit Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {/* Sub-Document Edit Modal */}
       {
         editingSubDoc ? (

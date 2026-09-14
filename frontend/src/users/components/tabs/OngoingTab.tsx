@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import { FileText, History, ChevronDown, ChevronRight, Printer } from "lucide-react"
+import { FileText, History, ChevronDown, ChevronRight, Printer, RotateCcw } from "lucide-react"
 import { type DocumentRow, getSubDocAmount, getMainDocSupplierInfo } from "../../types/documentTypes"
 
 /**
@@ -57,6 +57,7 @@ type Props = {
   onToggleRow: (id: string) => void
   onPreviewPR: (doc: DocumentRow) => void
   onPreviewOBR: (doc: DocumentRow) => void
+  onPreviewDV?: (doc: DocumentRow) => void
   onRoutingSlip?: (doc: DocumentRow) => void
   onHistoryModal: (doc: DocumentRow) => void
   onEditDoc: (doc: DocumentRow) => void
@@ -65,6 +66,7 @@ type Props = {
   onCancelDoc: (doc: DocumentRow) => void
   onReprocessDoc: (doc: DocumentRow) => void
   onReprocessSubDoc: (parentDoc: DocumentRow, index: number, sub: any) => void
+  onRequestReturnToApprovals?: (doc: DocumentRow) => void
   formatPeso: (raw: string) => string
   parseDurationToMs: (s: string) => number
   formatElapsedShort: (ms: number) => string
@@ -78,6 +80,7 @@ export default function OngoingTab({
   onToggleRow,
   onPreviewPR,
   onPreviewOBR,
+  onPreviewDV,
   onRoutingSlip,
   onHistoryModal,
   onEditDoc,
@@ -86,6 +89,7 @@ export default function OngoingTab({
   onCancelDoc,
   onReprocessDoc,
   onReprocessSubDoc,
+  onRequestReturnToApprovals,
   formatPeso,
   parseDurationToMs,
   formatElapsedShort,
@@ -179,7 +183,7 @@ export default function OngoingTab({
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Tracking #</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Created By</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Purpose</th>
-              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Particulars</th>
+              <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Documents</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Amount</th>
               <th className="px-3.5 py-3.5 text-xs font-bold uppercase tracking-wider text-white">Supplier</th>
               {/* Ongoing tab: no Logs column */}
@@ -272,6 +276,16 @@ export default function OngoingTab({
                             <span key={idx} className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium text-white ${p.color}`}>{p.label}</span>
                           )
                         )}
+                        {Boolean(getMainDocSupplierInfo(doc).supplier) && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPreviewDV?.(doc) }}
+                            className="inline-flex items-center rounded bg-purple-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-purple-700 focus:outline-none shadow-sm transition"
+                            title="Preview DV"
+                          >
+                            DV
+                          </button>
+                        )}
                         {(() => {
                           const href = String(doc.driveLink || "").trim()
                           if (!href) return null
@@ -326,6 +340,23 @@ export default function OngoingTab({
                         <button type="button" onClick={() => onHistoryModal(doc)} className="inline-flex items-center gap-1 rounded bg-amber-500 px-2 py-1 text-[10px] font-medium text-white hover:bg-amber-600">
                           <History className="size-3" />
                           History
+                        </button>
+                        <button
+                          type="button"
+                          disabled={doc.returnToApprovalsRequested || actionBusyId === doc.id}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onRequestReturnToApprovals?.(doc)
+                          }}
+                          className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[10px] font-medium transition ${
+                            doc.returnToApprovalsRequested
+                              ? 'bg-amber-100 text-amber-800 border border-amber-300 cursor-not-allowed'
+                              : 'bg-amber-600 text-white hover:bg-amber-700'
+                          }`}
+                          title={doc.returnToApprovalsRequested ? `Return requested: ${doc.returnToApprovalsReason || 'Pending Admin review'}` : 'Request to return this document back to Approvals'}
+                        >
+                          <RotateCcw className="size-3" />
+                          {doc.returnToApprovalsRequested ? 'Return Requested' : 'Request Return'}
                         </button>
                         {docStatus === "ongoing" && !hasReprocessed && (
                           <>
