@@ -1935,7 +1935,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                         OBR
                       </button>
                     ) : null}
-                    {Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim()) && (
+                    {Boolean(String((r as any).supplier || (r.doc as any)?.supplier || r.status?.supplier?.[0]?.name || '').trim()) && (
                       <button
                         type="button"
                         onClick={() => setPreview({ type: "DV", row: r })}
@@ -2182,7 +2182,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                               OBR
                             </button>
                           ) : null}
-                          {Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim()) && (
+                          {Boolean(String((r as any).supplier || (r.doc as any)?.supplier || r.status?.supplier?.[0]?.name || '').trim()) && (
                             <button
                               type="button"
                               onClick={() => setPreview({ type: "DV", row: r })}

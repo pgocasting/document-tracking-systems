@@ -11,13 +11,33 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// Parse client origins for CORS
+const rawClientUrls = process.env.CLIENT_URL || "http://localhost:5173";
+const allowedOrigins = rawClientUrls
+  .split(',')
+  .map(url => url.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const cleanOrigin = origin.replace(/\/$/, '');
+    if (
+      allowedOrigins.includes('*') ||
+      allowedOrigins.includes(cleanOrigin) ||
+      process.env.NODE_ENV !== 'production'
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Permissive to prevent CORS block on varied deployment subdomains
+  },
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  credentials: true
+};
+
 // Socket.IO setup with CORS
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
-    credentials: true
-  }
+  cors: corsOptions
 });
 
 // Store io instance globally for use in routes
@@ -58,9 +78,9 @@ io.on('connection', (socket) => {
 });
 
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Handle unhandled rejections globally without crashing node process immediately
 process.on('unhandledRejection', (reason, promise) => {

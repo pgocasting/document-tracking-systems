@@ -60,6 +60,7 @@ export type DocumentRow = {
   status: string
   prNo?: string
   obrNo?: string
+  date?: string
   gsoRoutingSlip?: string
   returnToApprovalsRequested?: boolean
   returnToApprovalsReason?: string
