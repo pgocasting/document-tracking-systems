@@ -175,7 +175,12 @@ export function PrTemplatePreview({
                     <span>
                       LGU: <span className="underline">PROVINCIAL GOVERNMENT OF BATAAN</span>
                     </span>
-                    <span className="text-right">FUND: {model.fund || ""}</span>
+                    <span
+                      className="text-right"
+                      style={{ paddingRight: "80px" }}
+                    >
+                      FUND: {model.fund || ""}
+                    </span>
                   </div>
 
                   {/* Main Purchase Request Box */}
@@ -188,7 +193,7 @@ export function PrTemplatePreview({
                         <col style={{ width: "130px" }} />
                       </colgroup>
                       <tbody>
-                        <tr className="border-b border-black">
+                        <tr>
                           <td className="border-r border-black px-2 pt-1.5 pb-2 align-middle whitespace-nowrap">
                             Department: {model.department || ""}
                           </td>
@@ -200,7 +205,10 @@ export function PrTemplatePreview({
                               </span>
                             ) : null}
                           </td>
-                          <td className="px-2 pt-1.5 pb-2 text-right align-middle whitespace-nowrap">
+                          <td
+                            className="px-2 pt-1.5 pb-2 text-right align-middle whitespace-nowrap"
+                            style={{ paddingRight: "180px" }}
+                          >
                             Date: {model.date || ""}
                           </td>
                         </tr>
@@ -332,7 +340,7 @@ export function PrTemplatePreview({
                 {/* Signatories Block */}
                 <div>
                   <div className="border border-black p-0 mb-1">
-                    <table className="w-full border-collapse table-fixed text-[11.5px]">
+                    <table className="w-full border-collapse table-fixed text-[11.5px]" style={{ tableLayout: "fixed" }}>
                       <colgroup>
                         <col style={{ width: "95px" }} />
                         <col style={{ width: "30%" }} />
@@ -340,32 +348,64 @@ export function PrTemplatePreview({
                         <col style={{ width: "35%" }} />
                       </colgroup>
                       <tbody>
-                        <tr className="border-b border-black text-center font-bold">
-                          <td className="border-r border-black p-1 text-left" rowSpan={4}>
-                            <div className="flex flex-col justify-between h-[105px] text-[10.5px]">
-                              <div>Signature:</div>
-                              <div>Printed Name:</div>
-                              <div>Designation:</div>
-                            </div>
+                        {/* Row 1: Signature space — left empty, headers at top of right cells */}
+                        <tr style={{ height: "85px" }}>
+                          <td
+                            className="border-r border-black px-1 text-[10.5px] text-left"
+                            style={{ verticalAlign: "top" }}
+                          >
+                            &nbsp;
                           </td>
-                          <td className="border-r border-black py-1">Requested by:</td>
-                          <td className="border-r border-black py-1">Cash Availability:</td>
-                          <td className="py-1">Approved by:</td>
+                          <td
+                            className="border-r border-b border-black px-1 text-center font-bold"
+                            style={{ verticalAlign: "top", paddingTop: "4px" }}
+                          >
+                            Requested by:
+                          </td>
+                          <td
+                            className="border-r border-b border-black px-1 text-center font-bold"
+                            style={{ verticalAlign: "top", paddingTop: "4px" }}
+                          >
+                            Cash Availability:
+                          </td>
+                          <td
+                            className="border-b border-black px-1 text-center font-bold"
+                            style={{ verticalAlign: "top", paddingTop: "4px" }}
+                          >
+                            Approved by:
+                          </td>
                         </tr>
-                        <tr className="border-b border-black h-[35px]">
-                          <td className="border-r border-black">&nbsp;</td>
-                          <td className="border-r border-black">&nbsp;</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr className="border-b border-black text-center font-bold text-[11px]">
-                          <td className="border-r border-black py-1 px-1 break-words">{model.requestedByName || "\u00A0"}</td>
-                          <td className="border-r border-black py-1 px-1 break-words">{String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}</td>
-                          <td className="py-1 px-1 break-words">{String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}</td>
-                        </tr>
-                        <tr className="text-center text-[10px]">
-                          <td className="border-r border-black py-1 px-1 break-words">{model.requestedByDesignation || "\u00A0"}</td>
-                          <td className="border-r border-black py-1 px-1 break-words">{String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}</td>
-                          <td className="py-1 px-1 break-words">{String(model.approvedByDesignation || "").trim() || "Provincial Governor"}</td>
+                        {/* Row 2: Labels on left + Names + Designations on right */}
+                        <tr>
+                          <td
+                            className="border-r border-black px-1 text-[10.5px] text-left"
+                            style={{ verticalAlign: "top", paddingTop: "3px" }}
+                          >
+                            <div>Signature:</div>
+                            <div>Printed Name:</div>
+                            <div>Designation:</div>
+                          </td>
+                          <td
+                            className="border-r border-black px-1 text-center"
+                            style={{ verticalAlign: "top", paddingTop: "3px" }}
+                          >
+                            <div className="font-bold text-[11px]">{model.requestedByName || "\u00A0"}</div>
+                            <div className="text-[10px]">{model.requestedByDesignation || "\u00A0"}</div>
+                          </td>
+                          <td
+                            className="border-r border-black px-1 text-center"
+                            style={{ verticalAlign: "top", paddingTop: "3px" }}
+                          >
+                            <div className="font-bold text-[11px]">{String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}</div>
+                            <div className="text-[10px]">{String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}</div>
+                          </td>
+                          <td
+                            className="px-1 text-center"
+                            style={{ verticalAlign: "top", paddingTop: "3px" }}
+                          >
+                            <div className="font-bold text-[11px]">{String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}</div>
+                            <div className="text-[10px]">{String(model.approvedByDesignation || "").trim() || "Provincial Governor"}</div>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
