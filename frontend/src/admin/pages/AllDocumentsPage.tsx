@@ -328,8 +328,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
         : null
       const createdBy =
         (parsedUser as any)?.role === "admin" ||
-        (parsedUser as any)?.role === "superadmin" ||
-        String(parsedUser?.username || "").toLowerCase() === "admin"
+          (parsedUser as any)?.role === "superadmin" ||
+          String(parsedUser?.username || "").toLowerCase() === "admin"
           ? "System Administrator"
           : parsedUser?.fullName || parsedUser?.username || "System Administrator"
       const office = payload.department || parsedUser?.office || "ADMIN"
@@ -1494,25 +1494,25 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
     const prItems = Array.isArray(doc?.prItems) ? doc.prItems : []
     const items: PoItem[] = prItems.length > 0
       ? prItems
-          .filter((it: any) => String(it?.description || "").trim() !== "__PR_PAGE_BREAK__")
-          .map((it: any, idx: number) => ({
-            stockPropertyNo: String(it?.itemNo || idx + 1),
-            unit: String(it?.unit || ""),
-            description: String(it?.description || ""),
-            quantity: it?.quantity || "",
-            unitCost: it?.unitCost || "",
-            amount: it?.totalCost || (Number(it?.quantity || 0) * Number(it?.unitCost || 0)) || "",
-          }))
+        .filter((it: any) => String(it?.description || "").trim() !== "__PR_PAGE_BREAK__")
+        .map((it: any, idx: number) => ({
+          stockPropertyNo: String(it?.itemNo || idx + 1),
+          unit: String(it?.unit || ""),
+          description: String(it?.description || ""),
+          quantity: it?.quantity || "",
+          unitCost: it?.unitCost || "",
+          amount: it?.totalCost || (Number(it?.quantity || 0) * Number(it?.unitCost || 0)) || "",
+        }))
       : [
-          {
-            stockPropertyNo: "1",
-            unit: "lot",
-            description: doc?.purpose || row?.purpose || "",
-            quantity: 1,
-            unitCost: doc?.amount || row?.amount || "",
-            amount: doc?.amount || row?.amount || "",
-          },
-        ]
+        {
+          stockPropertyNo: "1",
+          unit: "lot",
+          description: doc?.purpose || row?.purpose || "",
+          quantity: 1,
+          unitCost: doc?.amount || row?.amount || "",
+          amount: doc?.amount || row?.amount || "",
+        },
+      ]
 
     const supp = String((row as any).supplier || (doc as any)?.supplier || row.status?.supplier?.[0]?.name || "").trim()
 
@@ -1621,7 +1621,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
 
         {!readOnly && (
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            <button
+            {/* <button
               type="button"
               onClick={() => setIsNewRequestModalOpen(true)}
               className="relative inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-sm focus:outline-none"
@@ -1637,7 +1637,7 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                   1
                 </span>
               )}
-            </button>
+            </button>*/}
           </div>
         )}
       </div>
@@ -1650,8 +1650,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               type="button"
               onClick={() => setFundTab(name)}
               className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === name
-                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                  : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
+                ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
                 }`}
             >
               <span>{name}</span>
@@ -1672,8 +1672,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               setPhaseFilter('all')
             }}
             className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'all'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             All
@@ -1687,8 +1687,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               setPhaseFilter('ongoing')
             }}
             className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'ongoing'
-                ? 'bg-sky-600 text-white shadow-sm'
-                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
+              ? 'bg-sky-600 text-white shadow-sm'
+              : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             Ongoing
@@ -1703,8 +1703,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
               setPhaseFilter('completed')
             }}
             className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none ${fundTab !== 'discontinued' && phaseFilter === 'completed'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             Completed
@@ -1713,8 +1713,8 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
             type="button"
             onClick={() => setFundTab('discontinued')}
             className={`h-8 rounded-lg px-3 text-xs font-semibold transition focus:outline-none focus-visible:outline-none inline-flex items-center gap-1.5 ${fundTab === 'discontinued'
-                ? 'bg-rose-600 text-white shadow-sm'
-                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
+              ? 'bg-rose-600 text-white shadow-sm'
+              : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200'
               }`}
           >
             <span>Discontinued</span>
@@ -2545,11 +2545,10 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                                       setReturnToApprovalsConfirm(r)
                                       setReturnToApprovalsRemarks(String(r.doc.returnToApprovalsReason || ''))
                                     }}
-                                    className={`inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-xs font-semibold shadow-xs transition-all focus:outline-none ${
-                                      r.doc.returnToApprovalsRequested
-                                        ? 'bg-amber-600 text-white ring-2 ring-amber-400 ring-offset-1 hover:bg-amber-700 animate-pulse cursor-pointer'
-                                        : 'border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
-                                    }`}
+                                    className={`inline-flex h-7 w-32 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-xs font-semibold shadow-xs transition-all focus:outline-none ${r.doc.returnToApprovalsRequested
+                                      ? 'bg-amber-600 text-white ring-2 ring-amber-400 ring-offset-1 hover:bg-amber-700 animate-pulse cursor-pointer'
+                                      : 'border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
+                                      }`}
                                     title={
                                       r.doc.returnToApprovalsRequested
                                         ? `Return Requested by End User: ${r.doc.returnToApprovalsReason || 'Click to process return'}`
@@ -4156,9 +4155,9 @@ export default function AllDocumentsPage({ title = "All Documents", readOnly = f
                           setEditSupplierBusy(true)
                           const nextSubDocs = Array.isArray(editSupplierRow.doc?.subDocuments) && editSupplierRow.doc.subDocuments.length > 0
                             ? editSupplierRow.doc.subDocuments.map((s: any, idx: number) => ({
-                                ...s,
-                                supplier: (editSubDocSuppliers[idx] ?? s?.supplier ?? '').trim(),
-                              }))
+                              ...s,
+                              supplier: (editSubDocSuppliers[idx] ?? s?.supplier ?? '').trim(),
+                            }))
                             : undefined
 
                           await patchDocument(String(editSupplierRow.doc._id), {
