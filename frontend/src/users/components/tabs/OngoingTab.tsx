@@ -288,14 +288,14 @@ export default function OngoingTab({
                             DV
                           </button>
                         )}
-                        <button
+                        {/* <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); onPreviewPO?.(doc) }}
                           className="inline-flex items-center rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-emerald-700 focus:outline-none shadow-sm transition"
                           title="Preview PO"
                         >
                           PO
-                        </button>
+                        </button> */}
                         {(() => {
                           const href = String(doc.driveLink || "").trim()
                           if (!href) return null
@@ -358,11 +358,10 @@ export default function OngoingTab({
                             e.stopPropagation()
                             onRequestReturnToApprovals?.(doc)
                           }}
-                          className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[10px] font-medium transition ${
-                            doc.returnToApprovalsRequested
-                              ? 'bg-amber-100 text-amber-800 border border-amber-300 cursor-not-allowed'
-                              : 'bg-amber-600 text-white hover:bg-amber-700'
-                          }`}
+                          className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[10px] font-medium transition ${doc.returnToApprovalsRequested
+                            ? 'bg-amber-100 text-amber-800 border border-amber-300 cursor-not-allowed'
+                            : 'bg-amber-600 text-white hover:bg-amber-700'
+                            }`}
                           title={doc.returnToApprovalsRequested ? `Return requested: ${doc.returnToApprovalsReason || 'Pending Admin review'}` : 'Request to return this document back to Approvals'}
                         >
                           <RotateCcw className="size-3" />
