@@ -7,6 +7,7 @@ import ObrTemplatePdf from "../../components/ObrTemplatePdf"
 import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
 import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
+import PoTemplatePreview, { type PoTemplateModel, type PoItem } from "../../components/PoTemplatePreview"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
 import { useDocumentSocket } from "../../hooks/useSocket"
@@ -90,7 +91,7 @@ type DocumentRow = {
   }>
 }
 
-type PreviewType = "PR" | "OBR" | "DV"
+type PreviewType = "PR" | "OBR" | "DV" | "PO"
 
 const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api"
 const API_URL = RAW_API_URL.replace(/\/$/, "").endsWith("/api")
@@ -293,13 +294,20 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           onclone: (clonedDoc) => {
             clonedDoc.querySelectorAll('style').forEach((s) => {
               if (s.textContent) {
-                s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
               }
             })
             clonedDoc.querySelectorAll('[style]').forEach((el) => {
               const styleAttr = el.getAttribute('style')
-              if (styleAttr && /oklch/i.test(styleAttr)) {
-                el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                el.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
               }
             })
           },
@@ -369,13 +377,20 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
-              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
             }
           })
           clonedDoc.querySelectorAll('[style]').forEach((el) => {
             const styleAttr = el.getAttribute('style')
-            if (styleAttr && /oklch/i.test(styleAttr)) {
-              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
             }
           })
         },
@@ -407,6 +422,94 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
   const [dvPdfBusy, setDvPdfBusy] = useState(false)
   const dvVisibleRef = useRef<HTMLDivElement | null>(null)
   const dvCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const [poPdfBusy, setPoPdfBusy] = useState(false)
+  const poVisibleRef = useRef<HTMLDivElement | null>(null)
+  const poCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const capturePoPreviewToPdf = async () => {
+    const root = poVisibleRef.current || poCaptureRef.current
+    if (!root) return
+
+    let previewTab: Window | null = null
+    try {
+      setPoPdfBusy(true)
+      previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) {
+        window.alert("Please allow pop-ups to preview the PDF.")
+        return
+      }
+      await new Promise((r) => setTimeout(r, 150))
+      const pages = Array.from(root.querySelectorAll<HTMLElement>(".print-page"))
+      if (pages.length === 0) {
+        const singlePage = root.classList.contains("print-page") ? root : null
+        if (singlePage) pages.push(singlePage)
+      }
+      if (pages.length === 0) {
+        if (previewTab) previewTab.close()
+        return
+      }
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+
+      for (let i = 0; i < pages.length; i++) {
+        const el = pages[i]
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          allowTaint: false,
+          width: 816,
+          height: 1056,
+          windowWidth: 816,
+          windowHeight: 1056,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('style').forEach((s) => {
+              if (s.textContent) {
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+              }
+            })
+            clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+              const styleAttr = elem.getAttribute('style')
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                elem.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
+              }
+            })
+          },
+        })
+        const imgData = canvas.toDataURL("image/png")
+        const pageW = pdfDoc.internal.pageSize.getWidth()
+        const pageH = pdfDoc.internal.pageSize.getHeight()
+        if (i > 0) pdfDoc.addPage("letter", "portrait")
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      }
+
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch {
+        URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error("Failed to generate PO PDF", err)
+      if (previewTab) previewTab.close()
+    } finally {
+      setPoPdfBusy(false)
+    }
+  }
 
   const captureDvPreviewToPdf = async () => {
     const root = dvVisibleRef.current || dvCaptureRef.current
@@ -449,13 +552,20 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
-              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
             }
           })
           clonedDoc.querySelectorAll('[style]').forEach((el) => {
             const styleAttr = el.getAttribute('style')
-            if (styleAttr && /oklch/i.test(styleAttr)) {
-              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
             }
           })
         },
@@ -1081,7 +1191,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           id: String(d._id || d.trackingNo),
           trackingNo: String(d.trackingNo || ''),
           timestamp,
-          createdBy: String(d.createdBy || ''),
+          createdBy: String(d.createdBy || '').trim().toLowerCase() === 'admin' ? 'System Administrator' : String(d.createdBy || ''),
           office: d.office ? String(d.office) : "",
           fund: d.fund ? String(d.fund) : "",
           section: d.section ? String(d.section) : "",
@@ -1730,6 +1840,7 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
           onPreviewPR={(doc) => setPreview({ type: "PR", doc })}
           onPreviewOBR={(doc) => setPreview({ type: "OBR", doc })}
           onPreviewDV={(doc) => setPreview({ type: "DV", doc })}
+              onPreviewPO={(doc) => setPreview({ type: "PO", doc })}
           onOpenLogsModal={(doc) => setLogsModalDoc(doc)}
           onOpenLogsPreview={(doc) => setLogsPreviewDoc(doc)}
           onEditDoc={(doc) => { setEditDoc(doc); setIsModalOpen(true) }}
@@ -2136,6 +2247,18 @@ export default function UserDocuments({ showAll = false, onBadgeCountChange, hid
                   title="Download PDF"
                 >
                   {dvPdfBusy ? "..." : <Download className="size-4" />}
+                </button>
+              )}
+
+              {preview.type === "PO" && (
+                <button
+                  type="button"
+                  onClick={() => capturePoPreviewToPdf()}
+                  disabled={poPdfBusy}
+                  className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                  title="Download PDF"
+                >
+                  {poPdfBusy ? "..." : <Download className="size-4" />}
                 </button>
               )}
 

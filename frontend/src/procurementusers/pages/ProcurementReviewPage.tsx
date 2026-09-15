@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { History } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Download, History } from "lucide-react"
+import html2canvas from "html2canvas"
+import { jsPDF } from "jspdf"
+import PrTemplatePreview from "../../components/PrTemplatePreview"
+import ObrTemplatePreview, { type ObrTemplateModel } from "../../components/ObrTemplatePreview"
+import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
+import PoTemplatePreview, { type PoTemplateModel, type PoItem } from "../../components/PoTemplatePreview"
 import { toast } from "../../lib/toast"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { formatLogRemarks } from "../../utils/formatLogRemarks"
@@ -40,6 +46,7 @@ type ApiDoc = {
   obrNo?: string
   purpose: string
   amount?: string
+  supplier?: string
   status?: string
   driveLink?: string
   logs?: DocLog[]
@@ -158,6 +165,320 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
   const [query, setQuery] = useState("")
   const [pageSize, setPageSize] = useState(10)
 
+  // Preview modal state
+  const [preview, setPreview] = useState<{ type: "PR" | "OBR" | "DV" | "PO"; row: ReviewRow } | null>(null)
+  const [prActivePage, setPrActivePage] = useState(0)
+  const [prPdfBusy, setPrPdfBusy] = useState(false)
+  const [obrPdfBusy, setObrPdfBusy] = useState(false)
+  const [dvPdfBusy, setDvPdfBusy] = useState(false)
+  const [poPdfBusy, setPoPdfBusy] = useState(false)
+  const prCaptureRef = useRef<HTMLDivElement | null>(null)
+  const obrVisibleRef = useRef<HTMLDivElement | null>(null)
+  const obrCaptureRef = useRef<HTMLDivElement | null>(null)
+  const dvVisibleRef = useRef<HTMLDivElement | null>(null)
+  const dvCaptureRef = useRef<HTMLDivElement | null>(null)
+  const poVisibleRef = useRef<HTMLDivElement | null>(null)
+  const poCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const capturePrPreviewToPdf = async () => {
+    const root = prCaptureRef.current
+    if (!root) return
+    try {
+      setPrPdfBusy(true)
+      const previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) { window.alert("Please allow pop-ups to preview the PDF."); return }
+      await new Promise((r) => setTimeout(r, 50))
+      const pages = Array.from(root.querySelectorAll<HTMLElement>(".print-page"))
+      if (pages.length === 0) return
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+      for (let i = 0; i < pages.length; i++) {
+        const el = pages[i]
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          width: 816,
+          height: 1056,
+          windowWidth: 816,
+          windowHeight: 1056,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('style').forEach((s) => {
+              if (s.textContent) {
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+              }
+            })
+            clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+              const styleAttr = elem.getAttribute('style')
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                elem.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
+              }
+            })
+          },
+        })
+        const imgData = canvas.toDataURL("image/png")
+        const pageW = pdfDoc.internal.pageSize.getWidth()
+        const pageH = pdfDoc.internal.pageSize.getHeight()
+        if (i > 0) pdfDoc.addPage("letter", "portrait")
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      }
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch { URL.revokeObjectURL(url) }
+    } finally { setPrPdfBusy(false) }
+  }
+
+  const captureObrPreviewToPdf = async () => {
+    const root = obrVisibleRef.current || obrCaptureRef.current
+    if (!root) return
+    try {
+      setObrPdfBusy(true)
+      const previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) { window.alert("Please allow pop-ups to preview the PDF."); return }
+      await new Promise((r) => setTimeout(r, 150))
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || (root.classList.contains("print-page") ? root : null)
+      if (!pageEl) { if (previewTab) previewTab.close(); return }
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        width: 816,
+        height: 1056,
+        windowWidth: 816,
+        windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('style').forEach((s) => {
+            if (s.textContent) {
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+            }
+          })
+          clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+            const styleAttr = elem.getAttribute('style')
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              elem.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
+            }
+          })
+        },
+      })
+      const imgData = canvas.toDataURL("image/png")
+      const pageW = pdfDoc.internal.pageSize.getWidth()
+      const pageH = pdfDoc.internal.pageSize.getHeight()
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch { URL.revokeObjectURL(url) }
+    } finally { setObrPdfBusy(false) }
+  }
+
+  const captureDvPreviewToPdf = async () => {
+    const root = dvVisibleRef.current || dvCaptureRef.current
+    if (!root) return
+    try {
+      setDvPdfBusy(true)
+      const previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) { window.alert("Please allow pop-ups to preview the PDF."); return }
+      await new Promise((r) => setTimeout(r, 150))
+      const pageEl = root.querySelector<HTMLElement>(".print-page") || (root.classList.contains("print-page") ? root : null)
+      if (!pageEl) { if (previewTab) previewTab.close(); return }
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        width: 816,
+        height: 1056,
+        windowWidth: 816,
+        windowHeight: 1056,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        onclone: (clonedDoc) => {
+          clonedDoc.querySelectorAll('style').forEach((s) => {
+            if (s.textContent) {
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+            }
+          })
+          clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+            const styleAttr = elem.getAttribute('style')
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              elem.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
+            }
+          })
+        },
+      })
+      const imgData = canvas.toDataURL("image/png")
+      const pageW = pdfDoc.internal.pageSize.getWidth()
+      const pageH = pdfDoc.internal.pageSize.getHeight()
+      pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch { URL.revokeObjectURL(url) }
+    } finally { setDvPdfBusy(false) }
+  }
+
+  const capturePoPreviewToPdf = async () => {
+    const root = poVisibleRef.current || poCaptureRef.current
+    if (!root) return
+    try {
+      setPoPdfBusy(true)
+      const previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) { window.alert("Please allow pop-ups to preview the PDF."); return }
+      await new Promise((r) => setTimeout(r, 150))
+      const pages = Array.from(root.querySelectorAll<HTMLElement>(".print-page"))
+      if (pages.length === 0) {
+        const singlePage = root.classList.contains("print-page") ? root : null
+        if (singlePage) pages.push(singlePage)
+      }
+      if (pages.length === 0) { if (previewTab) previewTab.close(); return }
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+      for (let i = 0; i < pages.length; i++) {
+        const el = pages[i]
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          width: 816,
+          height: 1056,
+          windowWidth: 816,
+          windowHeight: 1056,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('style').forEach((s) => {
+              if (s.textContent) {
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+              }
+            })
+            clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+              const styleAttr = elem.getAttribute('style')
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                elem.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
+              }
+            })
+          },
+        })
+        const imgData = canvas.toDataURL("image/png")
+        const pageW = pdfDoc.internal.pageSize.getWidth()
+        const pageH = pdfDoc.internal.pageSize.getHeight()
+        if (i > 0) pdfDoc.addPage("letter", "portrait")
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      }
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch { URL.revokeObjectURL(url) }
+    } finally { setPoPdfBusy(false) }
+  }
+
+  const previewPoModel = useMemo<PoTemplateModel | null>(() => {
+    if (!preview || preview.type !== "PO") return null
+    const doc = preview.row.doc
+    const row = preview.row
+    const prItems = Array.isArray((doc as any)?.prItems) ? (doc as any).prItems : []
+    const items: PoItem[] = prItems.length > 0
+      ? prItems
+          .filter((it: any) => String(it?.description || "").trim() !== "__PR_PAGE_BREAK__")
+          .map((it: any, idx: number) => ({
+            stockPropertyNo: String(it?.itemNo || idx + 1),
+            unit: String(it?.unit || ""),
+            description: String(it?.description || ""),
+            quantity: it?.quantity || "",
+            unitCost: it?.unitCost || "",
+            amount: it?.totalCost || (Number(it?.quantity || 0) * Number(it?.unitCost || 0)) || "",
+          }))
+      : [
+          {
+            stockPropertyNo: "1",
+            unit: "lot",
+            description: doc?.purpose || row?.purpose || "",
+            quantity: 1,
+            unitCost: doc?.amount || row?.amount || "",
+            amount: doc?.amount || row?.amount || "",
+          },
+        ]
+
+    const supp = String(row.supplier || (doc as any)?.supplier || "").trim()
+
+    return {
+      supplier: supp,
+      address: String((doc as any)?.supplierAddress || (doc as any)?.address || "").trim(),
+      tin: String((doc as any)?.tin || "").trim(),
+      poNo: String((doc as any)?.poNo || "").trim(),
+      date: String((doc as any)?.poDate || (doc as any)?.prDate || (doc?.createdAt ? new Date(doc.createdAt).toISOString().split('T')[0] : "")).trim(),
+      modeOfProcurement: String((doc as any)?.modeOfProcurement || (doc as any)?.section || "SVP").trim(),
+      prNo: String((doc as any)?.prNo || "").trim(),
+      placeOfDelivery: String((doc as any)?.placeOfDelivery || (doc as any)?.department || doc?.office || "PG-BATAAN").trim(),
+      dateOfDelivery: String((doc as any)?.dateOfDelivery || "").trim(),
+      deliveryTerm: String((doc as any)?.deliveryTerm || "").trim(),
+      paymentTerm: String((doc as any)?.paymentTerm || "").trim(),
+      items,
+      approvedByName: String((doc as any)?.approvedByName || "JOSE ENRIQUE S. GARCIA III").trim(),
+      approvedByDesignation: String((doc as any)?.approvedByDesignation || "PROVINCIAL GOVERNOR").trim(),
+      conformeSupplierName: String((doc as any)?.conformeSupplierName || supp).trim(),
+      conformeDate: String((doc as any)?.conformeDate || "").trim(),
+      sanggunianResolutionNo: String((doc as any)?.sanggunianResolutionNo || "").trim(),
+      secretaryName: String((doc as any)?.secretaryName || "").trim(),
+      secretaryDate: String((doc as any)?.secretaryDate || "").trim(),
+      trackingNo: String(row.trackingNo || doc?.trackingNo || "").trim(),
+      status: doc?.status,
+      logs: doc?.logs,
+    }
+  }, [preview])
+
   // Modal state
   const [logsRow, setLogsRow] = useState<ReviewRow | null>(null)
   const [remarksType, setRemarksType] = useState<"return" | "approve">("return")
@@ -205,7 +526,7 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
               requestor: doc.office || "-",
               prRef: doc.prEnabled === false ? "Not Available" : "Available",
               obrRef: doc.obrEnabled === false ? "Not Available" : "Available",
-              createdBy: doc.createdBy || "-",
+              createdBy: String(doc.createdBy || '').trim().toLowerCase() === 'admin' ? 'System Administrator' : (doc.createdBy || "-"),
               purpose: item.purpose || doc.purpose || "-",
               supplier: (item as any).supplier || (doc as any).supplier || "-",
               obrAvail: doc.obrEnabled !== false,
@@ -479,22 +800,54 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
                         <td className="px-4 py-3 align-top text-slate-700">{r.supplier || "-"}</td>
                         <td className="px-4 py-3 align-top">
                           <div className="flex flex-col gap-1">
-                            <span
-                              className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold ${r.obrAvail ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-500"}`}
+                            {r.obrAvail ? (
+                              <button
+                                type="button"
+                                onClick={() => setPreview({ type: "OBR", row: r })}
+                                className="inline-flex items-center justify-center rounded bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white hover:bg-slate-800 focus:outline-none"
+                              >
+                                OBR
+                              </button>
+                            ) : (
+                              <span className="inline-flex items-center justify-center rounded bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                                OBR
+                              </span>
+                            )}
+                            {r.prAvail ? (
+                              <button
+                                type="button"
+                                onClick={() => setPreview({ type: "PR", row: r })}
+                                className="inline-flex items-center justify-center rounded bg-sky-600 px-2 py-0.5 text-[10px] font-semibold text-white hover:bg-sky-700 focus:outline-none"
+                              >
+                                PR
+                              </button>
+                            ) : (
+                              <span className="inline-flex items-center justify-center rounded bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                                PR
+                              </span>
+                            )}
+                            {Boolean(String(r.supplier || (r.doc as any)?.supplier || "").trim()) && (
+                              <button
+                                type="button"
+                                onClick={() => setPreview({ type: "DV", row: r })}
+                                className="inline-flex items-center justify-center rounded bg-purple-600 px-2 py-0.5 text-[10px] font-semibold text-white hover:bg-purple-700 focus:outline-none"
+                              >
+                                DV
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setPreview({ type: "PO", row: r })}
+                              className="inline-flex items-center justify-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white hover:bg-emerald-700 focus:outline-none"
                             >
-                              OBR
-                            </span>
-                            <span
-                              className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold ${r.prAvail ? "bg-sky-600 text-white" : "bg-slate-200 text-slate-500"}`}
-                            >
-                              PR
-                            </span>
+                              PO
+                            </button>
                             {r.driveLink ? (
                               <a
                                 href={r.driveLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center rounded bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-slate-900 hover:bg-amber-300"
+                                className="inline-flex items-center justify-center rounded bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-slate-900 hover:bg-amber-300"
                               >
                                 Link
                               </a>
@@ -532,7 +885,302 @@ export default function ProcurementReviewPage({ officePrivileges: _officePrivile
         </div>
       </div>
 
-      {/* ── Review Logs Modal ─────────────────────────────────────────────────── */}
+
+      {/* ── Document Preview Modal (PR, OBR, DV, PO) ─────────────────────────── */}
+      {preview ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          onMouseDown={(e) => {
+            if (e.currentTarget === e.target) {
+              setPreview(null)
+              setPrActivePage(0)
+            }
+          }}
+        >
+          <div className="flex max-h-[90dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/50 px-5 py-4">
+              <div className="min-w-0">
+                <div className="truncate text-sm font-bold text-slate-900">
+                  {preview.type} Preview - {preview.row.trackingNo}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 no-print">
+                {preview.type === "PR" && (
+                  <button
+                    type="button"
+                    onClick={capturePrPreviewToPdf}
+                    disabled={prPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {prPdfBusy ? "..." : <Download className="size-4" />}
+                  </button>
+                )}
+                {preview.type === "OBR" && (
+                  <button
+                    type="button"
+                    onClick={captureObrPreviewToPdf}
+                    disabled={obrPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {obrPdfBusy ? "..." : <Download className="size-4" />}
+                  </button>
+                )}
+                {preview.type === "DV" && (
+                  <button
+                    type="button"
+                    onClick={captureDvPreviewToPdf}
+                    disabled={dvPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {dvPdfBusy ? "..." : <Download className="size-4" />}
+                  </button>
+                )}
+                {preview.type === "PO" && (
+                  <button
+                    type="button"
+                    onClick={capturePoPreviewToPdf}
+                    disabled={poPdfBusy}
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+                    title="Download PDF"
+                  >
+                    {poPdfBusy ? "..." : <Download className="size-4" />}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPreview(null)
+                    setPrActivePage(0)
+                  }}
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
+                  aria-label="Close"
+                >
+                  <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-auto bg-slate-100 p-4">
+              {preview.type === "PR" ? (
+                <>
+                  <div className="print-area mx-auto w-[816px]">
+                    <PrTemplatePreview
+                      activePage={prActivePage}
+                      model={{
+                        trackingNo: preview.row.doc.trackingNo,
+                        items: Array.isArray((preview.row.doc as any)?.prItems) ? (preview.row.doc as any).prItems : [],
+                        fund: preview.row.doc.fund || "",
+                        department: (preview.row.doc as any)?.department || "",
+                        section: (preview.row.doc as any)?.section || "",
+                        prNo: String(preview.row.doc.prNo || "").trim(),
+                        date: String((preview.row.doc as any)?.prDate || "").trim(),
+                        fpp: (preview.row.doc as any)?.fpp || "",
+                        purpose: preview.row.doc.purpose || "",
+                        requestedByName: (preview.row.doc as any)?.requestedByName || "DEPARTMENT HEAD",
+                        requestedByDesignation: (preview.row.doc as any)?.requestedByDesignation || "Department Head",
+                        cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY",
+                        cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer",
+                        approvedByName: String((preview.row.doc as any)?.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III",
+                        approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || "").trim() || "Provincial Governor",
+                        status: preview.row.doc.status,
+                        logs: preview.row.doc.logs,
+                        hasPr: preview.row.doc.prEnabled,
+                        hasObr: preview.row.doc.obrEnabled,
+                      }}
+                    />
+                  </div>
+                  <div
+                    ref={prCaptureRef}
+                    style={{ position: "fixed", left: -10000, top: 0, width: 900, height: "auto", overflow: "visible", background: "white" }}
+                    aria-hidden="true"
+                  >
+                    <div className="print-area">
+                      <PrTemplatePreview
+                        forceShowAllPages
+                        model={{
+                          trackingNo: preview.row.doc.trackingNo,
+                          items: Array.isArray((preview.row.doc as any)?.prItems) ? (preview.row.doc as any).prItems : [],
+                          fund: preview.row.doc.fund || "",
+                          department: (preview.row.doc as any)?.department || "",
+                          section: (preview.row.doc as any)?.section || "",
+                          prNo: String(preview.row.doc.prNo || "").trim(),
+                          date: String((preview.row.doc as any)?.prDate || "").trim(),
+                          fpp: (preview.row.doc as any)?.fpp || "",
+                          purpose: preview.row.doc.purpose || "",
+                          requestedByName: (preview.row.doc as any)?.requestedByName || "DEPARTMENT HEAD",
+                          requestedByDesignation: (preview.row.doc as any)?.requestedByDesignation || "Department Head",
+                          cashAvailabilityName: String((preview.row.doc as any)?.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY",
+                          cashAvailabilityDesignation: String((preview.row.doc as any)?.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer",
+                          approvedByName: String((preview.row.doc as any)?.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III",
+                          approvedByDesignation: String((preview.row.doc as any)?.approvedByDesignation || "").trim() || "Provincial Governor",
+                          status: preview.row.doc.status,
+                          logs: preview.row.doc.logs,
+                          hasPr: preview.row.doc.prEnabled,
+                          hasObr: preview.row.doc.obrEnabled,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : preview.type === "OBR" ? (
+                <>
+                  <div ref={obrVisibleRef} className="print-area mx-auto w-[816px]">
+                    <ObrTemplatePreview
+                      model={{
+                        payee: "PR",
+                        office: "N/A",
+                        address: "N/A",
+                        trackingNo: preview.row.doc.trackingNo,
+                        fund: preview.row.doc.fund || "",
+                        obrNo: String(preview.row.doc.obrNo || "").trim() || (preview.row.doc.fund === "SEF" ? "200-26-" : "100-26-"),
+                        responsibilityCenter: String((preview.row.doc as any)?.responsibilityCenter || "").trim(),
+                        particulars: preview.row.doc.purpose || "",
+                        notes: (preview.row.doc as any)?.notes || "",
+                        fpp: String((preview.row.doc as any)?.fpp || "").trim(),
+                        accountCode: String((preview.row.doc as any)?.accountCode || "").trim(),
+                        amount: preview.row.doc.amount || "",
+                        preparedByName: preview.row.doc.createdBy || "",
+                        certifiedAName: String((preview.row.doc as any)?.certifiedAName || "").trim() || "ENGR. FERNANDO E. TANCIONGCO",
+                        certifiedAPosition: String((preview.row.doc as any)?.certifiedAPosition || "").trim() || "OIC-PGSO",
+                        certifiedBName: String((preview.row.doc as any)?.certifiedBName || "").trim() || "EDUARDO D. BANZON",
+                        certifiedBPosition: String((preview.row.doc as any)?.certifiedBPosition || "").trim() || "Provincial Budget Officer",
+                        status: preview.row.doc.status,
+                        logs: preview.row.doc.logs,
+                        hasPr: preview.row.doc.prEnabled,
+                        hasObr: preview.row.doc.obrEnabled,
+                      }}
+                    />
+                  </div>
+                  <div
+                    ref={obrCaptureRef}
+                    style={{ position: "fixed", left: -10000, top: 0, width: 816, height: "auto", overflow: "visible", background: "white" }}
+                    aria-hidden="true"
+                  >
+                    <div className="print-area">
+                      <ObrTemplatePreview
+                        model={{
+                          payee: "PR",
+                          office: "N/A",
+                          address: "N/A",
+                          trackingNo: preview.row.doc.trackingNo,
+                          fund: preview.row.doc.fund || "",
+                          obrNo: String(preview.row.doc.obrNo || "").trim() || (preview.row.doc.fund === "SEF" ? "200-26-" : "100-26-"),
+                          responsibilityCenter: String((preview.row.doc as any)?.responsibilityCenter || "").trim(),
+                          particulars: preview.row.doc.purpose || "",
+                          notes: (preview.row.doc as any)?.notes || "",
+                          fpp: String((preview.row.doc as any)?.fpp || "").trim(),
+                          accountCode: String((preview.row.doc as any)?.accountCode || "").trim(),
+                          amount: preview.row.doc.amount || "",
+                          preparedByName: preview.row.doc.createdBy || "",
+                          certifiedAName: String((preview.row.doc as any)?.certifiedAName || "").trim() || "ENGR. FERNANDO E. TANCIONGCO",
+                          certifiedAPosition: String((preview.row.doc as any)?.certifiedAPosition || "").trim() || "OIC-PGSO",
+                          certifiedBName: String((preview.row.doc as any)?.certifiedBName || "").trim() || "EDUARDO D. BANZON",
+                          certifiedBPosition: String((preview.row.doc as any)?.certifiedBPosition || "").trim() || "Provincial Budget Officer",
+                          status: preview.row.doc.status,
+                          logs: preview.row.doc.logs,
+                          hasPr: preview.row.doc.prEnabled,
+                          hasObr: preview.row.doc.obrEnabled,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : preview.type === "DV" ? (
+                <>
+                  <div ref={dvVisibleRef} className="print-area mx-auto w-[816px]">
+                    <DvTemplatePreview
+                      model={{
+                        payee: String(preview.row.supplier || preview.row.doc.supplier || "").trim() || "PR",
+                        address: String((preview.row.doc as any)?.supplierAddress || "N/A"),
+                        trackingNo: preview.row.trackingNo,
+                        fund: preview.row.doc.fund || "",
+                        dvNo: String((preview.row.doc as any)?.dvNo || "").trim(),
+                        date: (preview.row.doc as any)?.date || "",
+                        obrNo: String(preview.row.doc.obrNo || "").trim(),
+                        responsibilityCenter: (preview.row.doc as any)?.responsibilityCenter || "",
+                        particulars: preview.row.doc.purpose || "",
+                        amount: preview.row.doc.amount || "",
+                        amountDue: preview.row.doc.amount || "",
+                        preparedByName: preview.row.doc.createdBy || "",
+                        certifiedAName: String((preview.row.doc as any)?.certifiedAName || "").trim() || "ENGR. FERNANDO E. TANCIONGCO",
+                        certifiedAPosition: String((preview.row.doc as any)?.certifiedAPosition || "").trim() || "OIC-PGSO",
+                        certifiedBName: String((preview.row.doc as any)?.certifiedBName || "").trim() || "EDUARDO D. BANZON",
+                        certifiedBPosition: String((preview.row.doc as any)?.certifiedBPosition || "").trim() || "Provincial Budget Officer",
+                        status: preview.row.doc.status,
+                        logs: preview.row.doc.logs,
+                        hasPr: preview.row.doc.prEnabled,
+                        hasObr: preview.row.doc.obrEnabled,
+                      }}
+                    />
+                  </div>
+                  <div
+                    ref={dvCaptureRef}
+                    style={{ position: "fixed", left: -10000, top: 0, width: 816, height: "auto", overflow: "visible", background: "white" }}
+                    aria-hidden="true"
+                  >
+                    <div className="print-area">
+                      <DvTemplatePreview
+                        model={{
+                          payee: String(preview.row.supplier || preview.row.doc.supplier || "").trim() || "PR",
+                          address: String((preview.row.doc as any)?.supplierAddress || "N/A"),
+                          trackingNo: preview.row.trackingNo,
+                          fund: preview.row.doc.fund || "",
+                          dvNo: String((preview.row.doc as any)?.dvNo || "").trim(),
+                          date: (preview.row.doc as any)?.date || "",
+                          obrNo: String(preview.row.doc.obrNo || "").trim(),
+                          responsibilityCenter: (preview.row.doc as any)?.responsibilityCenter || "",
+                          particulars: preview.row.doc.purpose || "",
+                          amount: preview.row.doc.amount || "",
+                          amountDue: preview.row.doc.amount || "",
+                          preparedByName: preview.row.doc.createdBy || "",
+                          certifiedAName: String((preview.row.doc as any)?.certifiedAName || "").trim() || "ENGR. FERNANDO E. TANCIONGCO",
+                          certifiedAPosition: String((preview.row.doc as any)?.certifiedAPosition || "").trim() || "OIC-PGSO",
+                          certifiedBName: String((preview.row.doc as any)?.certifiedBName || "").trim() || "EDUARDO D. BANZON",
+                          certifiedBPosition: String((preview.row.doc as any)?.certifiedBPosition || "").trim() || "Provincial Budget Officer",
+                          status: preview.row.doc.status,
+                          logs: preview.row.doc.logs,
+                          hasPr: preview.row.doc.prEnabled,
+                          hasObr: preview.row.doc.obrEnabled,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : preview.type === "PO" ? (
+                <>
+                  {previewPoModel && (
+                    <div ref={poVisibleRef} className="print-area mx-auto w-[816px]">
+                      <PoTemplatePreview model={previewPoModel} />
+                    </div>
+                  )}
+                  {previewPoModel && (
+                    <div
+                      ref={poCaptureRef}
+                      style={{ position: "fixed", left: -10000, top: 0, width: 816, height: "auto", overflow: "visible", background: "white" }}
+                      aria-hidden="true"
+                    >
+                      <div className="print-area">
+                        <PoTemplatePreview model={previewPoModel} />
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+            {/* ── Review Logs Modal ─────────────────────────────────────────────────── */}
       {logsRow ? (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"

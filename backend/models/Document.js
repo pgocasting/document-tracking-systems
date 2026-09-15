@@ -161,6 +161,86 @@ const documentSchema = new mongoose.Schema({
     default: '',
     trim: true,
   },
+  supplierAddress: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  tin: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  poNo: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  poDate: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  modeOfProcurement: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  placeOfDelivery: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  dateOfDelivery: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  deliveryTerm: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  paymentTerm: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  conformeSupplierName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  conformeDate: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  sanggunianResolutionNo: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  secretaryName: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  secretaryDate: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  poItems: [
+    {
+      stockPropertyNo: { type: String, default: '' },
+      unit: { type: String, default: '' },
+      description: { type: String, default: '' },
+      quantity: { type: String, default: '' },
+      unitCost: { type: String, default: '' },
+      amount: { type: String, default: '' },
+    },
+  ],
   driveLink: {
     type: String,
     default: 'N/A',

@@ -13,6 +13,7 @@ type Props = {
   onPreviewPR: (doc: DocumentRow) => void
   onPreviewOBR: (doc: DocumentRow) => void
   onPreviewDV?: (doc: DocumentRow) => void
+  onPreviewPO?: (doc: DocumentRow) => void
   onOpenLogsModal: (doc: DocumentRow) => void
   onOpenLogsPreview: (doc: DocumentRow) => void
   onEditDoc: (doc: DocumentRow) => void
@@ -43,6 +44,7 @@ export default function PreValidationTab({
   onPreviewPR,
   onPreviewOBR,
   onPreviewDV,
+  onPreviewPO,
   onOpenLogsModal,
   onOpenLogsPreview,
   onEditDoc,

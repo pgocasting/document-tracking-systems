@@ -224,8 +224,8 @@ export function showDesktopNotification(options: DesktopNotificationOptions): No
     try {
       const notif = new Notification(options.title, {
         body: options.body || '',
-        icon: options.icon || '/favicon.ico',
-        badge: options.badge || '/favicon.ico',
+        icon: options.icon || '/images/Bataan.png',
+        badge: options.badge || '/images/Bataan.png',
         tag: options.tag,
         data: options.data,
       });

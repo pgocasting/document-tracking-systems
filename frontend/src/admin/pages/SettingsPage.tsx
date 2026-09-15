@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react"
 import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
 import ObrTemplatePreview, { type ObrTemplateModel } from "../../components/ObrTemplatePreview"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
+import PoTemplatePreview, { type PoTemplateModel } from "../../components/PoTemplatePreview"
 import { toast } from "../../lib/toast"
 
 type SettingsTab =
@@ -22,7 +23,7 @@ type SettingsTab =
   | "special-dates"
   | "change-password"
 
-type TemplateType = "PR" | "OBR" | "DV"
+type TemplateType = "PR" | "OBR" | "DV" | "PO"
 
 export type PrTemplateModel = {
   items?: Array<{
@@ -119,6 +120,28 @@ export default function SettingsPage() {
     approvedForPaymentPosition: "Acting - Provincial Governor",
     certifiedCorrectName: "MYRNA B. ROMAN",
     certifiedCorrectPosition: "Acting Provincial Accountant",
+  })
+
+  const [poModel, setPoModel] = useState<PoTemplateModel>({
+    supplier: "",
+    address: "",
+    tin: "",
+    poNo: "",
+    date: "",
+    modeOfProcurement: "",
+    prNo: "",
+    placeOfDelivery: "",
+    dateOfDelivery: "",
+    deliveryTerm: "",
+    paymentTerm: "",
+    items: [],
+    approvedByName: "JOSE ENRIQUE S. GARCIA III",
+    approvedByDesignation: "PROVINCIAL GOVERNOR",
+    conformeSupplierName: "",
+    conformeDate: "",
+    sanggunianResolutionNo: "",
+    secretaryName: "",
+    secretaryDate: "",
   })
 
   const [defaultSchedule, setDefaultSchedule] = useState<Record<WeekdayKey, DaySchedule>>({
@@ -315,7 +338,7 @@ export default function SettingsPage() {
               <div>
                 <div className="text-base font-bold tracking-tight text-slate-900">Templates</div>
                 <div className="mt-0.5 text-xs text-slate-500">
-                  Manage the official print templates used for PR, OBR, and DV forms across provincial departments.
+                  Manage the official print templates used for PR, OBR, PO, and DV forms across provincial departments.
                 </div>
               </div>
 
@@ -358,6 +381,22 @@ export default function SettingsPage() {
                               onClick={() => setActiveTemplate("OBR")}
                               className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
                               title="View / Edit OBR Template"
+                            >
+                              <Eye className="size-3.5" />
+                              View / Edit
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="transition-colors hover:bg-slate-50/80">
+                        <td className="px-4 py-3.5 align-middle font-semibold text-slate-800">PO (Purchase Order)</td>
+                        <td className="px-4 py-3.5 align-middle">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setActiveTemplate("PO")}
+                              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:outline-none"
+                              title="View / Edit PO Template"
                             >
                               <Eye className="size-3.5" />
                               View / Edit
@@ -868,6 +907,8 @@ export default function SettingsPage() {
                     ? "Purchase Request (PR) Template"
                     : activeTemplate === "OBR"
                     ? "Obligation Request (OBR) Template"
+                    : activeTemplate === "PO"
+                    ? "Purchase Order (PO) Template"
                     : "Disbursement Voucher (DV) Template"}
                 </div>
                 <div className="truncate text-xs text-muted-foreground">Edit template details and settings</div>
@@ -882,11 +923,13 @@ export default function SettingsPage() {
                   <PrTemplatePreview model={prModel} />
                 ) : activeTemplate === "DV" ? (
                   <DvTemplatePreview model={dvModel} />
+                ) : activeTemplate === "PO" ? (
+                  <PoTemplatePreview model={poModel} />
                 ) : (
                   <div className="mx-auto w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="aspect-3/4 w-full rounded-lg border border-slate-200 bg-white" />
                     <div className="mt-3 text-xs text-muted-foreground">
-                      Preview placeholder (you can connect this to the real template renderer later).
+                      Preview placeholder.
                     </div>
                   </div>
                 )}
@@ -1209,6 +1252,119 @@ export default function SettingsPage() {
                             className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
                             value={dvModel.certifiedCorrectPosition}
                             onChange={(e) => setDvModel((v) => ({ ...v, certifiedCorrectPosition: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <button
+                          type="button"
+                          className="inline-flex h-9 w-full items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus-visible:outline-none"
+                        >
+                          Save changes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTemplate(null)}
+                          className="mt-2 inline-flex h-9 w-full items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-medium shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeTemplate === "PO" ? (
+                  <div>
+                    <div className="text-sm font-semibold">Editor</div>
+                    <div className="mt-1 text-sm text-muted-foreground">Edit PO signatories and details.</div>
+
+                    <div className="mt-4 grid gap-3">
+                      <div className="grid gap-2">
+                        <label htmlFor="po-supplier" className="text-xs font-medium text-slate-600">Supplier</label>
+                        <input
+                          id="po-supplier"
+                          className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                          value={poModel.supplier ?? ""}
+                          onChange={(e) => setPoModel((v) => ({ ...v, supplier: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="po-address" className="text-xs font-medium text-slate-600">Supplier Address</label>
+                        <input
+                          id="po-address"
+                          className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                          value={poModel.address ?? ""}
+                          onChange={(e) => setPoModel((v) => ({ ...v, address: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="po-mode" className="text-xs font-medium text-slate-600">Mode of Procurement</label>
+                        <input
+                          id="po-mode"
+                          className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                          value={poModel.modeOfProcurement ?? ""}
+                          onChange={(e) => setPoModel((v) => ({ ...v, modeOfProcurement: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="po-delivery" className="text-xs font-medium text-slate-600">Place of Delivery</label>
+                        <input
+                          id="po-delivery"
+                          className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                          value={poModel.placeOfDelivery ?? ""}
+                          onChange={(e) => setPoModel((v) => ({ ...v, placeOfDelivery: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="po-delivery-term" className="text-xs font-medium text-slate-600">Delivery Term</label>
+                        <input
+                          id="po-delivery-term"
+                          className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                          value={poModel.deliveryTerm ?? ""}
+                          onChange={(e) => setPoModel((v) => ({ ...v, deliveryTerm: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                        <div className="text-xs font-semibold text-slate-700">Approved by</div>
+                        <div className="mt-2 grid gap-2">
+                          <label htmlFor="po-approved-name" className="text-xs font-medium text-slate-600">Printed name</label>
+                          <input
+                            id="po-approved-name"
+                            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                            value={poModel.approvedByName ?? ""}
+                            onChange={(e) => setPoModel((v) => ({ ...v, approvedByName: e.target.value }))}
+                          />
+                          <label htmlFor="po-approved-desig" className="text-xs font-medium text-slate-600">Designation</label>
+                          <input
+                            id="po-approved-desig"
+                            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                            value={poModel.approvedByDesignation ?? ""}
+                            onChange={(e) => setPoModel((v) => ({ ...v, approvedByDesignation: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                        <div className="text-xs font-semibold text-slate-700">Sanggunian Resolution</div>
+                        <div className="mt-2 grid gap-2">
+                          <label htmlFor="po-sanggunian-no" className="text-xs font-medium text-slate-600">Resolution No.</label>
+                          <input
+                            id="po-sanggunian-no"
+                            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                            value={poModel.sanggunianResolutionNo ?? ""}
+                            onChange={(e) => setPoModel((v) => ({ ...v, sanggunianResolutionNo: e.target.value }))}
+                          />
+                          <label htmlFor="po-secretary-name" className="text-xs font-medium text-slate-600">Secretary Name</label>
+                          <input
+                            id="po-secretary-name"
+                            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:outline-none focus-visible:outline-none"
+                            value={poModel.secretaryName ?? ""}
+                            onChange={(e) => setPoModel((v) => ({ ...v, secretaryName: e.target.value }))}
                           />
                         </div>
                       </div>

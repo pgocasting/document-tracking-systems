@@ -58,6 +58,7 @@ type Props = {
   onPreviewPR: (doc: DocumentRow) => void
   onPreviewOBR: (doc: DocumentRow) => void
   onPreviewDV?: (doc: DocumentRow) => void
+  onPreviewPO?: (doc: DocumentRow) => void
   onRoutingSlip?: (doc: DocumentRow) => void
   onHistoryModal: (doc: DocumentRow) => void
   onEditDoc: (doc: DocumentRow) => void
@@ -81,6 +82,7 @@ export default function OngoingTab({
   onPreviewPR,
   onPreviewOBR,
   onPreviewDV,
+  onPreviewPO,
   onRoutingSlip,
   onHistoryModal,
   onEditDoc,
@@ -286,6 +288,14 @@ export default function OngoingTab({
                             DV
                           </button>
                         )}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); onPreviewPO?.(doc) }}
+                          className="inline-flex items-center rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-medium text-white hover:bg-emerald-700 focus:outline-none shadow-sm transition"
+                          title="Preview PO"
+                        >
+                          PO
+                        </button>
                         {(() => {
                           const href = String(doc.driveLink || "").trim()
                           if (!href) return null

@@ -209,17 +209,6 @@ function hasApprovalLogByOffice(
       return false
     }
 
-    if (labelLower.startsWith('transferred to')) {
-      const destMatch = labelLower.match(/transferred to\s+([^(:]+)/i)
-      if (destMatch) {
-        const destStr = destMatch[1].trim().toLowerCase()
-        if (destStr === officeLower || destStr.includes(officeLower) || officeLower.includes(destStr)) {
-          return false
-        }
-      }
-      continue
-    }
-
     const byOfficeLower = String(l?.byOffice || '').trim().toLowerCase()
     const isApprovalLabel = labelLower.includes('approved') || labelLower.includes('returned')
     if (!isApprovalLabel) continue
@@ -254,7 +243,7 @@ function hasTransferredToOfficeLogs(
   return hasTransferredToOffice({ logs: rawLogs || [] }, officeLower)
 }
 
-function ProcurementMyDashboard({ officeLabel }: { officeLabel: string }) {
+function ProcurementMyDashboard({ officeLabel, reviewCount: reviewBadge }: { officeLabel: string; reviewCount?: number }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<DashboardStats>({ pending: 0, ongoing: 0, exceeded: 0 })
@@ -389,8 +378,6 @@ function ProcurementMyDashboard({ officeLabel }: { officeLabel: string }) {
       const pending = scoped.filter((it) => {
         if (!hasTransferredToOfficeLogs(it.logs, officeLower)) return false
         if (hasReceivedForOfficeLogs(it.logs, officeLower)) return false
-        // Pending should not be affected by approval logs for office
-        if (hasApprovalLogByOffice({ logs: it.logs }, officeLower)) return false
         return true
       }).length
 
@@ -486,17 +473,29 @@ function ProcurementMyDashboard({ officeLabel }: { officeLabel: string }) {
 
       {error ? <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-700">{error}</div> : null}
 
-      <div className="grid gap-5 md:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-4">
         {/* Pending */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-blue-600 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Pending</span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="relative flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Clock3 className="size-4" />
+              {stats.pending > 0 ? (
+                <span className="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold leading-none text-white shadow">
+                  {stats.pending > 99 ? '99+' : stats.pending}
+                </span>
+              ) : null}
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.pending}</div>
+            <div className="flex items-end gap-2">
+              <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.pending}</div>
+              {stats.pending > 0 ? (
+                <span className="mb-0.5 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                  To receive
+                </span>
+              ) : null}
+            </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
               <span className="inline-block size-1.5 rounded-full bg-blue-500 animate-ping" />
               Transferred to your office, waiting to be received
@@ -508,28 +507,82 @@ function ProcurementMyDashboard({ officeLabel }: { officeLabel: string }) {
         <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-emerald-600 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Ongoing</span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="relative flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
               <ClipboardCheck className="size-4" />
+              {stats.ongoing > 0 ? (
+                <span className="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full bg-emerald-600 text-[9px] font-bold leading-none text-white shadow">
+                  {stats.ongoing > 99 ? '99+' : stats.ongoing}
+                </span>
+              ) : null}
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.ongoing}</div>
+            <div className="flex items-end gap-2">
+              <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.ongoing}</div>
+              {stats.ongoing > 0 ? (
+                <span className="mb-0.5 inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                  In progress
+                </span>
+              ) : null}
+            </div>
             <div className="mt-1 text-xs text-slate-500 font-medium">
               Received by your office and currently in progress
             </div>
           </div>
         </div>
 
+        {/* For Review */}
+        {typeof reviewBadge === 'number' ? (
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-rose-500 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-rose-600">For Review</span>
+              <div className="relative flex size-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+                <Files className="size-4" />
+                {reviewBadge > 0 ? (
+                  <span className="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full bg-rose-600 text-[9px] font-bold leading-none text-white shadow">
+                    {reviewBadge > 99 ? '99+' : reviewBadge}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="flex items-end gap-2">
+                <div className="text-3xl font-extrabold tracking-tight text-slate-900">{reviewBadge}</div>
+                {reviewBadge > 0 ? (
+                  <span className="mb-0.5 inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
+                    Action needed
+                  </span>
+                ) : null}
+              </div>
+              <div className="mt-1 text-xs text-slate-500 font-medium">
+                Documents awaiting your review or approval
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {/* Exceeded */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 border-t-4 border-t-amber-500 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Exceeded</span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <div className="relative flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
               <BarChart3 className="size-4" />
+              {stats.exceeded > 0 ? (
+                <span className="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full bg-amber-600 text-[9px] font-bold leading-none text-white shadow">
+                  {stats.exceeded > 99 ? '99+' : stats.exceeded}
+                </span>
+              ) : null}
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.exceeded}</div>
+            <div className="flex items-end gap-2">
+              <div className="text-3xl font-extrabold tracking-tight text-slate-900">{loading ? "…" : stats.exceeded}</div>
+              {stats.exceeded > 0 ? (
+                <span className="mb-0.5 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                  Overdue
+                </span>
+              ) : null}
+            </div>
             <div className="mt-1 text-xs text-slate-500 font-medium">
               Overdue task durations
             </div>
@@ -563,7 +616,9 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
 
   const [route, setRoute] = useState<ProcurementRoute>("dashboard")
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [dashboardCount, setDashboardCount] = useState(0)
   const [reviewCount, setReviewCount] = useState(0)
+  const [refreshTick, setRefreshTick] = useState(0)
   const [officePrivileges, setOfficePrivileges] = useState<string[]>([])
   const [historyView, setHistoryView] = useState<"received-transfer" | "approvals">("received-transfer")
 
@@ -707,7 +762,68 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
           return hasApprovalLogByOffice({ logs: rawLogs }, officeLower)
         }
 
-        const count = docs.filter((d: any) => {
+        const isTerminalStatus = (statusRaw: string) => {
+          const statusLower = String(statusRaw || "").toLowerCase()
+          return (
+            statusLower === "completed" ||
+            statusLower === "returned" ||
+            statusLower === "discontinued" ||
+            statusLower === "cancelled" ||
+            statusLower === "canceled"
+          )
+        }
+
+        const isInOfficeScope = (statusRaw: string) => {
+          const s = String(statusRaw || "").toLowerCase()
+          if (isBudgetOffice) return s === "in-budget"
+          if (isPtoOffice) return s === "in-pto"
+          if (isGsoOffice) return s === "pending" || s === "pending-gso"
+          if (isBacOffice)
+            return (
+              s === "pending" ||
+              s === "pending-gso" ||
+              s === "pending-bac" ||
+              s === "for-validation" ||
+              s === "pre-validation"
+            )
+          return true
+        }
+
+        const toWorkItems = (d: any) => {
+          const subs = Array.isArray(d?.subDocuments) ? d.subDocuments : []
+          const mainItem = {
+            status: String(d?.status || ''),
+            logs: Array.isArray(d?.logs) ? (d.logs as any[]) : [],
+          }
+          const subItems = subs.map((s: any) => ({
+            status: String(s?.status || ''),
+            logs: Array.isArray(s?.logs) ? (s.logs as any[]) : [],
+          }))
+          return [mainItem, ...subItems]
+        }
+
+        const allItems = docs.flatMap(toWorkItems)
+        const scopedItems = allItems.filter((it) => {
+          if (isTerminalStatus(String(it?.status || ""))) return false
+          if (isInOfficeScope(String(it?.status || ""))) return true
+          const rawLogs = Array.isArray(it?.logs) ? it.logs : []
+          for (let i = rawLogs.length - 1; i >= 0; i--) {
+            const label = String(rawLogs[i]?.label || "").trim().toLowerCase()
+            if (label.startsWith("transferred to")) {
+              const after = label.slice("transferred to".length).trim()
+              const match = after.match(/^([^(:]+)/)
+              const dest = String(match ? match[1] : after).trim()
+              return officeMatches(dest, officeLower)
+            }
+          }
+          return false
+        })
+
+        const dashboardActiveCount = scopedItems.filter((it) => {
+          return hasTransferredToOfficeLogs(it.logs, officeLower)
+        }).length
+
+        const rCount = docs.filter((d: any) => {
           const parentStatusLower = String(d?.status || "").trim().toLowerCase()
           const allowedParentStatuses = new Set([
             "pending",
@@ -753,19 +869,36 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
           return true
         }).length
 
-        if (!cancelled) setReviewCount(count)
+        if (!cancelled) {
+          setDashboardCount(dashboardActiveCount)
+          setReviewCount(rCount)
+        }
       } catch {
-        if (!cancelled) setReviewCount(0)
+        if (!cancelled) {
+          setDashboardCount(0)
+          setReviewCount(0)
+        }
       }
     }
 
     compute()
-    const id = window.setInterval(compute, 10000)
+    const id = window.setInterval(compute, 5000)
     return () => {
       cancelled = true
       window.clearInterval(id)
     }
-  }, [route, user?.office, navIsGso, navIsBac, navIsBudget, navIsPto])
+  }, [route, user?.office, navIsGso, navIsBac, navIsBudget, navIsPto, refreshTick])
+
+  useDocumentSocket(
+    {
+      userId: user?.username || "procurement",
+      office: user?.office || "ADMIN",
+      role: user?.role || "procurement",
+    },
+    useCallback(() => {
+      setRefreshTick((t) => t + 1)
+    }, [])
+  )
 
   function navClass(isActive: boolean) {
     return isActive
@@ -820,8 +953,24 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 onClick={() => setRoute("dashboard")}
                 title="Dashboard"
               >
-                <LayoutDashboard className={`size-4 transition-colors ${route === "dashboard" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
-                {isSidebarCollapsed ? null : "Dashboard"}
+                <span className="relative inline-flex items-center">
+                  <LayoutDashboard className={`size-4 transition-colors ${route === "dashboard" ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
+                  {dashboardCount > 0 ? (
+                    <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-rose-600 px-1 text-center text-[10px] font-bold leading-4 text-white shadow-xs">
+                      {dashboardCount}
+                    </span>
+                  ) : null}
+                </span>
+                {isSidebarCollapsed ? null : (
+                  <span className="flex flex-1 items-center justify-between">
+                    <span>Dashboard</span>
+                    {dashboardCount > 0 ? (
+                      <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
+                        {dashboardCount}
+                      </span>
+                    ) : null}
+                  </span>
+                )}
               </button>
               {canSeeOfficeRequests ? (
                 <button
@@ -962,7 +1111,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
             <nav className="border-b border-slate-200/80 bg-white px-3 py-2 shadow-xs">
               <div className="flex gap-1.5 overflow-x-auto">
                 <button
-                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "dashboard"
+                  className={`relative inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${route === "dashboard"
                     ? "border-l-[3px] border-l-blue-600 bg-blue-50 text-blue-700 shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
@@ -971,6 +1120,11 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
                 >
                   <LayoutDashboard className="size-3.5" />
                   Dashboard
+                  {dashboardCount > 0 ? (
+                    <span className="ml-0.5 rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                      {dashboardCount}
+                    </span>
+                  ) : null}
                 </button>
 
                 {canSeeOfficeRequests ? (
@@ -1069,7 +1223,7 @@ export default function ProcurementDashboardPage({ onLogout, user }: Procurement
           <main className="w-full flex-1 overflow-auto p-4 lg:p-6">
             {route === "dashboard" ? (
               <div className="w-full space-y-6">
-                <ProcurementMyDashboard officeLabel={user?.office || ""} />
+                <ProcurementMyDashboard officeLabel={user?.office || ""} reviewCount={canUseReview ? reviewCount : undefined} />
 
                 <div className="space-y-3">
                   <ReceivedTransferPage officePrivileges={officePrivileges} transferredToOfficeOnly />

@@ -97,16 +97,41 @@ export default function UpdateRequestModal({
   )
 
   const [activeTab, setActiveTab] = useState<"pr" | "obr">("pr")
+  const isAdmin = useMemo(() => {
+    try {
+      const raw = localStorage.getItem("user") || sessionStorage.getItem("user")
+      const parsed = raw ? (JSON.parse(raw) as { role?: string } | null) : null
+      return parsed?.role === "admin" || parsed?.role === "superadmin"
+    } catch {
+      return false
+    }
+  }, [isOpen])
+
+  type OfficeOption = {
+    name: string
+    head?: string
+    headDesignation?: string
+    email?: string
+  }
+  const [officeOptions, setOfficeOptions] = useState<OfficeOption[]>([])
+  const [officeOptionsLoading, setOfficeOptionsLoading] = useState(false)
+
   const [prEnabled, setPrEnabled] = useState(true)
   const [obrEnabled, setObrEnabled] = useState(true)
 
   const preparedByName = useMemo(() => {
     try {
-      const raw = localStorage.getItem("user")
-      const parsed = raw ? (JSON.parse(raw) as { fullName?: string; username?: string } | null) : null
+      const raw = localStorage.getItem("user") || sessionStorage.getItem("user")
+      const parsed = raw ? (JSON.parse(raw) as { fullName?: string; username?: string; role?: string } | null) : null
+      const role = parsed?.role
+      if (role === "admin" || role === "superadmin") return "System Administrator"
       const fullName = String(parsed?.fullName || '').trim()
-      if (fullName) return fullName
-      return String(parsed?.username || '').trim()
+      if (fullName && fullName.toLowerCase() !== 'admin') return fullName
+      const username = String(parsed?.username || '').trim()
+      if (!username || username.toLowerCase() === 'admin' || username.toLowerCase() === 'superadmin') {
+        return "System Administrator"
+      }
+      return username
     } catch {
       return ""
     }
@@ -179,6 +204,43 @@ export default function UpdateRequestModal({
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleDepartmentChange = (val: string) => {
+    handleInputChange("department", val)
+
+    const match = officeOptions.find(
+      (o) => o.name.trim().toLowerCase() === val.trim().toLowerCase()
+    )
+
+    if (match) {
+      const head = String(match.head || "").trim()
+      const desig = String(match.headDesignation || "").trim()
+      const email = String(match.email || "").trim()
+
+      if (head) setDeptHeadName(head)
+      if (desig) setDeptHeadDesignation(desig)
+
+      if (head || desig) {
+        setPrSignatories((prev) => ({
+          ...prev,
+          requestedByName: head || prev.requestedByName,
+          requestedByDesignation: desig || prev.requestedByDesignation,
+        }))
+        setObrReps((prev) => ({
+          ...prev,
+          leftName: head || prev.leftName,
+          leftPosition: desig || prev.leftPosition,
+        }))
+      }
+
+      if (email) {
+        setFormData((prev) => ({
+          ...prev,
+          email: prev.email ? prev.email : email,
+        }))
+      }
+    }
   }
 
   const getMissingDetails = () => {
@@ -641,29 +703,71 @@ export default function UpdateRequestModal({
       ; (async () => {
         try {
           setFundOptionsLoading(true)
-          const token = localStorage.getItem("token")
-          const response = await fetch(`${API_URL}/source-of-funds`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-          })
+          setOfficeOptionsLoading(true)
+          const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+          const headers = token ? { Authorization: `Bearer ${token}` } : undefined
 
-          if (!response.ok) {
-            return
+          const [fundRes, offRes, depRes] = await Promise.allSettled([
+            fetch(`${API_URL}/source-of-funds`, { headers }),
+            fetch(`${API_URL}/offices`, { headers }),
+            fetch(`${API_URL}/departments`, { headers }),
+          ])
+
+          if (fundRes.status === "fulfilled" && fundRes.value.ok) {
+            const data = await fundRes.value.json().catch(() => ({}))
+            const list = Array.isArray((data as any)?.sourceOfFunds) ? (data as any).sourceOfFunds : []
+            const names: string[] = list
+              .filter((s: any) => !s || s.status !== "archived")
+              .map((s: any) => String(s?.name || "").trim())
+              .filter((n: string) => Boolean(n))
+
+            const deduped: string[] = Array.from(new Set<string>(names))
+            deduped.sort((a, b) => a.localeCompare(b))
+            setFundOptions(deduped)
           }
 
-          const data = await response.json().catch(() => ({}))
-          const list = Array.isArray((data as any)?.sourceOfFunds) ? (data as any).sourceOfFunds : []
-          const names: string[] = list
-            .filter((s: any) => !s || s.status !== "archived")
-            .map((s: any) => String(s?.name || "").trim())
-            .filter((n: string) => Boolean(n))
+          const optionsMap = new Map<string, OfficeOption>()
+          if (offRes.status === "fulfilled" && offRes.value.ok) {
+            const offData = await offRes.value.json().catch(() => ({}))
+            const list = Array.isArray(offData?.offices) ? offData.offices : []
+            for (const o of list) {
+              if (o?.status === "archived") continue
+              const name = String(o?.name || "").trim()
+              if (!name) continue
+              optionsMap.set(name.toLowerCase(), {
+                name,
+                head: String(o?.head || "").trim(),
+                headDesignation: String(o?.headDesignation || "").trim(),
+                email: String(o?.email || "").trim(),
+              })
+            }
+          }
 
-          const deduped: string[] = Array.from(new Set<string>(names))
-          deduped.sort((a, b) => a.localeCompare(b))
-          setFundOptions(deduped)
+          if (depRes.status === "fulfilled" && depRes.value.ok) {
+            const depData = await depRes.value.json().catch(() => ({}))
+            const list = Array.isArray(depData?.departments) ? depData.departments : []
+            for (const d of list) {
+              if (d?.status === "archived") continue
+              const name = String(d?.name || "").trim()
+              if (!name) continue
+              if (!optionsMap.has(name.toLowerCase())) {
+                optionsMap.set(name.toLowerCase(), {
+                  name,
+                  head: "",
+                  headDesignation: "",
+                  email: "",
+                })
+              }
+            }
+          }
+
+          const sortedOffices = Array.from(optionsMap.values()).sort((a, b) => a.name.localeCompare(b.name))
+          setOfficeOptions(sortedOffices)
         } catch {
           // ignore
         } finally {
           setFundOptionsLoading(false)
+          setOfficeOptionsLoading(false)
         }
       })()
   }, [isOpen])
@@ -678,16 +782,18 @@ export default function UpdateRequestModal({
     setObrEnabled(true)
 
     try {
-      const rawUser = localStorage.getItem("user")
+      const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user")
       const parsedUser = rawUser
-        ? (JSON.parse(rawUser) as { username?: string; office?: string } | null)
+        ? (JSON.parse(rawUser) as { username?: string; office?: string; role?: string } | null)
         : null
 
       const username = parsedUser?.username
+      const role = parsedUser?.role
+      const isAdminUser = role === "admin" || role === "superadmin"
       const office = typeof parsedUser?.office === "string" && parsedUser.office.trim() ? parsedUser.office.trim() : ""
 
       let next = { ...defaultFormData }
-      if (office) next.department = office
+      if (!isAdminUser && office) next.department = office
       if (preparedByName) next.contactNumber = preparedByName
 
       if (username) {
@@ -884,14 +990,36 @@ export default function UpdateRequestModal({
                 <label htmlFor="new-request-department" className="text-xs font-semibold text-slate-700">
                   Department
                 </label>
-                <input
-                  id="new-request-department"
-                  type="text"
-                  value={formData.department}
-                  readOnly
-                  required
-                  className="h-9 w-full rounded border border-slate-300 bg-slate-50 px-3 text-sm text-slate-600 focus:outline-none"
-                />
+                {isAdmin ? (
+                  <div className="relative">
+                    <input
+                      id="new-request-department"
+                      type="text"
+                      list="new-request-department-list"
+                      value={formData.department}
+                      onChange={(e) => handleDepartmentChange(e.target.value)}
+                      placeholder="Select or type department..."
+                      required
+                      className="h-9 w-full rounded border border-slate-300 bg-white px-3 text-sm focus:border-sky-500 focus:outline-none"
+                    />
+                    <datalist id="new-request-department-list">
+                      {officeOptions.map((o) => (
+                        <option key={o.name} value={o.name}>
+                          {o.head ? `${o.name} (Head: ${o.head})` : o.name}
+                        </option>
+                      ))}
+                    </datalist>
+                  </div>
+                ) : (
+                  <input
+                    id="new-request-department"
+                    type="text"
+                    value={formData.department}
+                    readOnly
+                    required
+                    className="h-9 w-full rounded border border-slate-300 bg-slate-50 px-3 text-sm text-slate-600 focus:outline-none"
+                  />
+                )}
               </div>
               <div className="space-y-1.5">
                 <label htmlFor="new-request-amount" className="text-xs font-semibold text-slate-700">

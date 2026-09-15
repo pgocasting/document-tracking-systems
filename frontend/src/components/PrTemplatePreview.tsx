@@ -79,7 +79,7 @@ export function PrTemplatePreview({
   const items = Array.isArray(model.items) ? model.items : []
   const PR_PAGE_BREAK_MARKER = "__PR_PAGE_BREAK__"
 
-  const safeNumber = (raw: string) => {
+  const safeNumber = (raw: any) => {
     const s = String(raw || "").trim()
     if (!s) return 0
     const cleaned = s.replace(/[^0-9.,-]/g, "").replace(/,/g, "")
@@ -153,7 +153,7 @@ export function PrTemplatePreview({
               key={pageIndex}
               className={`print-page bg-white relative w-[816px] h-[1056px] overflow-hidden mx-auto p-3 print-no-mt ${isVisible ? "" : "hidden"}`}
               style={{
-                fontFamily: "Times New Roman, Times, serif",
+                fontFamily: "'Times New Roman', Times, Georgia, serif",
                 breakAfter: pageIndex === pageCount - 1 ? "auto" : "page",
                 pageBreakAfter: pageIndex === pageCount - 1 ? "auto" : "always",
               }}
@@ -168,153 +168,215 @@ export function PrTemplatePreview({
                 </div>
               ) : null}
 
-              <div className="mt-3 h-[calc(100%-12px)] w-full border border-black bg-white px-4 pb-8 pt-6 relative">
-                <h3 className="text-center text-xl font-bold uppercase tracking-wide">PURCHASE REQUEST</h3>
-                <div className="mt-1 flex items-center text-[12px] font-bold">
-                  <span>
-                    LGU: <span className="underline">PROVINCIAL GOVERNMENT OF BATAAN</span>
-                  </span>
-                  <span className="ml-auto mr-36">FUND: {model.fund || ""}</span>
-                </div>
-
-                <div className="mt-2 border border-black min-h-[650px] p-0 pr-table">
-                  <div className="grid grid-cols-[140px_1fr_120px] text-[12px] font-bold text-black">
-                    <div className="border-r border-black px-2 py-1">Department: {model.department || ""}</div>
-                    <div className="px-2 py-1">
-                      <span>PR No.:</span>
-                      {model.prNo ? (
-                        <span className="text-blue-600 font-bold ml-1.5">
-                          {model.prNo.replace(/^PR\s*No\.?\s*:?\s*/i, "")}
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="px-2 py-1">Date: {model.date || ""}</div>
-                  </div>
-                  <div className="grid grid-cols-[140px_1fr_120px] border-b border-black text-[12px] font-bold">
-                    <div className="border-r border-black px-2 py-1">Section: {model.section || ""}</div>
-                    <div className="px-2 py-1">FPP: {model.fpp || ""}</div>
-                    <div className="p-1" />
+              <div className="mt-3 h-[calc(100%-12px)] w-full border border-black bg-white px-4 pb-6 pt-5 relative box-border flex flex-col justify-between">
+                <div>
+                  <h3 className="text-center text-xl font-bold uppercase tracking-wide">PURCHASE REQUEST</h3>
+                  <div className="mt-1 flex items-center justify-between text-[12px] font-bold">
+                    <span>
+                      LGU: <span className="underline">PROVINCIAL GOVERNMENT OF BATAAN</span>
+                    </span>
+                    <span className="text-right">FUND: {model.fund || ""}</span>
                   </div>
 
-                  <div className="grid grid-cols-[80px_60px_1fr_70px_80px_80px] border-b border-black text-[12px] font-bold text-center">
-                    <div className="border-r border-black py-1">Item No.</div>
-                    <div className="border-r border-black py-1">Unit</div>
-                    <div className="border-r border-black py-1">Item Description</div>
-                    <div className="border-r border-black py-1">Quantity</div>
-                    <div className="border-r border-black py-1">Unit Cost</div>
-                    <div className="py-1">Total Cost</div>
+                  {/* Main Purchase Request Box */}
+                  <div className="mt-2 border border-black p-0 pr-table">
+                    {/* Header info table */}
+                    <table className="w-full border-collapse table-fixed text-[12px] font-bold border-b border-black">
+                      <colgroup>
+                        <col style={{ width: "140px" }} />
+                        <col style={{ width: "auto" }} />
+                        <col style={{ width: "130px" }} />
+                      </colgroup>
+                      <tbody>
+                        <tr className="border-b border-black">
+                          <td className="border-r border-black px-2 pt-1.5 pb-2 align-middle whitespace-nowrap">
+                            Department: {model.department || ""}
+                          </td>
+                          <td className="px-2 pt-1.5 pb-2 align-middle">
+                            <span>PR No.:</span>
+                            {model.prNo ? (
+                              <span className="text-blue-600 font-bold ml-1.5 font-mono">
+                                {model.prNo.replace(/^PR\s*No\.?\s*:?\s*/i, "")}
+                              </span>
+                            ) : null}
+                          </td>
+                          <td className="px-2 pt-1.5 pb-2 text-right align-middle whitespace-nowrap">
+                            Date: {model.date || ""}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border-r border-black px-2 pt-1.5 pb-2 align-middle whitespace-nowrap">
+                            Section: {model.section || ""}
+                          </td>
+                          <td className="px-2 pt-1.5 pb-2 align-middle" colSpan={2}>
+                            FPP: {model.fpp || ""}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    {/* Unified Items Table with aligned 140px column boundary (80px + 60px) */}
+                    <table className="w-full border-collapse table-fixed text-[11px]">
+                      <colgroup>
+                        <col style={{ width: "80px" }} />
+                        <col style={{ width: "60px" }} />
+                        <col style={{ width: "auto" }} />
+                        <col style={{ width: "70px" }} />
+                        <col style={{ width: "80px" }} />
+                        <col style={{ width: "85px" }} />
+                      </colgroup>
+                      <thead>
+                        <tr className="border-b border-black text-[11.5px] font-bold text-center bg-[#f1f5f9]">
+                          <th className="border-r border-black pt-1.5 pb-2 px-1 font-bold text-center align-middle">Item No.</th>
+                          <th className="border-r border-black pt-1.5 pb-2 px-1 font-bold text-center align-middle">Unit</th>
+                          <th className="border-r border-black pt-1.5 pb-2 px-2 font-bold text-center align-middle">Item Description</th>
+                          <th className="border-r border-black pt-1.5 pb-2 px-1 font-bold text-center align-middle">Quantity</th>
+                          <th className="border-r border-black pt-1.5 pb-2 px-1 font-bold text-center align-middle">Unit Cost</th>
+                          <th className="pt-1.5 pb-2 px-1 font-bold text-center align-middle">Total Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.from({ length: itemRowCount + 1 }).map((_, rowIndex) => {
+                          const isTotalRow = rowIndex === totalRowIndex
+                          const isCarryRow = pageIndex > 0 && rowIndex === 0
+
+                          const pageItemIndex = pageIndex > 0 ? rowIndex - 1 : rowIndex
+                          const row = !isTotalRow && !isCarryRow ? pageItems[pageItemIndex] : null
+                          const rowHasUnit = row ? Boolean(String(row.unit || "").trim()) : false
+                          const rowTotal = row ? computeItemTotal(row) : 0
+
+                          const autoItemNo = rowHasUnit
+                            ? String(
+                              pageItems
+                                .slice(0, pageItemIndex + 1)
+                                .filter((it) => String(it.unit || "").trim()).length,
+                            )
+                            : ""
+
+                          const displayItemNo = isTotalRow || isCarryRow || !rowHasUnit ? "" : autoItemNo
+
+                          let displayTotalCost = ""
+                          if (isTotalRow) {
+                            displayTotalCost = formatPeso(isLastPage ? computedGrandTotal : prevTotal + pageSubTotal)
+                          } else if (isCarryRow) {
+                            displayTotalCost = prevTotal ? formatPeso(prevTotal) : ""
+                          } else if (row) {
+                            if (row.totalCost) {
+                              const num = safeNumber(row.totalCost)
+                              displayTotalCost = num > 0 ? `₱ ${formatMoney(num)}` : String(row.totalCost)
+                            } else if (rowTotal > 0) {
+                              displayTotalCost = formatPeso(rowTotal)
+                            }
+                          }
+
+                          let displayUnitCost = ""
+                          if (!isTotalRow && !isCarryRow && row?.unitCost) {
+                            const costNum = safeNumber(row.unitCost)
+                            displayUnitCost = costNum > 0 ? formatMoney(costNum) : String(row.unitCost)
+                          }
+
+                          if (isTotalRow) {
+                            return (
+                              <tr key={rowIndex} className="border-b border-black last:border-b-0 bg-[#f8fafc] font-bold">
+                                <td className="border-r border-black px-1 py-1 text-center font-mono align-middle text-[10.5px]">&nbsp;</td>
+                                <td className="border-r border-black px-1 py-1 text-center align-middle text-[10.5px]">&nbsp;</td>
+                                <td className="border-r border-black px-2 py-1 text-center font-bold text-[12px] align-middle tracking-wider uppercase">
+                                  {isLastPage ? "TOTAL" : "SUB-TOTAL"}
+                                </td>
+                                <td className="border-r border-black px-1 py-1 text-center align-middle text-[10.5px]">&nbsp;</td>
+                                <td className="border-r border-black px-1.5 py-1 text-right align-middle text-[10.5px]">&nbsp;</td>
+                                <td className="px-1.5 py-1 text-right tabular-nums align-middle text-[11px] font-bold">
+                                  {displayTotalCost}
+                                </td>
+                              </tr>
+                            )
+                          }
+
+                          return (
+                            <tr
+                              key={rowIndex}
+                              className="border-b border-black last:border-b-0 min-h-[22px]"
+                            >
+                              <td className="border-r border-black px-1 pt-0.5 pb-1 text-center font-mono align-top text-[10.5px]">
+                                {displayItemNo || "\u00A0"}
+                              </td>
+                              <td className="border-r border-black px-1 pt-0.5 pb-1 text-center align-top text-[10.5px]">
+                                {isCarryRow ? "" : (row?.unit || "\u00A0")}
+                              </td>
+                              <td
+                                className={`border-r border-black px-2 pt-0.5 pb-1 ${isCarryRow ? "text-center font-bold text-[11px]" : "text-left text-[10.5px] font-normal"} align-top break-words [overflow-wrap:anywhere] break-all leading-normal`}
+                              >
+                                {isCarryRow ? "BALANCED FORWARDED" : (row?.description || "\u00A0")}
+                              </td>
+                              <td className="border-r border-black px-1 pt-0.5 pb-1 text-center tabular-nums align-top text-[10.5px]">
+                                {isCarryRow ? "" : (row?.quantity || "\u00A0")}
+                              </td>
+                              <td className="border-r border-black px-1.5 pt-0.5 pb-1 text-right tabular-nums align-top text-[10.5px]">
+                                {displayUnitCost || "\u00A0"}
+                              </td>
+                              <td className="px-1.5 pt-0.5 pb-1 text-right tabular-nums align-top text-[10.5px]">
+                                {displayTotalCost || "\u00A0"}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
                   </div>
 
-                  {Array.from({ length: itemRowCount + 1 }).map((_, rowIndex) => {
-                    const isTotalRow = rowIndex === totalRowIndex
-                    const isCarryRow = pageIndex > 0 && rowIndex === 0
-
-                    const pageItemIndex = pageIndex > 0 ? rowIndex - 1 : rowIndex
-                    const row = !isTotalRow && !isCarryRow ? pageItems[pageItemIndex] : null
-                    const rowHasUnit = row ? Boolean(String(row.unit || "").trim()) : false
-                    const rowTotal = row ? computeItemTotal(row) : 0
-
-                    const autoItemNo = rowHasUnit
-                      ? String(
-                        pageItems
-                          .slice(0, pageItemIndex + 1)
-                          .filter((it) => String(it.unit || "").trim()).length,
-                      )
-                      : ""
-
-                    const displayItemNo = isTotalRow || isCarryRow || !rowHasUnit ? "" : autoItemNo
-
-                    return (
-                      <div
-                        key={rowIndex}
-                        className="grid grid-cols-[80px_60px_1fr_70px_80px_80px] border-b border-black last:border-b-0"
-                      >
-                        <div className="border-r border-black min-h-[24px] px-2 flex items-center justify-center text-[11px] font-normal pt-0.5 pb-0.5 whitespace-pre-wrap break-words">
-                          {displayItemNo}
-                        </div>
-                        <div className="border-r border-black min-h-[24px] px-2 flex items-center justify-center text-[11px] font-normal pt-0.5 pb-0.5 whitespace-pre-wrap break-words">
-                          {isTotalRow || isCarryRow ? "" : row?.unit || ""}
-                        </div>
-                        <div
-                          className={`border-r border-black min-h-[24px] px-2 flex items-center ${isTotalRow ? "justify-center font-bold text-[13px]" : isCarryRow ? "justify-center font-bold text-[11px]" : "text-[11px] font-normal"} pt-0.5 pb-0.5 whitespace-pre-wrap break-words leading-tight`}
-                        >
-                          {isTotalRow ? (isLastPage ? "TOTAL" : "SUB-TOTAL") : isCarryRow ? "BALANCED FORWARDED" : row?.description || ""}
-                        </div>
-                        <div className="border-r border-black min-h-[24px] px-2 flex items-center justify-center text-[11px] font-normal pt-0.5 pb-0.5 whitespace-pre-wrap break-words">
-                          {isTotalRow || isCarryRow ? "" : row?.quantity || ""}
-                        </div>
-                        <div className="border-r border-black min-h-[24px] px-2 flex items-center justify-center text-[11px] font-normal pt-0.5 pb-0.5 whitespace-pre-wrap break-words">
-                          {isTotalRow || isCarryRow ? "" : row?.unitCost || ""}
-                        </div>
-                        <div className={`min-h-[24px] px-2 flex items-center justify-center text-[11px] ${isTotalRow ? "font-bold" : "font-normal"} pt-0.5 pb-0.5 whitespace-nowrap`}>
-                          {isTotalRow
-                            ? formatPeso(isLastPage ? computedGrandTotal : prevTotal + pageSubTotal)
-                            : isCarryRow
-                              ? prevTotal
-                                ? formatPeso(prevTotal)
-                                : ""
-                              : row
-                                ? row.totalCost
-                                  ? `₱ ${String(row.totalCost).replace(/[^0-9.,-]/g, "").trim()}`
-                                  : rowTotal
-                                    ? formatPeso(rowTotal)
-                                    : ""
-                                : ""}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                <div className="mt-1 text-[13px] px-2 leading-tight">
-                  <span className="font-bold">Purpose:</span> {model.purpose || ""}
-                </div>
-
-                <div className="h-6" />
-
-                <div className="border border-black p-0 mb-4">
-                  <div className="grid grid-cols-[80px_1fr_1fr_1fr] text-[12px]">
-                    <div className="border-r border-black row-span-5 whitespace-nowrap p-1 flex flex-col justify-end leading-tight">
-                      <div className="text-left">Signature:</div>
-                      <div className="text-left">Printed Name:</div>
-                      <div className="text-left">Designation:</div>
-                    </div>
-
-                    <div className="border-r border-black py-1 text-center">Requested by:</div>
-                    <div className="border-r border-black py-1 text-center">Cash Availability:</div>
-                    <div className="py-1 text-center">Approved by:</div>
-
-                    <div className="border-r border-b border-black row-span-2 h-8" />
-                    <div className="border-r border-b border-black row-span-2 h-8" />
-                    <div className="border-b border-black row-span-2 h-8" />
-
-                    <div className="border-r border-black h-7 text-center text-[12px] font-bold flex items-center justify-center whitespace-nowrap px-2">
-                      {model.requestedByName || ""}
-                    </div>
-                    <div className="border-r border-black h-7 text-center text-[12px] font-bold flex items-center justify-center whitespace-nowrap px-2">
-                      {String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}
-                    </div>
-                    <div className="h-7 text-center text-[12px] font-bold flex items-center justify-center whitespace-nowrap px-2">
-                      {String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}
-                    </div>
-
-                    <div className="border-r border-black h-6 text-center text-[12px] flex items-center justify-center px-2">
-                      {model.requestedByDesignation || ""}
-                    </div>
-                    <div className="border-r border-black h-6 text-center text-[12px] flex items-center justify-center px-2">
-                      {String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}
-                    </div>
-                    <div className="h-6 text-center text-[12px] flex items-center justify-center px-2">
-                      {String(model.approvedByDesignation || "").trim() || "Provincial Governor"}
-                    </div>
+                  <div className="mt-1 text-[12.5px] px-2 leading-tight">
+                    <span className="font-bold">Purpose:</span> {model.purpose || ""}
                   </div>
                 </div>
 
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[12px] leading-none font-bold">
-                  {`${pageIndex + 1} of ${pageCount}`}
+                {/* Signatories Block */}
+                <div>
+                  <div className="border border-black p-0 mb-1">
+                    <table className="w-full border-collapse table-fixed text-[11.5px]">
+                      <colgroup>
+                        <col style={{ width: "95px" }} />
+                        <col style={{ width: "30%" }} />
+                        <col style={{ width: "35%" }} />
+                        <col style={{ width: "35%" }} />
+                      </colgroup>
+                      <tbody>
+                        <tr className="border-b border-black text-center font-bold">
+                          <td className="border-r border-black p-1 text-left" rowSpan={4}>
+                            <div className="flex flex-col justify-between h-[105px] text-[10.5px]">
+                              <div>Signature:</div>
+                              <div>Printed Name:</div>
+                              <div>Designation:</div>
+                            </div>
+                          </td>
+                          <td className="border-r border-black py-1">Requested by:</td>
+                          <td className="border-r border-black py-1">Cash Availability:</td>
+                          <td className="py-1">Approved by:</td>
+                        </tr>
+                        <tr className="border-b border-black h-[35px]">
+                          <td className="border-r border-black">&nbsp;</td>
+                          <td className="border-r border-black">&nbsp;</td>
+                          <td>&nbsp;</td>
+                        </tr>
+                        <tr className="border-b border-black text-center font-bold text-[11px]">
+                          <td className="border-r border-black py-1 px-1 break-words">{model.requestedByName || "\u00A0"}</td>
+                          <td className="border-r border-black py-1 px-1 break-words">{String(model.cashAvailabilityName || "").trim() || "ALICIA R. MAGPANTAY"}</td>
+                          <td className="py-1 px-1 break-words">{String(model.approvedByName || "").trim() || "JOSE ENRIQUE S. GARCIA III"}</td>
+                        </tr>
+                        <tr className="text-center text-[10px]">
+                          <td className="border-r border-black py-1 px-1 break-words">{model.requestedByDesignation || "\u00A0"}</td>
+                          <td className="border-r border-black py-1 px-1 break-words">{String(model.cashAvailabilityDesignation || "").trim() || "Provincial Treasurer"}</td>
+                          <td className="py-1 px-1 break-words">{String(model.approvedByDesignation || "").trim() || "Provincial Governor"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="text-center text-[11.5px] leading-none font-bold pt-1">
+                    {`${pageIndex + 1} of ${pageCount}`}
+                  </div>
                 </div>
+
               </div>
-
             </div>
           )
         })}
@@ -324,3 +386,4 @@ export function PrTemplatePreview({
 }
 
 export default PrTemplatePreview
+

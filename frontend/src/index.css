@@ -36,8 +36,9 @@ input::-ms-clear {
 
  @media print {
   @page {
-    size: letter;
-    margin: 0.25in;
+    /* Short Bond Paper: 8.5in x 11in (Letter / US Short Bond) */
+    size: 8.5in 11in;
+    margin: 0;
   }
 
   html,
@@ -82,9 +83,9 @@ input::-ms-clear {
   }
 
   .print-area .print-page {
-    width: 100% !important;
-    height: 10.5in !important;
-    max-width: 100% !important;
+    width: 8.5in !important;
+    height: 11in !important;
+    max-width: 8.5in !important;
     overflow: hidden !important;
     margin: 0 !important;
     box-sizing: border-box !important;

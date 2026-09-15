@@ -7,6 +7,8 @@ import ObrTemplatePdf from "../../components/ObrTemplatePdf"
 import { pdf } from "@react-pdf/renderer"
 import PrTemplatePreview from "../../components/PrTemplatePreview"
 import DvTemplatePreview, { type DvTemplateModel } from "../../components/DvTemplatePreview"
+import PoTemplatePreview, { type PoTemplateModel, type PoItem } from "../../components/PoTemplatePreview"
+import EditPoModal from "../../components/EditPoModal"
 import { useDocumentSocket } from "../../hooks/useSocket"
 import { toast } from "../../lib/toast"
 import { getSubDocAmount, getMainDocSupplierInfo } from "../../users/types/documentTypes"
@@ -303,7 +305,7 @@ type ApprovalsPageProps = {
   excludeTerminalStatuses?: boolean
 }
 
-type PreviewType = "OBR" | "PR" | "DV"
+type PreviewType = "OBR" | "PR" | "DV" | "PO" | "PO"
 
 export default function ApprovalsPage({
   title = "Approvals",
@@ -330,6 +332,7 @@ export default function ApprovalsPage({
   const [prActivePage, setPrActivePage] = useState(0)
   const [prPdfBusy, setPrPdfBusy] = useState(false)
   const [obrPdfBusy, setObrPdfBusy] = useState(false)
+  const [isEditPoModalOpen, setIsEditPoModalOpen] = useState(false)
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false)
   const [hasDraft, setHasDraft] = useState(false)
 
@@ -370,8 +373,13 @@ export default function ApprovalsPage({
       const parsedUser = userRaw
         ? (JSON.parse(userRaw) as { username?: string; fullName?: string; office?: string } | null)
         : null
-      const createdBy = parsedUser?.fullName || parsedUser?.username || "Admin"
-      const office = parsedUser?.office || "ADMIN"
+      const createdBy =
+        (parsedUser as any)?.role === "admin" ||
+        (parsedUser as any)?.role === "superadmin" ||
+        String(parsedUser?.username || "").toLowerCase() === "admin"
+          ? "System Administrator"
+          : parsedUser?.fullName || parsedUser?.username || "System Administrator"
+      const office = payload.department || parsedUser?.office || "ADMIN"
       const token = localStorage.getItem("token")
 
       const response = await fetch(`${API_URL}/documents`, {
@@ -1196,7 +1204,7 @@ export default function ApprovalsPage({
                 prNo: String(d.prNo || ''),
                 obrNo: String(d.obrNo || ''),
               },
-              createdBy: d.createdBy,
+              createdBy: String(d.createdBy || '').trim().toLowerCase() === 'admin' ? 'System Administrator' : (d.createdBy || '—'),
               purpose: isSub ? (item.purpose || d.purpose) : d.purpose,
               supplier: isSub ? (item.supplier || '') : String((d as any)?.supplier || ''),
               attachments: { pr: '#', obr: '#', driveLink: d.driveLink || '#' },
@@ -1563,13 +1571,20 @@ export default function ApprovalsPage({
           onclone: (clonedDoc) => {
             clonedDoc.querySelectorAll('style').forEach((s) => {
               if (s.textContent) {
-                s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
               }
             })
             clonedDoc.querySelectorAll('[style]').forEach((el) => {
               const styleAttr = el.getAttribute('style')
-              if (styleAttr && /oklch/i.test(styleAttr)) {
-                el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                el.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
               }
             })
           },
@@ -1642,13 +1657,20 @@ export default function ApprovalsPage({
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
-              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
             }
           })
           clonedDoc.querySelectorAll('[style]').forEach((el) => {
             const styleAttr = el.getAttribute('style')
-            if (styleAttr && /oklch/i.test(styleAttr)) {
-              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
             }
           })
         },
@@ -1718,13 +1740,20 @@ export default function ApprovalsPage({
         onclone: (clonedDoc) => {
           clonedDoc.querySelectorAll('style').forEach((s) => {
             if (s.textContent) {
-              s.textContent = s.textContent.replace(/oklch\([^\)]+\)/gi, '#000000')
+              s.textContent = s.textContent
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
             }
           })
           clonedDoc.querySelectorAll('[style]').forEach((el) => {
             const styleAttr = el.getAttribute('style')
-            if (styleAttr && /oklch/i.test(styleAttr)) {
-              el.setAttribute('style', styleAttr.replace(/oklch\([^\)]+\)/gi, '#000000'))
+            if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+              el.setAttribute('style', styleAttr
+                .replace(/oklch\([^\)]+\)/gi, '#000000')
+                .replace(/oklab\([^\)]+\)/gi, '#000000')
+                .replace(/color\([^\)]+\)/gi, '#000000')
+              )
             }
           })
         },
@@ -1763,6 +1792,286 @@ export default function ApprovalsPage({
       }
     }
   }, [rows, preview])
+
+  const [poPdfBusy, setPoPdfBusy] = useState(false)
+  const poVisibleRef = useRef<HTMLDivElement | null>(null)
+  const poCaptureRef = useRef<HTMLDivElement | null>(null)
+
+  const capturePoPreviewToPdf = async (_row: ApprovalRow) => {
+    const root = poVisibleRef.current || poCaptureRef.current
+    if (!root) return
+
+    let previewTab: Window | null = null
+    try {
+      setPoPdfBusy(true)
+      previewTab = window.open("about:blank", "_blank")
+      if (!previewTab) {
+        window.alert('Please allow pop-ups to preview the PDF.')
+        return
+      }
+      await new Promise((r) => setTimeout(r, 150))
+      const pages = Array.from(root.querySelectorAll<HTMLElement>(".print-page"))
+      if (pages.length === 0) {
+        const singlePage = root.classList.contains("print-page") ? root : null
+        if (singlePage) pages.push(singlePage)
+      }
+      if (pages.length === 0) {
+        if (previewTab) previewTab.close()
+        return
+      }
+      const pdfDoc = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" })
+
+      for (let i = 0; i < pages.length; i++) {
+        const el = pages[i]
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          allowTaint: false,
+          width: 816,
+          height: 1056,
+          windowWidth: 816,
+          windowHeight: 1056,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('style').forEach((s) => {
+              if (s.textContent) {
+                s.textContent = s.textContent
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+              }
+            })
+            clonedDoc.querySelectorAll('[style]').forEach((elem) => {
+              const styleAttr = elem.getAttribute('style')
+              if (styleAttr && /(oklch|oklab|color\()/i.test(styleAttr)) {
+                elem.setAttribute('style', styleAttr
+                  .replace(/oklch\([^\)]+\)/gi, '#000000')
+                  .replace(/oklab\([^\)]+\)/gi, '#000000')
+                  .replace(/color\([^\)]+\)/gi, '#000000')
+                )
+              }
+            })
+          },
+        })
+        const imgData = canvas.toDataURL("image/png")
+        const pageW = pdfDoc.internal.pageSize.getWidth()
+        const pageH = pdfDoc.internal.pageSize.getHeight()
+        if (i > 0) pdfDoc.addPage("letter", "portrait")
+        pdfDoc.addImage(imgData, "PNG", 0, 0, pageW, pageH)
+      }
+
+      const blob = pdfDoc.output("blob")
+      const url = URL.createObjectURL(blob)
+      try {
+        previewTab.location.href = url
+        previewTab.addEventListener?.("beforeunload", () => URL.revokeObjectURL(url))
+      } catch {
+        URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error("Failed to generate PO PDF", err)
+      if (previewTab) previewTab.close()
+    } finally {
+      setPoPdfBusy(false)
+    }
+  }
+
+  const handleSavePo = async (data: Partial<PoTemplateModel> & { poItems?: PoItem[]; supplierAddress?: string; poDate?: string }) => {
+    if (!preview || preview.type !== 'PO') return
+    const docId = preview.row.doc._id
+    const token = localStorage.getItem('token')
+
+    try {
+      const rawList = data.poItems || data.items || []
+      const sanitizedPrItems = rawList.map((it, idx) => ({
+        itemNo: String(it.stockPropertyNo || idx + 1),
+        unit: String(it.unit || ''),
+        description: String(it.description || ''),
+        quantity: it.quantity !== undefined && it.quantity !== null && it.quantity !== '' ? String(it.quantity) : '',
+        unitCost: it.unitCost !== undefined && it.unitCost !== null && it.unitCost !== '' ? String(it.unitCost) : '',
+        totalCost: it.amount !== undefined && it.amount !== null && it.amount !== '' ? String(it.amount) : '',
+      }))
+
+      const sanitizedPoItems = rawList.map((it, idx) => ({
+        stockPropertyNo: String(it.stockPropertyNo || idx + 1),
+        unit: String(it.unit || ''),
+        description: String(it.description || ''),
+        quantity: it.quantity !== undefined && it.quantity !== null && it.quantity !== '' ? String(it.quantity) : '',
+        unitCost: it.unitCost !== undefined && it.unitCost !== null && it.unitCost !== '' ? String(it.unitCost) : '',
+        amount: it.amount !== undefined && it.amount !== null && it.amount !== '' ? String(it.amount) : '',
+      }))
+
+      const response = await fetch(`${API_URL}/documents/${docId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          supplier: data.supplier ?? '',
+          supplierAddress: data.supplierAddress || data.address || '',
+          address: data.supplierAddress || data.address || '',
+          tin: data.tin ?? '',
+          poNo: data.poNo ?? '',
+          poDate: data.poDate || data.date || '',
+          date: data.poDate || data.date || '',
+          modeOfProcurement: data.modeOfProcurement ?? '',
+          prNo: data.prNo ?? '',
+          placeOfDelivery: data.placeOfDelivery ?? '',
+          dateOfDelivery: data.dateOfDelivery ?? '',
+          deliveryTerm: data.deliveryTerm ?? '',
+          paymentTerm: data.paymentTerm ?? '',
+          prItems: sanitizedPrItems,
+          poItems: sanitizedPoItems,
+          approvedByName: data.approvedByName ?? '',
+          approvedByDesignation: data.approvedByDesignation ?? '',
+          conformeSupplierName: data.conformeSupplierName ?? '',
+          conformeDate: data.conformeDate ?? '',
+          sanggunianResolutionNo: data.sanggunianResolutionNo ?? '',
+          secretaryName: data.secretaryName ?? '',
+          secretaryDate: data.secretaryDate ?? '',
+        }),
+      })
+
+      if (!response.ok) {
+        let errorMsg = 'Failed to update PO'
+        try {
+          const errData = await response.json()
+          errorMsg = errData.message || errorMsg
+        } catch {
+          const txt = await response.text().catch(() => '')
+          if (txt) errorMsg = txt
+        }
+        throw new Error(errorMsg)
+      }
+
+      setPreview((prev) => {
+        if (!prev || prev.type !== 'PO') return prev
+        const newDoc = {
+          ...prev.row.doc,
+          ...data,
+          supplier: data.supplier || prev.row.doc.supplier,
+          address: data.supplierAddress || data.address,
+          supplierAddress: data.supplierAddress || data.address,
+          poNo: data.poNo,
+          poDate: data.poDate || data.date,
+          prItems: sanitizedPrItems,
+          poItems: sanitizedPoItems,
+        }
+        return {
+          ...prev,
+          row: {
+            ...prev.row,
+            supplier: data.supplier || prev.row.supplier,
+            doc: newDoc as any,
+          },
+        }
+      })
+
+      await fetchRows()
+      toast.success('PO updated successfully')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update PO')
+      throw err
+    }
+  }
+
+  const previewPoModel = useMemo<PoTemplateModel | null>(() => {
+    if (!preview || preview.type !== 'PO') return null
+    const doc = preview.row.doc
+    const row = preview.row
+    const prItems = Array.isArray(doc?.prItems) ? doc.prItems : []
+    const items: PoItem[] = prItems.length > 0
+      ? prItems
+          .filter((it: any) => String(it?.description || "").trim() !== "__PR_PAGE_BREAK__")
+          .map((it: any, idx: number) => ({
+            stockPropertyNo: String(it?.itemNo || idx + 1),
+            unit: String(it?.unit || ""),
+            description: String(it?.description || ""),
+            quantity: it?.quantity || "",
+            unitCost: it?.unitCost || "",
+            amount: it?.totalCost || (Number(it?.quantity || 0) * Number(it?.unitCost || 0)) || "",
+          }))
+      : [
+          {
+            stockPropertyNo: "1",
+            unit: "lot",
+            description: doc?.purpose || row?.purpose || "",
+            quantity: 1,
+            unitCost: doc?.amount || row?.amount || "",
+            amount: doc?.amount || row?.amount || "",
+          },
+        ]
+
+    const supp = String(row.supplier || (doc as any)?.supplier || "").trim()
+
+    return {
+      supplier: supp,
+      address: String((doc as any)?.supplierAddress || (doc as any)?.address || "").trim(),
+      tin: String((doc as any)?.tin || "").trim(),
+      poNo: String((doc as any)?.poNo || "").trim(),
+      date: String((doc as any)?.poDate || (doc as any)?.prDate || (doc?.createdAt ? new Date(doc.createdAt).toISOString().split('T')[0] : "")).trim(),
+      modeOfProcurement: String((doc as any)?.modeOfProcurement || doc?.section || "SVP").trim(),
+      prNo: String(row.referenceNos?.prNo || (doc as any)?.prNo || "").trim(),
+      placeOfDelivery: String((doc as any)?.placeOfDelivery || doc?.department || doc?.office || "PG-BATAAN").trim(),
+      dateOfDelivery: String((doc as any)?.dateOfDelivery || "").trim(),
+      deliveryTerm: String((doc as any)?.deliveryTerm || "").trim(),
+      paymentTerm: String((doc as any)?.paymentTerm || "").trim(),
+      items,
+      approvedByName: String((doc as any)?.approvedByName || "JOSE ENRIQUE S. GARCIA III").trim(),
+      approvedByDesignation: String((doc as any)?.approvedByDesignation || "PROVINCIAL GOVERNOR").trim(),
+      conformeSupplierName: String((doc as any)?.conformeSupplierName || supp).trim(),
+      conformeDate: String((doc as any)?.conformeDate || "").trim(),
+      sanggunianResolutionNo: String((doc as any)?.sanggunianResolutionNo || "").trim(),
+      secretaryName: String((doc as any)?.secretaryName || "").trim(),
+      secretaryDate: String((doc as any)?.secretaryDate || "").trim(),
+      trackingNo: String(row.trackingNo || doc?.trackingNo || "").trim(),
+      status: doc?.status,
+      logs: doc?.logs,
+    }
+  }, [preview])
+
+  const previewDvModel = useMemo<DvTemplateModel | null>(() => {
+    if (!preview || preview.type !== 'DV') return null
+    const doc = preview.row.doc
+    const row = preview.row
+    const supp = String(row.supplier || (doc as any)?.supplier || "").trim()
+    return {
+      payee: supp || "PR",
+      address: String((doc as any)?.supplierAddress || "N/A"),
+      trackingNo: row.trackingNo || doc?.trackingNo || "",
+      fund: doc?.fund || "",
+      dvNo: String((doc as any)?.dvNo || "").trim(),
+      date: (doc as any)?.date || "",
+      obrNo: String(row.referenceNos?.obrNo || (doc as any)?.obrNo || "").trim(),
+      responsibilityCenter: (doc as any)?.responsibilityCenter || "",
+      particulars: doc?.purpose || row.purpose || "",
+      amount: (doc as any)?.supplierAmount || doc?.amount || row.amount || "",
+      amountDue: (doc as any)?.supplierAmount || doc?.amount || row.amount || "",
+      preparedByName: doc?.createdBy || row.createdBy || "",
+      certifiedAName:
+        String((doc as any)?.certifiedAName || "").trim() ||
+        officeHeads[doc?.office?.toUpperCase() || ""]?.head ||
+        String((doc as any)?.requestedByName || "").trim() ||
+        "ENGR. FERNANDO E. TANCIONGCO",
+      certifiedAPosition:
+        String((doc as any)?.certifiedAPosition || "").trim() ||
+        officeHeads[doc?.office?.toUpperCase() || ""]?.designation ||
+        String((doc as any)?.requestedByDesignation || "").trim() ||
+        "OIC-PGSO",
+      certifiedBName: String((doc as any)?.certifiedBName || "").trim() || "EDUARDO D. BANZON",
+      certifiedBPosition: String((doc as any)?.certifiedBPosition || "").trim() || "Provincial Budget Officer",
+      status: doc?.status,
+      logs: doc?.logs,
+      hasPr: doc?.prEnabled,
+      hasObr: doc?.obrEnabled,
+    }
+  }, [officeHeads, preview])
 
   const previewPrItems = useMemo(() => {
     const raw = preview?.row?.doc?.prItems
@@ -2133,6 +2442,16 @@ export default function ApprovalsPage({
                             title="Preview DV"
                           >
                             DV
+                          </button>
+                        )}
+                        {(actionIsGso || actionIsAdmin || Boolean(String(r.supplier || (r.doc as any)?.supplier || '').trim())) && (
+                          <button
+                            type="button"
+                            onClick={() => setPreview({ type: "PO", row: r })}
+                            className={`inline-flex h-7 w-full items-center justify-center rounded text-[11px] font-semibold transition focus:outline-none focus-visible:outline-none ${deadlineStatus.isExceeded ? 'bg-white text-rose-600 hover:bg-rose-50' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
+                            title="Preview PO"
+                          >
+                            PO
                           </button>
                         )}
                         <a
@@ -2508,6 +2827,30 @@ export default function ApprovalsPage({
                     {dvPdfBusy ? '...' : <Download className="size-4" />}
                   </button>
                 ) : null}
+
+                {preview.type === 'PO' ? (
+                  <>
+                    {(actionIsGso || actionIsAdmin || hasPrivilege("PO Preparation") || hasPrivilege("Update PO") || hasPrivilege("Edit PO")) ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsEditPoModalOpen(true)}
+                        className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none"
+                        title="Edit PO"
+                      >
+                        <Pencil className="size-4 text-blue-600" />
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => capturePoPreviewToPdf(preview.row)}
+                      disabled={poPdfBusy}
+                      className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                      title="Download PDF"
+                    >
+                      {poPdfBusy ? '...' : <Download className="size-4" />}
+                    </button>
+                  </>
+                ) : null}
               </div>
             </div>
 
@@ -2675,6 +3018,60 @@ export default function ApprovalsPage({
                       />
                     </div>
                   </div>
+                </>
+              ) : preview.type === 'DV' ? (
+                <>
+                  {previewDvModel && (
+                    <div ref={dvVisibleRef} className="print-area mx-auto w-[816px]">
+                      <DvTemplatePreview model={previewDvModel} />
+                    </div>
+                  )}
+                  {previewDvModel && (
+                    <div
+                      ref={dvCaptureRef}
+                      style={{
+                        position: 'fixed',
+                        left: -10000,
+                        top: 0,
+                        width: 816,
+                        height: 'auto',
+                        overflow: 'visible',
+                        background: 'white',
+                      }}
+                      aria-hidden="true"
+                    >
+                      <div className="print-area">
+                        <DvTemplatePreview model={previewDvModel} />
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : preview.type === 'PO' ? (
+                <>
+                  {previewPoModel && (
+                    <div ref={poVisibleRef} className="print-area mx-auto w-[816px]">
+                      <PoTemplatePreview model={previewPoModel} />
+                    </div>
+                  )}
+                  {previewPoModel && (
+                    <div
+                      ref={poCaptureRef}
+                      style={{
+                        position: 'fixed',
+                        left: -10000,
+                        top: 0,
+                        width: 816,
+                        height: 'auto',
+                        overflow: 'visible',
+                        background: 'white',
+                      }}
+                      aria-hidden="true"
+                    >
+                      <div className="print-area">
+                        <PoTemplatePreview model={previewPoModel} />
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="print-area mx-auto w-[816px]">
@@ -4715,6 +5112,16 @@ export default function ApprovalsPage({
         onClose={() => setIsNewRequestModalOpen(false)}
         onSubmit={handleCreateNewRequest}
       />
+
+      {/* Edit PO Modal */}
+      {isEditPoModalOpen && preview && preview.type === 'PO' && previewPoModel ? (
+        <EditPoModal
+          isOpen={isEditPoModalOpen}
+          onClose={() => setIsEditPoModalOpen(false)}
+          initialData={previewPoModel}
+          onSave={handleSavePo}
+        />
+      ) : null}
     </div >
   )
 }

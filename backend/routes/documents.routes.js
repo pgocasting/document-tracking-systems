@@ -316,15 +316,23 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'Tracking number already exists.' });
     }
 
+    let author = String(createdBy || '').trim();
+    if (!author || author.toLowerCase() === 'admin') {
+      author = 'System Administrator';
+    }
+
+    const finalOffice = typeof office === 'string' && office.trim() ? office.trim() : (typeof department === 'string' ? department.trim() : '');
+    const finalDepartment = typeof department === 'string' && department.trim() ? department.trim() : (typeof office === 'string' ? office.trim() : '');
+
     const doc = new Document({
       trackingNo: String(trackingNo).trim(),
-      createdBy: String(createdBy).trim(),
-      office: typeof office === 'string' ? office.trim() : '',
+      createdBy: author,
+      office: finalOffice,
       fund: typeof fund === 'string' ? fund.trim() : '',
       section: typeof section === 'string' && section.trim() ? section.trim() : 'N/A',
       fpp: typeof fpp === 'string' ? fpp.trim() : '',
-      department: typeof department === 'string' ? department.trim() : '',
-      contactNumber: typeof contactNumber === 'string' ? contactNumber.trim() : '',
+      department: finalDepartment,
+      contactNumber: typeof contactNumber === 'string' && contactNumber.trim().toLowerCase() === 'admin' ? 'System Administrator' : (typeof contactNumber === 'string' ? contactNumber.trim() : author),
       responsibilityCenter: typeof responsibilityCenter === 'string' ? responsibilityCenter.trim() : '',
       accountCode: typeof accountCode === 'string' ? accountCode.trim() : '',
       email: typeof email === 'string' ? email.trim() : '',
@@ -443,8 +451,9 @@ router.patch('/:id', authenticateToken, async (req, res) => {
     }
 
     let officePrivileges = [];
+    let officeName = '';
     if (!isAdminRole) {
-      const officeName = await loadCurrentUserOffice(req.user);
+      officeName = await loadCurrentUserOffice(req.user);
       officePrivileges = await loadOfficePrivilegesByOfficeName(officeName);
     }
 
@@ -480,6 +489,21 @@ router.patch('/:id', authenticateToken, async (req, res) => {
       amount,
       supplierAmount,
       supplier,
+      supplierAddress,
+      tin,
+      poNo,
+      poDate,
+      modeOfProcurement,
+      placeOfDelivery,
+      dateOfDelivery,
+      deliveryTerm,
+      paymentTerm,
+      conformeSupplierName,
+      conformeDate,
+      sanggunianResolutionNo,
+      secretaryName,
+      secretaryDate,
+      poItems,
       prNo,
       obrNo,
       prEnabled,
@@ -526,12 +550,19 @@ router.patch('/:id', authenticateToken, async (req, res) => {
     }
 
     if (!isAdminRole) {
+      const officeLower = String(officeName || '').trim().toLowerCase();
+      const isGsoOrBac = officeLower.includes('gso') || officeLower.includes('bac');
+
       for (const p of requiredPrivileges) {
         if (isDocumentOwner) {
           const key = String(p).trim().toLowerCase();
           if (key !== 'approvals' && key !== 'complete request') continue;
         }
         if (role === 'procurement' && String(p).trim().toLowerCase() === 'approvals') {
+          continue;
+        }
+        // Procurement / GSO / BAC users are allowed to edit supplier & PR items for PO Preparation
+        if ((role === 'procurement' || isGsoOrBac) && (String(p).toLowerCase() === 'update supplier' || String(p).toLowerCase() === 'update pr')) {
           continue;
         }
         if (!hasPrivilege(officePrivileges, p)) {
@@ -572,6 +603,21 @@ router.patch('/:id', authenticateToken, async (req, res) => {
     if (typeof amount === 'string') update.amount = amount.trim();
     if (typeof supplierAmount === 'string') update.supplierAmount = supplierAmount.trim();
     if (typeof supplier === 'string') update.supplier = supplier.trim();
+    if (typeof supplierAddress === 'string') update.supplierAddress = supplierAddress.trim();
+    if (typeof tin === 'string') update.tin = tin.trim();
+    if (typeof poNo === 'string') update.poNo = poNo.trim();
+    if (typeof poDate === 'string') update.poDate = poDate.trim();
+    if (typeof modeOfProcurement === 'string') update.modeOfProcurement = modeOfProcurement.trim();
+    if (typeof placeOfDelivery === 'string') update.placeOfDelivery = placeOfDelivery.trim();
+    if (typeof dateOfDelivery === 'string') update.dateOfDelivery = dateOfDelivery.trim();
+    if (typeof deliveryTerm === 'string') update.deliveryTerm = deliveryTerm.trim();
+    if (typeof paymentTerm === 'string') update.paymentTerm = paymentTerm.trim();
+    if (typeof conformeSupplierName === 'string') update.conformeSupplierName = conformeSupplierName.trim();
+    if (typeof conformeDate === 'string') update.conformeDate = conformeDate.trim();
+    if (typeof sanggunianResolutionNo === 'string') update.sanggunianResolutionNo = sanggunianResolutionNo.trim();
+    if (typeof secretaryName === 'string') update.secretaryName = secretaryName.trim();
+    if (typeof secretaryDate === 'string') update.secretaryDate = secretaryDate.trim();
+    if (Array.isArray(poItems)) update.poItems = poItems;
     if (typeof prNo === 'string') update.prNo = prNo.trim();
     if (typeof obrNo === 'string') update.obrNo = obrNo.trim();
     if (typeof prEnabled === 'boolean') update.prEnabled = prEnabled;
